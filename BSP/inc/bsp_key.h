@@ -28,10 +28,9 @@
 
 typedef enum
 {
+   KEY_DOWN ,
 
-	KEY_UP ,
-	KEY_DOWN ,
-
+	KEY_UP 
 }KEYState_TypeDef;
 
 

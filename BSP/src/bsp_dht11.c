@@ -6,7 +6,7 @@
  */
 #include "bsp.h"
 
-static GPIO_InitTypeDef GPIO_InitStruct;
+
 
 /**************************************************************************
  * static void DHT11_Mode_Out_PP(void)
@@ -16,7 +16,9 @@ static GPIO_InitTypeDef GPIO_InitStruct;
  *************************************************************************/
 static void DHT11_Mode_Out_PP(void)
 {
-    GPIO_InitStruct.Pin = TEMP_SENSOR_Pin;
+	GPIO_InitTypeDef GPIO_InitStruct={0};
+	 __HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitStruct.Pin = TEMP_SENSOR_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -31,7 +33,9 @@ static void DHT11_Mode_Out_PP(void)
  *************************************************************************/
 static void DHT11_Mode_IPU(void)
 {
-    GPIO_InitStruct.Pin = TEMP_SENSOR_Pin;
+	GPIO_InitTypeDef GPIO_InitStruct={0};
+	 __HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitStruct.Pin = TEMP_SENSOR_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(TEMP_SENSOR_GPIO_Port, &GPIO_InitStruct);
@@ -88,7 +92,7 @@ void DHT11_Init(void)
 {
     DHT11_Mode_Out_PP();
     DHT11_PIN_SET();
-    HAL_Delay(1000);  // 上电等待1s稳定
+    //HAL_Delay(1000);  // 上电等待1s稳定
 }
 
 /**************************************************************************

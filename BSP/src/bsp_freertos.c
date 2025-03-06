@@ -75,7 +75,7 @@ uint8_t uckey_number;
 uint8_t key_power_flag,decoder_flag ;
 uint8_t check_code;
 
-
+uint8_t power_on_key_counter, mode_key_counter;
 
 
 void freeRTOS_Handler(void)
@@ -143,22 +143,16 @@ static void vTaskDecoderPro(void *pvParameters)
 **********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters)
 {
-    uint32_t ulNotifyValue;
-    BaseType_t xResult;
-    static uint8_t power_on_key_counter, mode_key_counter;
+  
+   
+    static uint8_t power_on_flag;
 
     while(1)
     {
       
         
-        xResult = xTaskNotifyWait(0x00,
-                                 0xFFFFFFFF,
-                                 &ulNotifyValue,
-                                 pdMS_TO_TICKS(100));
-        
-        if(xResult == pdPASS)
-        {
-            if(g_key.key_power_flag == KEY_POWER_ID){
+   
+          if(g_key.key_power_flag == KEY_POWER_ID){
 
 		        power_on_key_counter ++ ;
             
@@ -238,7 +232,7 @@ static void vTaskRunPro(void *pvParameters)
 	   case power_on :
 
 		// 检查LED硬件测试
-		Check_LED_Hardware_Test();
+		//Check_LED_Hardware_Test();
 
         // 只有在不进行LED测试时才执行正常的power_on处理
         if(!Is_LED_Testing())
@@ -249,7 +243,10 @@ static void vTaskRunPro(void *pvParameters)
 
 	  case power_off:
   
-
+         if(power_on_flag==0){
+             power_on_flag ++;
+			 buzzer_sound();
+		 }
          power_off_run_handler();
 
 	   break;
@@ -259,10 +256,10 @@ static void vTaskRunPro(void *pvParameters)
 
      // send_cmd_ack_hanlder();
 
-	  vTaskDelay(pdMS_TO_TICKS(100));
+	  vTaskDelay(20);
     }
-   }
-}
+ }
+
 
 /**********************************************************************************************************
 *

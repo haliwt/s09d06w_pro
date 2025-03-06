@@ -102,7 +102,7 @@ void Error_Handler(void);
 #define BUZZER_PWM_GPIO_Port GPIOB
 //TM1639 GPIO
 #define MCU_DIO_Pin 						GPIO_PIN_10
-#define MCU_DIO_GPIO_Port
+#define MCU_DIO_GPIO_Port                  GPIOB
 
 #define MCU_STB_Pin 						GPIO_PIN_11
 #define MCU_STB_GPIO_Port 					GPIOB
@@ -122,12 +122,15 @@ void Error_Handler(void);
 #define KEY_POWER_Pin GPIO_PIN_0
 #define KEY_POWER_GPIO_Port GPIOD
 #define KEY_POWER_EXTI_IRQn EXTI0_1_IRQn
+
 #define KEY_MODE_Pin GPIO_PIN_1
 #define KEY_MODE_GPIO_Port GPIOD
 #define KEY_MODE_EXTI_IRQn EXTI0_1_IRQn
+
 #define KEY_UP_Pin GPIO_PIN_2
 #define KEY_UP_GPIO_Port GPIOD
 #define KEY_UP_EXTI_IRQn EXTI2_3_IRQn
+
 #define KEY_DOWN_Pin GPIO_PIN_3
 #define KEY_DOWN_GPIO_Port GPIOD
 #define KEY_DOWN_EXTI_IRQn EXTI2_3_IRQn
