@@ -123,7 +123,7 @@ void power_on_run_handler(void)
 	 
 
 
-	   gl_run.process_on_step =3;
+	   gl_run.process_on_step =1;
 
 	 break;
 
@@ -154,13 +154,15 @@ void power_off_run_handler(void)
    case 0:
    	  gl_run.process_on_step =0;
 
+     
+      power_off_led();
       gl_run.process_off_step = 1;
 
    break;
 
    case 1:
-
-     gl_run.process_off_step = 2;
+      LED_Power_Breathing();
+     
 
    break;
 

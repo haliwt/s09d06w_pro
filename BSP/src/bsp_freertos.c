@@ -156,7 +156,7 @@ static void vTaskRunPro(void *pvParameters)
 
 		        power_on_key_counter ++ ;
             
-		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 6){
+		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 100){
 				g_key.key_power_flag=0;
 				power_on_key_counter=0;
 			    buzzer_sound();
@@ -176,7 +176,7 @@ static void vTaskRunPro(void *pvParameters)
 
 				}
 		    }
-			else if(KEY_POWER_VALUE() ==KEY_DOWN && power_on_key_counter  > 5){
+			else if(KEY_POWER_VALUE() ==KEY_DOWN && power_on_key_counter  > 100){
 		            g_key.key_power_flag=0;
 				    power_on_key_counter=0;
 			        g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
