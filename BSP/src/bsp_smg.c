@@ -7,6 +7,8 @@
 
 #include "bsp.h"
 
+#define TM1639_CHAR_H               0x76    // H: 0111 0110 (b,c,e,f,g)
+
 
 static const uint8_t Number_Table[] = {
     0x3F, // 0: 0011 1111   （f,e,d,c,b,a）

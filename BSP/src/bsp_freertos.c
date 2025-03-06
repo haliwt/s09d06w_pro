@@ -75,7 +75,7 @@ uint8_t uckey_number;
 uint8_t key_power_flag,decoder_flag ;
 uint8_t check_code;
 
-static uint32_t power_on_time = 0;    // 记录开机时间
+
 
 
 void freeRTOS_Handler(void)

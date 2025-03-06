@@ -87,7 +87,9 @@ extern KEY_PROCESS_TYPEDEF  g_key;
 
 
 
+uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx);
 
+void sys_write_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx, uint8_t status);
 
 
 

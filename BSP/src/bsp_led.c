@@ -79,7 +79,7 @@ void LED_Power_Breathing(void)
 void LED_FUN_ON(void)
 {
 
-   // TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L, (1 << current_bit));
+   TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L,0xFC);
 
 }
 

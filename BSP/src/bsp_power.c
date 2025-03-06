@@ -21,10 +21,10 @@ POWER_RUN_STATE gl_run;
 typedef enum {
     DISPLAY_TEMP = 0,
     DISPLAY_HUM = 1,
-	DISPLAY_TIME = 2
 } DisplayMode;
 
-DisplayMode disp_temp_hum = DISPLAY_TEMP;  // 默认显示温度
+uint8_t disp_temp_hum = DISPLAY_TEMP;  // 默认显示温度
+uint8_t disp_timer_temp;
 
 /**********************************************************************
 	*
@@ -81,21 +81,21 @@ void power_on_run_handler(void)
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	
-			disp_temp_hum++;
-			if (disp_temp_hum > 3) {
-				disp_temp_hum = 1; // 循环显示状态
+			disp_timer_temp++;
+			if (disp_timer_temp > 2) {
+				disp_timer_temp= 0; // 循环显示状态
 			}
 	
 			// 根据状态调用显示函数
-			switch (disp_temp_hum) {
-				case 1:
+			switch (disp_timer_temp) {
+				case 0:
 					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 					break;
-				case 2:
+				case 1:
 					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
-				case 3:
-					DHT11_Display_Data(DISPLAY_TIME); // 显示时间
+				case 2:
+					//DHT11_Display_Data(DISPLAY_TIME); // 显示时间
 					break;
 			}
 		}
@@ -106,7 +106,10 @@ void power_on_run_handler(void)
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	
 			disp_temp_hum =! disp_temp_hum;   // 切换布尔状态
+			
+			
 			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
+			
 		}
 	}
 

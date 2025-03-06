@@ -47,11 +47,11 @@
 #define TM1639_BRIGHTNESS_MIN        0x00    // 最小亮度
 
 // 特殊字符段码定义
-#define TM1639_CHAR_H               0x76    // H: 0111 0110 (b,c,e,f,g)
-#define TM1639_CHAR_DEGREE          0x63    // 度数符号 (b,c,g)
-#define TM1639_CHAR_C               0x39    // 摄氏度C (a,d,e,f)
-#define TM1639_CHAR_RH              0x50    // 湿度符号RH的H部分 (e,g)
-#define TM1639_DOT                  0x80    // 小数点 (dp)
+//#define TM1639_CHAR_H               0x76    // H: 0111 0110 (b,c,e,f,g)
+//#define TM1639_CHAR_DEGREE          0x63    // 度数符号 (b,c,g)
+//#define TM1639_CHAR_C               0x39    // 摄氏度C (a,d,e,f)
+//#define TM1639_CHAR_RH              0x50    // 湿度符号RH的H部分 (e,g)
+//#define TM1639_DOT                  0x80    // 小数点 (dp)
 
 #define SEG_A                       0x01
 #define SEG_B                       0x02
