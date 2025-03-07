@@ -96,7 +96,17 @@ void LED_FUN_ON(void)
    TM1639_Display_ON_OFF(1);
 
 }
-
+/************************************************************************
+ * Function Name: void wifi_led_fast_blink(void)
+ * 功能:
+ * 参数:无
+ * 返回值:无
+ ************************************************************************/
+void wifi_led_fast_blink(void)
+{
+	LED_WIFI_TOGGLE();
+	osDelay(100);
+}
 
 
 

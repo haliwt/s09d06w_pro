@@ -89,13 +89,13 @@ void power_on_run_handler(void)
 			// 根据状态调用显示函数
 			switch (disp_temp_hum) {
 				case 1:
-					//DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 					break;
 				case 2:
-					//DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
+					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
 				case 3:
-					//DHT11_Display_Data(DISPLAY_TIME); // 显示时间
+					TM1639_Display_3_Digit(g_pro.gdisp_hours_value); // 显示时间
 					break;
 			}
 		}

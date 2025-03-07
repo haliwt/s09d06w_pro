@@ -178,15 +178,13 @@ static void vTaskRunPro(void *pvParameters)
 		    }
 			else if(KEY_POWER_VALUE() ==KEY_DOWN && (power_on_key_counter  > 100 && power_on_key_counter < 130)){
 		            g_key.key_power_flag=0;
-				    power_on_key_counter=150;
+				    power_on_key_counter=200;
 			        g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
 			        g_pro.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
+			        g_pro.gWifi_link_flag =0 ; //clear wifi link net flag .repeat be detected wifi state.
 			
 					buzzer_sound();
-
-
-
-		   }
+            }
 		}
 		else if(g_key.key_mode_flag == KEY_MODEL_ID ){ //&& MODEL_KEY_VALUE()==KEY_UP){
 
@@ -239,9 +237,23 @@ static void vTaskRunPro(void *pvParameters)
         {
             power_on_run_handler();
 			if( g_key.key_long_power_flag ==  KEY_LONG_POWER){ //wifi led blink fast .)
-		        g_key.key_long_power_flag =0;
+		        //g_key.key_long_power_flag =0;
+		        if(g_pro.gTimer_wifi_led_fast_blink < 120){
+				    wifi_led_fast_blink();
+		        }
+				else{
+					
+				   g_key.key_long_power_flag =0;
+				   if(g_pro.gWifi_link_flag == 1){
+                        LED_WIFI_ON();
+				   }
+				   else{
+                        LED_WIFI_OFF();
+      
+				   }
 
-		   }
+                }
+             }
         }
         break;
 
