@@ -80,7 +80,7 @@ void LED_FUN_ON(void)
 {
    TM1639_Display_ON_OFF(1);
 
-   TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L,0xFC);
+   TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L,0xCF);
 
 }
 

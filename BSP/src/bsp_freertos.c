@@ -216,7 +216,7 @@ static void vTaskRunPro(void *pvParameters)
 				//gpro_t.gTimer_again_send_power_on_off =0;
 				//key_dec_fun();
 		}
-		else if(g_key.key_up_flag ==1){ // && ADD_KEY_VALUE()==KEY_UP){
+		else if(g_key.key_up_flag ==KEY_UP_ID){ // && ADD_KEY_VALUE()==KEY_UP){
 				g_key.key_up_flag ++;
 				buzzer_sound();
 				//SendData_Buzzer_Has_Ack();
