@@ -20,7 +20,7 @@ process_t g_pro;
 void bsp_init(void)
 {
  delay_init(64); 
- DHT11_Init();
+ dht11_init();
 
 }
 

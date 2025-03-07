@@ -57,6 +57,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+
+#define LED_TEMP_SYMBOL_Pin 					GPIO_PIN_8
+#define LED_TEMP_SYMBOL_GPIO_Port 				GPIOB
+
+
 #define LED_HUM_SYMBOL_Pin 					GPIO_PIN_13
 #define LED_HUM_SYMBOL_GPIO_Port 			GPIOC
 
@@ -78,8 +83,7 @@ void Error_Handler(void);
 #define LED_MOUSE_Pin 					GPIO_PIN_7
 #define LED_MOUSE_GPIO_Port 			GPIOB
 
-#define LED_TEMP_SYMBOL_Pin 					GPIO_PIN_8
-#define LED_TEMP_SYMBOL_GPIO_Port 				GPIOB
+
 
 //GPIO CTL
 

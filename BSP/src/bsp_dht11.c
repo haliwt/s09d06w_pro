@@ -1,176 +1,167 @@
-/*
- * bsp_dht11.c
- *
- *  Created on: 2025年3月5日
- *      Author: Administrator
- */
 #include "bsp.h"
 
 
 DHT11_Data_TypeDef dht11_data;
 DHT11_Status status;
 
-/**************************************************************************
- * static void DHT11_Mode_Out_PP(void)
- * 功能：配置DHT11引脚为推挽输出模式
- * 参数：无
- * 返回值：无
- *************************************************************************/
-static void DHT11_Mode_Out_PP(void)
+
+/**
+ * @brief       复位DHT11
+ * @param       data: 要写入的数据
+ * @retval      无
+ */
+static void dht11_reset(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct={0};
-	 __HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitStruct.Pin = TEMP_SENSOR_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(TEMP_SENSOR_GPIO_Port, &GPIO_InitStruct);
+    DHT11_DQ_OUT(0);    /* 拉低DQ */
+    delay_ms(20);       /* 拉低至少18ms */
+    DHT11_DQ_OUT(1);    /* DQ=1 */
+    delay_us(30);       /* 主机拉高10~35us */
 }
 
-/**************************************************************************
- * static void DHT11_Mode_IPU(void)
- * 功能：配置DHT11引脚为上拉输入模式
- * 参数：无
- * 返回值：无
- *************************************************************************/
-static void DHT11_Mode_IPU(void)
+/**
+ * @brief       等待DHT11的回应
+ * @param       无
+ * @retval      0, DHT11正常
+ *              1, DHT11异常/不存在
+ */
+uint8_t dht11_check(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct={0};
-	 __HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitStruct.Pin = TEMP_SENSOR_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    HAL_GPIO_Init(TEMP_SENSOR_GPIO_Port, &GPIO_InitStruct);
-}
+    uint8_t retry = 0;
+    uint8_t rval = 0;
 
-/**************************************************************************
- * static uint8_t DHT11_Read_Byte(void)
- * 功能：读取一个字节的数据
- * 参数：无
- * 返回值：读取到的字节数据，超时返回0
- *************************************************************************/
-static uint8_t DHT11_Read_Byte(void)
-{
-    uint8_t i, temp = 0;
-    uint32_t timeout = 0;
-    
-    for(i = 0; i < 8; i++)
+    while (DHT11_DQ_IN && retry < 100)  /* DHT11会拉低83us */
     {
-        // 等待变高电平
-        timeout = DHT11_TIMEOUT;
-        while((!DHT11_PIN_READ()) && timeout) 
+        retry++;
+        delay_us(1);
+    }
+
+    if (retry >= 100)
+    {
+        rval = 1;
+    }
+    else
+    {
+        retry = 0;
+
+        while (!DHT11_DQ_IN && retry < 100) /* DHT11拉低后会再次拉高87us */
         {
-            timeout--;
+            retry++;
             delay_us(1);
         }
-        if(!timeout) return 0;
-        
-        delay_us(40);  // 延时40us
-        
-        if(DHT11_PIN_READ())  // 如果还是高电平
+        if (retry >= 100) rval = 1;
+    }
+    
+    return rval;
+}
+
+/**
+ * @brief       从DHT11读取一个位
+ * @param       无
+ * @retval      读取到的位值: 0 / 1
+ */
+uint8_t dht11_read_bit(void)
+{
+    uint8_t retry = 0;
+
+    while (DHT11_DQ_IN && retry < 100)  /* 等待变为低电平 */
+    {
+        retry++;
+        delay_us(1);
+    }
+
+    retry = 0;
+
+    while (!DHT11_DQ_IN && retry < 100) /* 等待变高电平 */
+    {
+        retry++;
+        delay_us(1);
+    }
+
+    delay_us(40);       /* 等待40us */
+
+    if (DHT11_DQ_IN)    /* 根据引脚状态返回 bit */
+    {
+        return 1;
+    }
+    else 
+    {
+        return 0;
+    }
+}
+
+/**
+ * @brief       从DHT11读取一个字节
+ * @param       无
+ * @retval      读到的数据
+ */
+static uint8_t dht11_read_byte(void)
+{
+    uint8_t i, data = 0;
+
+    for (i = 0; i < 8; i++)         /* 循环读取8位数据 */
+    {
+        data <<= 1;                 /* 高位数据先输出, 先左移一位 */
+        data |= dht11_read_bit();   /* 读取1bit数据 */
+    }
+
+    return data;
+}
+
+/**
+ * @brief       从DHT11读取一次数据
+ * @param       temp: 温度值(范围:-20~50°)
+ * @param       humi: 湿度值(范围:5%~95%)
+ * @retval      0, 正常.
+ *              1, 失败
+ */
+uint8_t dht11_read_data(uint8_t *temp, uint8_t *humi)
+{
+    uint8_t buf[5];
+    uint8_t i;
+    dht11_reset();
+
+    if (dht11_check() == 0)
+    {
+        for (i = 0; i < 5; i++)     /* 读取40位数据 */
         {
-            temp |= (uint8_t)(0x01 << (7-i));  // 对应位置1
-            
-            // 等待变低电平
-            timeout = DHT11_TIMEOUT;
-            while((DHT11_PIN_READ()) && timeout)
-            {
-                timeout--;
-                delay_us(1);
-            }
-            if(!timeout) return 0;
+            buf[i] = dht11_read_byte();
+        }
+
+        if ((buf[0] + buf[1] + buf[2] + buf[3]) == buf[4])
+        {
+            *humi = buf[0];
+            *temp = buf[2];
         }
     }
-    return temp;
+    else
+    {
+        return 1;
+    }
+    
+    return 0;
 }
 
-/**************************************************************************
- * void DHT11_Init(void)
- * 功能：初始化DHT11
- * 参数：无
- * 返回值：无
- *************************************************************************/
-void DHT11_Init(void)
+/**
+ * @brief       初始化DHT11的IO口 DQ 同时检测DHT11的存在
+ * @param       无
+ * @retval      0, 正常
+ *              1, 不存在/不正常
+ */
+uint8_t dht11_init(void)
 {
-    DHT11_Mode_Out_PP();
-    DHT11_PIN_SET();
-    //HAL_Delay(1000);  // 上电等待1s稳定
-}
+    GPIO_InitTypeDef gpio_init_struct={0};
 
-/**************************************************************************
- * DHT11_Status DHT11_Read_Data(DHT11_Data_TypeDef* data)
- * 功能：读取DHT11的温湿度数据
- * 参数：data - DHT11数据结构体指针
- * 返回值：DHT11_Status 类型的操作结果
- *************************************************************************/
-DHT11_Status DHT11_Read_Data(void)
-{
-    uint8_t buf[5] = {0};
-    uint32_t timeout = 0;
-    
-    // 主机发送开始信号
-    DHT11_Mode_Out_PP();
-    DHT11_PIN_RESET();
-    delay_ms(20);    // 至少拉低18ms
-    DHT11_PIN_SET();
-    delay_us(20); // 主机拉高20~40us
-    
-    // 切换为输入模式
-    DHT11_Mode_IPU();
-    
-    // 等待DHT11响应，先是低电平
-    timeout = DHT11_TIMEOUT;
-    while((DHT11_PIN_READ()) && timeout)
-    {
-        timeout--;
-        delay_us(1);
-    }
-    if(!timeout) return DHT11_NO_RESPONSE;
-    
-    // 等待DHT11拉高
-    timeout = DHT11_TIMEOUT;
-    while((!DHT11_PIN_READ()) && timeout)
-    {
-        timeout--;
-        delay_us(1);
-    }
-    if(!timeout) return DHT11_TIMEOUT_ERROR;
-    
-    // 等待DHT11拉低
-    timeout = DHT11_TIMEOUT;
-    while((DHT11_PIN_READ()) && timeout)
-    {
-        timeout--;
-        delay_us(1);
-    }
-    if(!timeout) return DHT11_TIMEOUT_ERROR;
-    
-    // 读取40位数据
-    for(uint8_t i = 0; i < 5; i++)
-    {
-        buf[i] = DHT11_Read_Byte();
-        if(buf[i] == 0) return DHT11_TIMEOUT_ERROR;
-    }
-    
-    // 验证校验和
-    if(buf[0] + buf[2] != buf[4])
-    {
-        return DHT11_CHECKSUM_ERROR;
-    }
-    
-    // 保存数据
-    dht11_data.humidity = buf[0];
-    dht11_data.temperature = buf[2];
-    dht11_data.is_negative = 0;
-    
-    // 处理负温度（如果支持）
-    if(buf[2] & 0x80)
-    {
-        dht11_data.temperature = buf[2] & 0x7F;
-        dht11_data.is_negative = 1;
-    }
-    
-    return DHT11_OK;
+    DHT11_DQ_GPIO_CLK_ENABLE();     /* 开启DQ引脚时钟 */
+
+    gpio_init_struct.Pin = DHT11_DQ_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_OD;            /* 开漏输出 */
+    gpio_init_struct.Pull = GPIO_PULLUP;                    /* 上拉 */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;          /* 高速 */
+    HAL_GPIO_Init(DHT11_DQ_GPIO_PORT, &gpio_init_struct);   /* 初始化DHT11_DQ引脚 */
+    /* DHT11_DQ引脚模式设置,开漏输出,上拉, 这样就不用再设置IO方向了, 开漏输出的时候(=1), 也可以读取外部信号的高低电平 */
+
+    dht11_reset();
+    return dht11_check();
 }
 
 /**
@@ -184,11 +175,13 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
   //  DHT11_Status status;
     
     // 读取DHT11数据
-    status = DHT11_Read_Data();
+    status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
     if(status != DHT11_OK)
     {
         // 读取失败，显示错误代码
         //TM1639_Display_3_Digit(status);
+        LED_TEMP_SINGLE_ON();
+        LED_HUM_SINGLE_OFF();
         SMG_Display_Err();
         return status;
     }
@@ -218,10 +211,30 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     return DHT11_OK;
 }
 
-/**
- * @brief  在TM1639上显示DHT11的温湿度数据
- * @param  mode: 0-显示温度，1-显示湿度
- * @retval DHT11_Status 类型的操作结果
- */
+
+
+void Update_DHT11_Value(void)
+{
+    
+     DISABLE_INT();
+	 dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+     ENABLE_INT();
+	
+
+	//sendData_Real_TimeHum(run_t.gDht11_humidity,run_t.gDht11_temperature);
+	
+    
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
