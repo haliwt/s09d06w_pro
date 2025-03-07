@@ -6,7 +6,7 @@
  */
 #include "bsp.h"
 
-#define SWITCH_THRESHOLD 1
+#define SWITCH_THRESHOLD 2
 
 typedef struct{
 
@@ -106,7 +106,7 @@ void power_on_run_handler(void)
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	
 			disp_temp_hum =! disp_temp_hum;   // 切换布尔状态
-			DHT11_Display_Data(0); // 显示温度或湿度
+			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
 			
 		}
 	}
