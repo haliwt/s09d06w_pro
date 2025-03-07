@@ -51,7 +51,7 @@ void power_off_led(void)
  ************************************************************************/
 void LED_Power_Breathing(void)
 {
-    static uint32_t breathing_time = 0;
+    static uint8_t breathing_time = 0;
     static uint8_t led_state = 0;
     
     breathing_time++;
@@ -109,6 +109,20 @@ void wifi_led_fast_blink(void)
 }
 
 
+void wifi_led_slowly_blink(void)
+{
+    static uint8_t breathing_time = 0;
+   
+    
+    breathing_time++;
+    if(breathing_time >= 50)  // 呼吸周期1秒
+    {
+        breathing_time = 0;
+       
+        LED_WIFI_TOGGLE();
+        
+    }
+}
 
 
 

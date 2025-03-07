@@ -52,6 +52,7 @@ void LED_FUN_ON(void);
 
 void wifi_led_fast_blink(void);
 
+void wifi_led_slowly_blink(void);
 
 
 

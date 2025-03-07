@@ -236,8 +236,8 @@ static void vTaskRunPro(void *pvParameters)
         if(!Is_LED_Testing())
         {
             power_on_run_handler();
-			if( g_key.key_long_power_flag ==  KEY_LONG_POWER){ //wifi led blink fast .)
-		        //g_key.key_long_power_flag =0;
+			if(g_key.key_long_power_flag ==  KEY_LONG_POWER || g_key.key_long_power_flag  == 0x90){ //wifi led blink fast .)
+		         g_key.key_long_power_flag  = 0x90 ;
 		        if(g_pro.gTimer_wifi_led_fast_blink < 120){
 				    wifi_led_fast_blink();
 		        }
@@ -247,10 +247,7 @@ static void vTaskRunPro(void *pvParameters)
 				   if(g_pro.gWifi_link_flag == 1){
                         LED_WIFI_ON();
 				   }
-				   else{
-                        LED_WIFI_OFF();
-      
-				   }
+				  
 
                 }
              }

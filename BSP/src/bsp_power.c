@@ -119,7 +119,10 @@ void power_on_run_handler(void)
 
 	 case 2: //WIFI link process
 	 
+       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_pro.gWifi_link_flag ==0){
 
+             wifi_led_slowly_blink();
+        }
 
 	   gl_run.process_on_step =1;
 
@@ -154,6 +157,8 @@ void power_off_run_handler(void)
 
    	  power_off_led();
       TM1639_Display_ON_OFF(0);
+	  g_key.key_long_power_flag  = 0;
+	  g_key.key_long_mode_flag = 0;
 
       gl_run.process_off_step = 1;
 
