@@ -7,6 +7,8 @@
 #include "bsp.h"
 
 
+DHT11_Data_TypeDef dht11_data;
+DHT11_Status status;
 
 /**************************************************************************
  * static void DHT11_Mode_Out_PP(void)
@@ -101,7 +103,7 @@ void DHT11_Init(void)
  * 参数：data - DHT11数据结构体指针
  * 返回值：DHT11_Status 类型的操作结果
  *************************************************************************/
-DHT11_Status DHT11_Read_Data(DHT11_Data_TypeDef* data)
+DHT11_Status DHT11_Read_Data(void)
 {
     uint8_t buf[5] = {0};
     uint32_t timeout = 0;
@@ -157,15 +159,15 @@ DHT11_Status DHT11_Read_Data(DHT11_Data_TypeDef* data)
     }
     
     // 保存数据
-    data->humidity = buf[0];
-    data->temperature = buf[2];
-    data->is_negative = 0;
+    dht11_data.humidity = buf[0];
+    dht11_data.temperature = buf[2];
+    dht11_data.is_negative = 0;
     
     // 处理负温度（如果支持）
     if(buf[2] & 0x80)
     {
-        data->temperature = buf[2] & 0x7F;
-        data->is_negative = 1;
+        dht11_data.temperature = buf[2] & 0x7F;
+        dht11_data.is_negative = 1;
     }
     
     return DHT11_OK;
@@ -178,15 +180,16 @@ DHT11_Status DHT11_Read_Data(DHT11_Data_TypeDef* data)
  */
 DHT11_Status DHT11_Display_Data(uint8_t mode)
 {
-    DHT11_Data_TypeDef dht11_data;
-    DHT11_Status status;
+  //  DHT11_Data_TypeDef dht11_data;
+  //  DHT11_Status status;
     
     // 读取DHT11数据
-    status = DHT11_Read_Data(&dht11_data);
+    status = DHT11_Read_Data();
     if(status != DHT11_OK)
     {
         // 读取失败，显示错误代码
-        TM1639_Display_3_Digit(status);
+        //TM1639_Display_3_Digit(status);
+        SMG_Display_Err();
         return status;
     }
     
@@ -194,8 +197,9 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     if(mode == 0)
     {
         // 显示温度
-        if(dht11_data.is_negative)
+        if(dht11_data.is_negative){
             TM1639_Display_Temperature(-dht11_data.temperature);
+        }
         else{
         	LED_TEMP_SINGLE_ON();
         	LED_HUM_SINGLE_OFF();
@@ -213,3 +217,11 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     
     return DHT11_OK;
 }
+
+/**
+ * @brief  在TM1639上显示DHT11的温湿度数据
+ * @param  mode: 0-显示温度，1-显示湿度
+ * @retval DHT11_Status 类型的操作结果
+ */
+
+

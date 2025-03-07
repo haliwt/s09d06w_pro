@@ -65,7 +65,7 @@
 
 // 函数声明
 void TM1639_Init(void);                      // 初始化TM1639
-void TM1639_Display_3_Digit(uint16_t num);   // 显示3位数字
+void TM1639_Display_3_Digit(uint8_t num);   // 显示3位数字
 void TM1639_Set_Brightness(uint8_t bright);  // 设置亮度
 void TM1639_Display_ON_OFF(uint8_t status);  // 显示开关控制
 void TM1639_Clear(void);                     // 清空显示

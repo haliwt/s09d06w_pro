@@ -2,24 +2,24 @@
 
 // 数码管段码表，0-9的显示码
 static const uint8_t TM1639_Number_Table[] = {
-    0x3F, // 0: 0011 1111   （f,e,d,c,b,a）
-    0x06, // 1: 0000 0110
-    0x5B, // 2: 0101 1011
-    0x4F, // 3: 0100 1111
+    0xF3, // 0: 0011 1111   （f,e,d,c,b,a）--0x3F
+    0x60, // 1: 0000 0110 --0x06--写数据式冲低位开始，向高位开始写
+    0xB5, // 2: 0101 1011 --0x5B
+    0xF4, // 3: 0100 1111 --0x4F
     0x66, // 4: 0110 0110
-    0x6D, // 5: 0110 1101
-    0x7D, // 6: 0111 1101
-    0x07, // 7: 0000 0111
-    0x7F, // 8: 0111 1111
-    0x6F  // 9: 0110 1111
+    0xD6, // 5: 0110 1101 --0x6D
+    0xD7, // 6: 0111 1101  --0x7D 
+    0x70, // 7: 0000 0111
+    0xF7, // 8: 0111 1111
+    0xF6  // 9: 0110 1111
 };
 
 // 字母和特殊字符显示码
 static const uint8_t TM1639_Char_Table[] = {
-    0x76, // H: 0111 0110 (b,c,e,f,g)
-    0x63, // °: 0110 0011 (b,c,g)
-    0x39, // C: 0011 1001 (a,d,e,f)
-    0x50  // RH的H部分: 0101 0000 (e,g)
+    0x67, // H: 0111 0110 (b,c,e,f,g)
+    0x36, // °: 0110 0011 (b,c,g)
+    0x93, // C: 0011 1001 (a,d,e,f)
+    0x05  // RH的H部分: 0101 0000 (e,g)
 };
 
 #define TM1639_CHAR_H TM1639_Char_Table[0]
@@ -158,7 +158,7 @@ void TM1639_Write_Digit_Full(uint8_t addr_h, uint8_t addr_l, uint8_t data)
  * @param  num: 要显示的数字(0-999)
  * @retval None
  */
-void TM1639_Display_3_Digit(uint16_t num)
+void TM1639_Display_3_Digit(uint8_t num)
 {
     uint8_t ten, one;
     
@@ -169,11 +169,11 @@ void TM1639_Display_3_Digit(uint16_t num)
     
     // 写入十位（最左边）
   
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, ten);
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, TM1639_Number_Table[ten]);
         
     // 写入十位（中间）
  
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, one);
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, TM1639_Number_Table[one]);
         
     // 写入个位（最右边）'H'
     TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_CHAR_H);
@@ -217,7 +217,8 @@ void TM1639_Display_Decimal(uint16_t num, uint8_t dot_pos)
  */
 void TM1639_Display_Temperature(int8_t temp)
 {
-    if(temp < 0)
+	#if 0
+	if(temp < 0)
     {
         // 显示负号
         TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 0x40);
@@ -229,27 +230,36 @@ void TM1639_Display_Temperature(int8_t temp)
     }
     else if(temp < 100)
     {
+   #endif 
         // 显示十位
-        if(temp >= 10)
-            TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 
-                TM1639_Number_Table[temp / 10]);
-        else
-            TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, TM1639_Number_Table[0]);
+       if(temp >= 10){
+	   	       TM1639_Write_Digit_Full(TM1639_ADDR_GRID4_H, TM1639_ADDR_GRID4_L,0x00); //
+			   TM1639_Write_Digit_Full(TM1639_ADDR_GRID5_H, TM1639_ADDR_GRID5_L,0x00); //
+			   TM1639_Write_Digit_Full(TM1639_ADDR_GRID6_H, TM1639_ADDR_GRID6_L,0x00); //
+			   TM1639_Write_Digit_Full(TM1639_ADDR_GRID7_H, TM1639_ADDR_GRID7_L,0x00); //
+            TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,TM1639_Number_Table[temp / 10]);
+       	}
+       else{
+	   	  	TM1639_Write_Digit_Full(TM1639_ADDR_GRID4_H, TM1639_ADDR_GRID4_L,0x00); //
+   			TM1639_Write_Digit_Full(TM1639_ADDR_GRID5_H, TM1639_ADDR_GRID5_L,0x00); //
+   			TM1639_Write_Digit_Full(TM1639_ADDR_GRID6_H, TM1639_ADDR_GRID6_L,0x00); //
+   			TM1639_Write_Digit_Full(TM1639_ADDR_GRID7_H, TM1639_ADDR_GRID7_L,0x00); //
+            TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,TM1639_Number_Table[0]);
+       	}
         
-        // 显示个位带小数点
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,
-            TM1639_Number_Table[temp % 10] | TM1639_DOT);
+        // 显示个位
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[temp % 10] );
         
         // 显示度数符号
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
-    }
-    else
-    {
-        // 温度超出范围，显示"---"
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 0x40);
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, 0x40);
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, 0x40);
-    }
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
+   // }
+//    else
+//    {
+//        // 温度超出范围，显示"---"
+//        TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 0x40);
+//        TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, 0x40);
+//        TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, 0x40);
+//    }
 }
 
 /**
@@ -262,15 +272,15 @@ void TM1639_Display_Humidity(uint8_t humi)
     if(humi > 99) humi = 99;
     
     // 显示十位
-    if(humi >= 10)
+    if(humi >= 10){
         TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 
             TM1639_Number_Table[humi / 10]);
+    }
     else
         TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, TM1639_Number_Table[0]);
     
     // 显示个位带小数点
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,
-        TM1639_Number_Table[humi % 10] | TM1639_DOT);
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[humi % 10]);
     
     // 显示RH符号
     TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_RH);
@@ -328,4 +338,6 @@ void TM1639_All_Off(void)
     // 关闭显示
     TM1639_Display_ON_OFF(TM1639_DISPLAY_OFF);
 }
+
+
 

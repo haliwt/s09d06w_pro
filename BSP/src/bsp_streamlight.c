@@ -167,7 +167,7 @@ void Check_LED_Hardware_Test(void)
             if(test_result == LED_TEST_OK)
             {
                 // 测试成功，显示"888"
-                TM1639_Display_3_Digit(888);
+                TM1639_Display_3_Digit(88);
             }
             else
             {

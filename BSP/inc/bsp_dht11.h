@@ -40,7 +40,7 @@ typedef struct {
 
 // 函数声明
 void DHT11_Init(void);
-DHT11_Status DHT11_Read_Data(DHT11_Data_TypeDef* data);
+DHT11_Status DHT11_Read_Data(void);
 DHT11_Status DHT11_Display_Data(uint8_t mode);   // 在TM1639上显示温湿度
 
 #endif /* BSP_INC_BSP_DHT11_H_ */

@@ -11,17 +11,37 @@
 
 
 static const uint8_t Number_Table[] = {
-    0x3F, // 0: 0011 1111   （f,e,d,c,b,a）
-    0x06, // 1: 0000 0110
-    0x5B, // 2: 0101 1011
-    0x4F, // 3: 0100 1111
+    0xF3, // 0: 0011 1111   （f,e,d,c,b,a）--0x3F
+    0x60, // 1: 0000 0110 --0x06--写数据式冲低位开始，向高位开始写
+    0xB5, // 2: 0101 1011 --0x5B
+    0xF4, // 3: 0100 1111 --0x4F
     0x66, // 4: 0110 0110
-    0x6D, // 5: 0110 1101
-    0x7D, // 6: 0111 1101
-    0x07, // 7: 0000 0111
-    0x7F, // 8: 0111 1111
-    0x6F  // 9: 0110 1111
+    0xD6, // 5: 0110 1101 --0x6D
+    0xD7, // 6: 0111 1101  --0x7D 
+    0x70, // 7: 0000 0111
+    0xF7, // 8: 0111 1111
+    0xF6  // 9: 0110 1111
 };
+
+
+// 字母和特殊字符显示码
+//static const uint8_t TM1639_Char_Table[] = {
+//    0x67, // H: 0111 0110 (b,c,e,f,g)
+//    0x36, // °: 0110 0011 (b,c,g)
+//    0x93, // C: 0011 1001 (a,d,e,f)
+//    0x05  // RH的H部分: 0101 0000 (e,g)
+//};
+
+
+// 字母和特殊字符显示码
+static const uint8_t TM1639_Char_Err_Table[] = {
+    0x97, // E: 0111 1001 (b,c,e,f,g)
+    0x05, // r: 0101 0000 (b,c,g)
+    
+  
+};
+
+
 
 
 /**
@@ -51,3 +71,21 @@ void SMG_Display_Hour(void)
     // 最后一位显示'H'
     TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_H);
 }
+
+
+
+void SMG_Display_Err(void)
+{
+
+	 TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, TM1639_Char_Err_Table[0]);
+        
+    // 写入十位（中间）
+ 
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, TM1639_Char_Err_Table[1]);
+        
+    // 写入个位（最右边）'H'
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_Char_Err_Table[1]);
+
+
+}
+

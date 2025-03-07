@@ -57,7 +57,7 @@ void power_on_run_handler(void)
 		   // function led is turn on 
              power_on_led();
 		   //display smg led turn on
-		    DHT11_Display_Data(0); //display temperature value 
+		   // DHT11_Display_Data(0); //display temperature value 
 		   
            //timer 
 		   g_pro.gTimer_disp_time_second= 0;
@@ -89,13 +89,13 @@ void power_on_run_handler(void)
 			// 根据状态调用显示函数
 			switch (disp_temp_hum) {
 				case 1:
-					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+					//DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 					break;
 				case 2:
-					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
+					//DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
 				case 3:
-					DHT11_Display_Data(DISPLAY_TIME); // 显示时间
+					//DHT11_Display_Data(DISPLAY_TIME); // 显示时间
 					break;
 			}
 		}
@@ -106,7 +106,8 @@ void power_on_run_handler(void)
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	
 			disp_temp_hum =! disp_temp_hum;   // 切换布尔状态
-			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
+			DHT11_Display_Data(0); // 显示温度或湿度
+			
 		}
 	}
 
