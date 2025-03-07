@@ -26,6 +26,7 @@
 // TM1639 命令定义
 #define TM1639_CMD_DATA               0x40    // 数据命令
 #define TM1639_CMD_DISPLAY            0x88    // 显示控制命令
+#define TM1639_DONOT_DISPLAY          0x80    //  关闭显示
 
 // TM1639 显示地址定义（每个数字需要高4位和低4位两个地址）
 // 第1位数码管（最左）
@@ -43,7 +44,7 @@
 #define TM1639_DISPLAY_OFF           0x00    // 显示关
 
 // TM1639 亮度级别 (0-7)
-#define TM1639_BRIGHTNESS_MAX        0x07    // 最大亮度
+#define TM1639_BRIGHTNESS_MAX        0x01//0x07    // 最大亮度
 #define TM1639_BRIGHTNESS_MIN        0x00    // 最小亮度
 
 // 特殊字符段码定义

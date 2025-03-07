@@ -152,6 +152,7 @@ void power_off_run_handler(void)
    	  gl_run.process_on_step =0;
 
    	  power_off_led();
+      TM1639_Display_ON_OFF(0);
 
       gl_run.process_off_step = 1;
 

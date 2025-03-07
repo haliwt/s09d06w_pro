@@ -156,7 +156,7 @@ static void vTaskRunPro(void *pvParameters)
 
 		        power_on_key_counter ++ ;
             
-		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 100){
+		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 100 && g_key.key_long_power_flag != KEY_LONG_POWER){
 				g_key.key_power_flag=0;
 				power_on_key_counter=0;
 			    buzzer_sound();
@@ -176,9 +176,9 @@ static void vTaskRunPro(void *pvParameters)
 
 				}
 		    }
-			else if(KEY_POWER_VALUE() ==KEY_DOWN && power_on_key_counter  > 100){
+			else if(KEY_POWER_VALUE() ==KEY_DOWN && (power_on_key_counter  > 100 && power_on_key_counter < 130)){
 		            g_key.key_power_flag=0;
-				    power_on_key_counter=0;
+				    power_on_key_counter=150;
 			        g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
 			        g_pro.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
 			
@@ -232,12 +232,16 @@ static void vTaskRunPro(void *pvParameters)
 	   case power_on :
 
 		// 检查LED硬件测试
-		//Check_LED_Hardware_Test();
+		Check_LED_Hardware_Test();
 
         // 只有在不进行LED测试时才执行正常的power_on处理
         if(!Is_LED_Testing())
         {
             power_on_run_handler();
+			if( g_key.key_long_power_flag ==  KEY_LONG_POWER){ //wifi led blink fast .)
+		        g_key.key_long_power_flag =0;
+
+		   }
         }
         break;
 
@@ -289,7 +293,7 @@ static void vTaskStart(void *pvParameters)
             /* 接收到消息，检测那个位被按下 */
             if((ulValue & POWER_BIT_0 ) != 0)
             {
-           
+           		  power_on_key_counter=0;
                   g_key.key_power_flag = KEY_POWER_ID;
 
             }
