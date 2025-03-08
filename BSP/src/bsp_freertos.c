@@ -149,39 +149,29 @@ static void vTaskRunPro(void *pvParameters)
 
     while(1)
     {
-      
-        
-   
-          if(g_key.key_power_flag == KEY_POWER_ID){
+      if(g_key.key_power_flag == KEY_POWER_ID){
 
 		        power_on_key_counter ++ ;
             
-		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 100 && g_key.key_long_power_flag != KEY_LONG_POWER){
+		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 60 && g_key.key_long_power_flag != KEY_LONG_POWER){
 				g_key.key_power_flag=0;
 				power_on_key_counter=0;
 			    buzzer_sound();
                 if(g_pro.gPower_on == power_off){
 					g_pro.gPower_on = power_on;
-				//gpro_t.send_ack_cmd = check_ack_power_on;
-				//gpro_t.gTimer_again_send_power_on_off =0;
-				//SendData_PowerOnOff(1);//power on
+				
 				}
 				else{
 
-				g_pro.gPower_on = power_off;
-				//gpro_t.send_ack_cmd =  check_ack_power_off;
-				//gpro_t.gTimer_again_send_power_on_off =0;
-				//SendData_PowerOnOff(0);//power off
-				
-
+					g_pro.gPower_on = power_off;
 				}
 		    }
-			else if(KEY_POWER_VALUE() ==KEY_DOWN && (power_on_key_counter  > 100 && power_on_key_counter < 130)){
+			else if(KEY_POWER_VALUE() ==KEY_DOWN && g_pro.gPower_on == power_on && (power_on_key_counter  >= 60 && power_on_key_counter < 200)){
 		            g_key.key_power_flag=0;
 				    power_on_key_counter=200;
 			        g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
 			        g_pro.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
-			        g_pro.gWifi_link_flag =0 ; //clear wifi link net flag .repeat be detected wifi state.
+			        g_wifi.gwifi_link_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
 			
 					buzzer_sound();
             }
@@ -189,19 +179,20 @@ static void vTaskRunPro(void *pvParameters)
 		else if(g_key.key_mode_flag == KEY_MODEL_ID ){ //&& MODEL_KEY_VALUE()==KEY_UP){
 
 		        mode_key_counter++ ;
-		        if(KEY_MODE_VALUE() == KEY_UP && mode_key_counter < 6){
+		        if(KEY_MODE_VALUE() == KEY_UP && mode_key_counter < 60){
 					g_key.key_mode_flag = KEY_NULL;
 					mode_key_counter=0;
 				    buzzer_sound();
 				    //mode_key_fun();
 		        }
-				else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter > 5){
+				else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
 
                     g_key.key_mode_flag = KEY_NULL;
-					mode_key_counter=0;
+					mode_key_counter=200;
 					buzzer_sound();
                     //g_key.key_long_mode_flag = KEY_LONG_MODE; // input set up timer timing mode .
                     g_pro.gtime_timer_define_flag = timer_time_mode;
+					g_pro.gTimer_switch_set_timer_times = 0;
 
 				
 				}
@@ -209,18 +200,14 @@ static void vTaskRunPro(void *pvParameters)
 		else if(g_key.key_down_flag ==KEY_DOWN_ID){// && DEC_KEY_VALUE()==KEY_UP){
 				g_key.key_down_flag ++;
 				buzzer_sound();
-				//SendData_Buzzer_Has_Ack();
-				//gpro_t.send_ack_cmd = check_ack_buzzer;
-				//gpro_t.gTimer_again_send_power_on_off =0;
-				//key_dec_fun();
+				
+				key_dwon_fun();
 		}
 		else if(g_key.key_up_flag ==KEY_UP_ID){ // && ADD_KEY_VALUE()==KEY_UP){
 				g_key.key_up_flag ++;
 				buzzer_sound();
-				//SendData_Buzzer_Has_Ack();
-				//gpro_t.send_ack_cmd = check_ack_buzzer;
-				//gpro_t.gTimer_again_send_power_on_off =0;
-				//key_add_fun();
+				
+				key_up_fun();
 		}
 			
 		
@@ -236,22 +223,8 @@ static void vTaskRunPro(void *pvParameters)
         if(!Is_LED_Testing())
         {
             power_on_run_handler();
-			if(g_key.key_long_power_flag ==  KEY_LONG_POWER || g_key.key_long_power_flag  == 0x90){ //wifi led blink fast .)
-		         g_key.key_long_power_flag  = 0x90 ;
-		        if(g_pro.gTimer_wifi_led_fast_blink < 120){
-				    wifi_led_fast_blink();
-		        }
-				else{
-					
-				   g_key.key_long_power_flag =0;
-				   if(g_pro.gWifi_link_flag == 1){
-                        LED_WIFI_ON();
-				   }
-				  
-
-                }
-             }
-        }
+            //wifi_link_net_handler();
+            set_temperature_value_handler();
         break;
 
 	  case power_off:
@@ -269,10 +242,12 @@ static void vTaskRunPro(void *pvParameters)
 
      // send_cmd_ack_hanlder();
 
-	  vTaskDelay(20);
+	  
     }
- }
-
+	  
+	vTaskDelay(20);
+   }
+}
 
 /**********************************************************************************************************
 *
@@ -308,6 +283,7 @@ static void vTaskStart(void *pvParameters)
             }
             else if((ulValue & MODE_BIT_1 ) != 0){   /* 接收到消息，检测那个位被按下 */
             	 if(g_pro.gPower_on == power_on){
+				 	 mode_key_counter=0;
             	     g_key.key_mode_flag = KEY_MODEL_ID;
 
             	 }

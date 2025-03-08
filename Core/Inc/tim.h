@@ -46,7 +46,7 @@ extern TIM_HandleTypeDef htim17;
 
 void MX_TIM1_Init(void);
 void MX_TIM3_Init(void);
-void MX_TIM16_Init(void);
+void MX_TIM16_Init(uint8_t data);
 void MX_TIM17_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);

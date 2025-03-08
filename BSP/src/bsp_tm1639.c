@@ -154,6 +154,27 @@ void TM1639_Write_Digit_Full(uint8_t addr_h, uint8_t addr_l, uint8_t data)
 }
 
 /**
+ * @brief  写入半个一位数码管（包括高4位或低4位）
+ * @param  addr_h: 高4位地址
+ * @param  addr_l: 低4位地址
+ * @param  data: 要显示的段码数据
+ * @retval None
+ */
+void TM1639_Write_Half_Digit(uint8_t addr, uint8_t data)
+{
+
+    
+    // 先写入4位--高字节或者低字节
+    TM1639_Start();
+    TM1639_Write_Byte(addr);
+    TM1639_Write_Byte(data);  // 低4位数据
+    TM1639_Stop();
+    
+  
+}
+
+
+/**
  * @brief  显示3位数字
  * @param  num: 要显示的数字(0-999)
  * @retval None
@@ -233,17 +254,11 @@ void TM1639_Display_Temperature(int8_t temp)
    #endif 
         // 显示十位
        if(temp >= 10){
-	   	       TM1639_Write_Digit_Full(TM1639_ADDR_GRID4_H, TM1639_ADDR_GRID4_L,0x00); //
-			   TM1639_Write_Digit_Full(TM1639_ADDR_GRID5_H, TM1639_ADDR_GRID5_L,0x00); //
-			   TM1639_Write_Digit_Full(TM1639_ADDR_GRID6_H, TM1639_ADDR_GRID6_L,0x00); //
-			   TM1639_Write_Digit_Full(TM1639_ADDR_GRID7_H, TM1639_ADDR_GRID7_L,0x00); //
+	   	     
             TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,TM1639_Number_Table[temp / 10]);
        	}
        else{
-	   	  	TM1639_Write_Digit_Full(TM1639_ADDR_GRID4_H, TM1639_ADDR_GRID4_L,0x00); //
-   			TM1639_Write_Digit_Full(TM1639_ADDR_GRID5_H, TM1639_ADDR_GRID5_L,0x00); //
-   			TM1639_Write_Digit_Full(TM1639_ADDR_GRID6_H, TM1639_ADDR_GRID6_L,0x00); //
-   			TM1639_Write_Digit_Full(TM1639_ADDR_GRID7_H, TM1639_ADDR_GRID7_L,0x00); //
+	   	  
             TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,TM1639_Number_Table[0]);
        	}
         
@@ -252,14 +267,7 @@ void TM1639_Display_Temperature(int8_t temp)
         
         // 显示度数符号
        TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
-   // }
-//    else
-//    {
-//        // 温度超出范围，显示"---"
-//        TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 0x40);
-//        TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, 0x40);
-//        TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, 0x40);
-//    }
+
 }
 
 /**
@@ -306,7 +314,7 @@ void TM1639_Clear(void)
  */
 void TM1639_Display_H(uint8_t position)
 {
-    uint8_t i;
+ 
     
     if(position > 2) position = 2;
     

@@ -161,7 +161,7 @@ void MX_TIM3_Init(void)
 
 }
 /* TIM16 init function */
-void MX_TIM16_Init(void)
+void MX_TIM16_Init(uint8_t pwm_duty)
 {
 
   /* USER CODE BEGIN TIM16_Init 0 */
@@ -190,7 +190,7 @@ void MX_TIM16_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 20;//pwm_duty = 50%//0;
+  sConfigOC.Pulse = pwm_duty;//20 = pwm_duty = 50%//0; 
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;

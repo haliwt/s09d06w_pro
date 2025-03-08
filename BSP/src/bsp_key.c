@@ -4,9 +4,13 @@
  *  Created on: 2025年3月4日
  *      Author: Administrator
  */
-#include "bsp_key.h"
+#include "bsp.h"
 
 KEY_PROCESS_TYPEDEF  g_key;
+
+uint8_t glset_temperture_value;
+uint8_t temperature_init_value ;
+
 
 
 /**
@@ -52,7 +56,177 @@ uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx)
 
 
 
+/**
+ * @brief  key_dwon_fun(void)
+ * @param  NO: 
+ * @retval None
+ */
+void key_dwon_fun(void)
+{
 
+  
+  switch(g_pro.gtime_timer_define_flag ){
+    case normal_time_mode: //set temperature number 
+       
+       if(temperature_init_value==0){
+		   temperature_init_value++;
+
+	       glset_temperture_value = 39;
+
+	   }
+	   else{
+	       glset_temperture_value --; //20 ~40 degree
+		   if(glset_temperture_value < 20)glset_temperture_value =20;
+
+	   }
+	   
+       
+       TM1639_Display_Temperature(glset_temperture_value);
+	   g_pro.gTimer_input_set_temp_times=0;
+	   g_pro.gset_temperture_flag = 1;
+	   g_pro.gTimer_switch_temp_hum = 0;
+       
+    break;
+    case timer_time_mode://set timer timing numbers 
+    if(g_pro.gTimer_switch_set_timer_times < 4){
+        
+    }
+    else {
+        g_pro.gtime_timer_define_flag = normal_time_mode;
+    }
+    break;
+    default:
+        break;
+  }
+
+}
+/**
+ * @brief : void key_up_fun(void)
+ * @param  NO: 
+ * @retval None
+ */
+ void key_up_fun(void)
+{
+	switch(g_pro.gtime_timer_define_flag ){
+    case normal_time_mode: //set temperature number 
+
+		if(temperature_init_value==0){
+		   temperature_init_value++;
+
+	       glset_temperture_value = 21;
+
+	   }
+       else{
+		   glset_temperture_value ++; //20 ~40 degree
+		   if(glset_temperture_value > 40)glset_temperture_value =40;
+		  
+       }
+       
+       TM1639_Display_Temperature(glset_temperture_value);
+	   g_pro.gTimer_input_set_temp_times=0;
+	   g_pro.gset_temperture_flag = 1;
+	   g_pro.gTimer_switch_temp_hum = 0;
+       
+    break;
+    case timer_time_mode://set timer timing numbers 
+    if(g_pro.gTimer_switch_set_timer_times < 4){
+        
+    }
+    else {
+        g_pro.gtime_timer_define_flag = normal_time_mode;
+    }
+    break;
+    default:
+        break;
+  }
+
+}
+
+/******************************************************************************
+	*
+	*Function Name:void bsp_init(void)
+	*Funcion: 
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
+void set_temperature_value_handler(void)
+{
+	static uint16_t check_time;
+    uint8_t real_read_temperture_value;
+    static uint8_t first_close_dry_flag;
+    if(g_pro.gset_temperture_flag == 1 && g_pro.gTimer_input_set_temp_temp_time >= 3)
+	{
+		g_pro.gset_temperture_flag ++;
+		g_pro.gset_temperture_value = glset_temperture_value;
+		g_pro.gTimer_switch_temp_hum=5;
+        real_read_temperture_value = read_dht11_temperature_value();
+        first_close_dry_flag=0;
+        if(real_read_temperture_value > g_pro.gset_temperture_value){
+            DRY_CLOSE();
+        }
+        else{
+            DRY_OPEN();
+        }
+    }
+    else{
+        if(g_pro.gset_temperture_flag==2){
+             check_time++;
+             if(check_time >= 200){
+                 check_time = 0;
+                 real_read_temperture_value = read_dht11_temperature_value();
+                 if(real_read_temperture_value > g_pro.gset_temperture_value){
+                     if(first_close_dry_flag==0){
+                         first_close_dry_flag=1;
+                         DRY_CLOSE();
+                     }
+                     else{
+
+                        DRY_CLOSE();  
+                     }
+                     
+                 }
+                 else{
+				 	 if(first_close_dry_flag==1){
+					    if(real_read_temperture_value > (g_pro.gset_temperture_value -1)){
+							 DRY_OPEN();
+					    }
+					 }
+					 else{
+                      DRY_OPEN();
+
+					}
+                 }
+             }
+          
+        }
+		else if(g_pro.gset_temperture_flag == 0){
+
+             check_time++;
+             if(check_time >= 200){
+                 check_time = 0;
+                 real_read_temperture_value = read_dht11_temperature_value();
+                 if(real_read_temperture_value > 39){ //39 degree
+                     if(first_close_dry_flag==0){
+                         first_close_dry_flag=1;
+                         DRY_CLOSE();
+                     }
+                     else{
+
+                        DRY_CLOSE();  
+                     }
+                     
+                 }
+                 else{
+                     DRY_OPEN();
+                 }
+             }
+                
+        }
+        
+    }
+
+}
 
 
 

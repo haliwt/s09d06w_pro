@@ -76,4 +76,7 @@ void TM1639_Display_Decimal(uint16_t num, uint8_t dot_pos); // 显示带小数�
 void TM1639_Write_Digit_Full(uint8_t addr_h, uint8_t addr_l, uint8_t data); // 写入完整的一位数码管
 void TM1639_All_Off(void);                  // 关闭所有显示（包括数码管和LED）
 
+void TM1639_Write_Half_Digit(uint8_t addr,uint8_t data);
+
+
 #endif /* __BSP_TM1639_H_ */

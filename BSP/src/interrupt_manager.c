@@ -27,6 +27,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		   g_pro.gTimer_timer_time_second ++ ;
 		   g_pro.gTimer_switch_temp_hum ++;
 		   g_pro.gTimer_wifi_led_fast_blink ++ ;
+		   g_pro.gTimer_switch_set_timer_times++;
+		   g_pro.gTimer_input_set_temp_times++;
+		   g_pro.gTimer_fan_run_one_minute++;
+		   g_pro.gTimer_input_set_temp_temp_time++;
 
 	   }
 	   

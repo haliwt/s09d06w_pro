@@ -43,7 +43,7 @@ void power_on_run_handler(void)
 
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
-       if(g_pro.gWifi_link_flag == wifi_no_link){
+       if(g_wifi.gwifi_link_flag == wifi_no_link){
 	       g_pro.gAI =1;
 		   g_pro.gDry =1;
 		   g_pro.gPlasma =1;
@@ -52,12 +52,14 @@ void power_on_run_handler(void)
 		   //display time timing value 
 		   g_pro.gdisp_hours_value =0;
 		   g_pro.gdisp_timer_hours_value =0; //设置定时时间，
+		   g_pro.gset_temperture_flag =0;
 		   g_pro.gtime_timer_define_flag=normal_time_mode; //
 		   
 		   // function led is turn on 
              power_on_led();
 		   //display smg led turn on
-		   // DHT11_Display_Data(0); //display temperature value 
+		    Fan_Full_Speed();
+		    DHT11_Display_Data(0); //display temperature value 
 		   
            //timer 
 		   g_pro.gTimer_disp_time_second= 0;
@@ -95,6 +97,7 @@ void power_on_run_handler(void)
 					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
 				case 3:
+					LED_AI_OFF();
 					TM1639_Display_3_Digit(g_pro.gdisp_hours_value); // 显示时间
 					break;
 			}
@@ -102,9 +105,11 @@ void power_on_run_handler(void)
 	} 
 	else {
 		// 如果计时器超过阈值，切换布尔显示状态
+  
+	if(g_pro.gtime_timer_define_flag == normal_time_mode && g_pro.gset_temperture_flag != 1){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
-	
+	        LED_AI_ON();
 			disp_temp_hum =! disp_temp_hum;   // 切换布尔状态
 			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
 			
@@ -119,26 +124,26 @@ void power_on_run_handler(void)
 
 	 case 2: //WIFI link process
 	 
-       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_pro.gWifi_link_flag ==0){
+       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_flag ==0){
 
              wifi_led_slowly_blink();
         }
 
-	   gl_run.process_on_step =1;
+	    mainboard_fun_handler();
+
+	   gl_run.process_on_step =2;
 
 	 break;
 
+	 case 3: // wifi function
 
+	    gl_run.process_on_step =1;
 
-
-
-
+	 break;
 
 	}
    
-
-
-
+     }
 }
 /**********************************************************************
 	*
@@ -150,6 +155,8 @@ void power_on_run_handler(void)
 **********************************************************************/
 void power_off_run_handler(void)
 {
+
+   static uint8_t fan_run_one_minute , fan_flag;
    switch(gl_run.process_off_step){
 
    case 0:
@@ -159,12 +166,40 @@ void power_off_run_handler(void)
       TM1639_Display_ON_OFF(0);
 	  g_key.key_long_power_flag  = 0;
 	  g_key.key_long_mode_flag = 0;
+	  g_pro.gset_temperture_flag =0;   //set temperature flag 
+	  g_pro.gtime_timer_define_flag = normal_time_mode;
+
+	  fan_run_one_minute = 1;
+	  g_pro.gTimer_fan_run_one_minute =0;
 
       gl_run.process_off_step = 1;
+	  
 
    break;
 
    case 1:
+
+     if(fan_flag == 0){
+	 	fan_flag++;
+	  fan_run_one_minute =2;
+     }
+
+	 if(fan_run_one_minute ==1){
+
+	     if(g_pro.gTimer_fan_run_one_minute  < 61){
+
+              Fan_Full_Speed();
+		 }
+		 else{
+
+		    fan_run_one_minute++;
+			FAN_Stop();
+
+		 }
+
+	 }
+
+     mainboard_close_all_fun();
 
      LED_Power_Breathing();
 

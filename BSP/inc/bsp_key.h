@@ -90,6 +90,12 @@ uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx);
 
 void sys_write_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx, uint8_t status);
 
+void key_dwon_fun(void);
+void key_up_fun(void);
+
+void set_temperature_value_handler(void);
+
+
 
 
 #endif /* BSP_INC_BSP_KEY_H_ */

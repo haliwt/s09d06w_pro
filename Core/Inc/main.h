@@ -87,8 +87,8 @@ void Error_Handler(void);
 
 //GPIO CTL
 
-#define RELAY_Pin GPIO_PIN_15
-#define RELAY_GPIO_Port GPIOC
+#define RELAY_Pin                 GPIO_PIN_15
+#define RELAY_GPIO_Port           GPIOC
 
 #define FAN_COM_Pin GPIO_PIN_5
 #define FAN_COM_GPIO_Port GPIOA

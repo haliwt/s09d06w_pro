@@ -25,10 +25,15 @@
 #include "bsp_led.h"
 #include "bsp_delay.h"
 #include "bsp_dht11.h"
+#include "bsp_dry.h"
+#include "bsp_mouse.h"
+#include "bsp_plasma.h"
 #include "bsp_disp.h"
 #include "bsp_message.h"
 #include "bsp_cmd_link.h"
 #include "interrupt_manager.h"
+//wifi
+#include "bsp_wifi.h"
 
 
 //
@@ -82,8 +87,13 @@ typedef struct _process{
    uint8_t gPlasma;
    uint8_t gAI;
    uint8_t gMouse;
+   
 
    uint8_t gTemp_value;
+   uint8_t gset_temperture_value;
+   uint8_t gset_temperture_flag ;
+  
+   
    uint8_t gtime_timer_define_flag;
    uint8_t gdisp_hours_value;
    uint8_t gdisp_timer_hours_value;
@@ -91,8 +101,7 @@ typedef struct _process{
  //  uint8_t  gdisp_time_minutes;
  //  uint8_t  gdisp_timer_time_minutes;
 
-   //wifi reference
-    uint8_t gWifi_link_flag;
+
 
 
 
@@ -102,6 +111,10 @@ typedef struct _process{
    uint8_t  gTimer_timer_time_second;
    uint8_t  gTimer_wifi_led_fast_blink;
    uint8_t  gTimer_switch_temp_hum;
+   uint8_t  gTimer_switch_set_timer_times;
+   uint8_t  gTimer_input_set_temp_times;
+   uint8_t   gTimer_fan_run_one_minute;
+   uint8_t   gTimer_input_set_temp_temp_time;
 }process_t;
 
 extern process_t g_pro;
@@ -110,6 +123,9 @@ extern process_t g_pro;
 
 void bsp_init(void);
 
+void mainboard_fun_handler(void);
+
+void mainboard_close_all_fun(void);
 
 
 #endif /* BSP_INC_BSP_H_ */

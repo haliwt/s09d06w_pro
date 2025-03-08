@@ -212,6 +212,14 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
 }
 
 
+uint8_t read_dht11_temperature_value(void)
+{
+	 
+	  dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+     return dht11_data.temperature;
+}
+
+
 
 void Update_DHT11_Value(void)
 {
