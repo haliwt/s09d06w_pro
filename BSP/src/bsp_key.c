@@ -154,7 +154,7 @@ void set_temperature_value_handler(void)
 {
 	static uint16_t check_time;
     uint8_t real_read_temperture_value;
-    static uint8_t first_close_dry_flag;
+    static uint8_t first_close_dry_flag, donot_define_close;
     if(g_pro.gset_temperture_flag == 1 && g_pro.gTimer_input_set_temp_temp_time >= 3)
 	{
 		g_pro.gset_temperture_flag ++;
@@ -179,21 +179,34 @@ void set_temperature_value_handler(void)
                      if(first_close_dry_flag==0){
                          first_close_dry_flag=1;
                          DRY_CLOSE();
+					     LED_DRY_OFF();
                      }
                      else{
 
                         DRY_CLOSE();  
+						LED_DRY_OFF();
                      }
                      
                  }
                  else{
+				 	 real_read_temperture_value = read_dht11_temperature_value();
 				 	 if(first_close_dry_flag==1){
-					    if(real_read_temperture_value > (g_pro.gset_temperture_value -1)){
+					 	if(g_pro.gset_temperture_value > 23){ //温度在 20 ~ 40度
+					    if(real_read_temperture_value <= (g_pro.gset_temperture_value -2)){
 							 DRY_OPEN();
+							 LED_DRY_ON();
 					    }
+					 	}
+						else{
+
+						DRY_OPEN();
+						LED_DRY_ON();
+
+						}
 					 }
 					 else{
                       DRY_OPEN();
+					  LED_DRY_ON();
 
 					}
                  }
@@ -203,30 +216,40 @@ void set_temperature_value_handler(void)
 		else if(g_pro.gset_temperture_flag == 0){
 
              check_time++;
-             if(check_time >= 200){
+             if(check_time > 150){ //50~=1s ,3s
                  check_time = 0;
                  real_read_temperture_value = read_dht11_temperature_value();
                  if(real_read_temperture_value > 39){ //39 degree
-                     if(first_close_dry_flag==0){
-                         first_close_dry_flag=1;
-                         DRY_CLOSE();
-                     }
-                     else{
+                     if(donot_define_close==0){
+					     donot_define_close++;
 
-                        DRY_CLOSE();  
-                     }
-                     
+					 }
+                     DRY_CLOSE();  
+					 LED_DRY_OFF();
                  }
                  else{
-                     DRY_OPEN();
-                 }
-             }
-                
-        }
-        
-    }
 
-}
+				     real_read_temperture_value = read_dht11_temperature_value();
+				 	 if(donot_define_close==1){
+					 	
+					    if(real_read_temperture_value <= 37){
+								 DRY_OPEN();
+								 LED_DRY_ON();
+						  }
+				 	  }
+					  else{
+	                     DRY_OPEN();
+						 LED_DRY_ON();
+					  	}
+					 }
+                 }
+        }
+                
+    }
+        
+ }
+
+
 
 
 

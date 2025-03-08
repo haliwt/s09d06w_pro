@@ -9,6 +9,8 @@
 
 process_t g_pro;
 
+ uint16_t mainboard_time;
+
 /******************************************************************************
 	*
 	*Function Name:void bsp_init(void)
@@ -34,11 +36,11 @@ void bsp_init(void)
 ******************************************************************************/
 void mainboard_fun_handler(void)
 {
-   static uint16_t mainboard_time;
+   //static uint16_t mainboard_time;
 
    mainboard_time ++ ;
 
-   if(mainboard_time > 300){
+   if(mainboard_time > 100){// 2s  //300 ~= 6s, 50 ~=1s
       mainboard_time=0;
 
 
