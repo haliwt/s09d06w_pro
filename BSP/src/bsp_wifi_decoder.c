@@ -26,8 +26,13 @@ typedef struct{
 
 local_ref_t gl_msg;
 
+static uint8_t gl_wifi_set_temp;
 
 
+void wifi_decoder_refer_init(void)
+{
+   gl_wifi_set_temp=0;
+}
 
  
 //处理腾讯云下发的数据
@@ -742,11 +747,18 @@ void Json_Parse_Command_Fun(void)
             g_wifi.wifi_set_temperature_value = temp_decade*10 +  temp_unit;
             if( g_wifi.wifi_set_temperature_value > 40)  g_wifi.wifi_set_temperature_value=40;
             if( g_wifi.wifi_set_temperature_value <20 )  g_wifi.wifi_set_temperature_value=20;
+            gl_wifi_set_temp = 1;
+			
+            g_pro.gset_temperture_value = g_wifi.wifi_set_temperature_value;
+			g_wifi.gTimer_disp_wifi_set_temp = 0;
+			
             MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
-			osDelay(100);//HAL_Delay(350);
-			SendWifiData_To_Data(0x3A, g_wifi.wifi_set_temperature_value); //smart phone set temperature value .
-			osDelay(5);//HAL_Delay(10);
-          
+		    osDelay(100);//HAL_Delay(350);
+			TM1639_Display_Temperature(g_wifi.wifi_set_temperature_value); //WT.EDIT 2025.03.11
+			if(g_disp.g_second_disp_flag == 1){
+				SendWifiData_To_Data(0x3A, g_wifi.wifi_set_temperature_value); //smart phone set temperature value .
+				osDelay(5);//HAL_Delay(10);
+		    }
        }
      
 	  buzzer_temp_on=0;
@@ -769,8 +781,10 @@ void Json_Parse_Command_Fun(void)
          
 			MqttData_Publis_SetFan(g_wifi.set_wind_speed_value);
 			osDelay(100);//HAL_Delay(350);
+			if(g_disp.g_second_disp_flag == 1){
     		SendWifiData_To_PanelWindSpeed(g_wifi.set_wind_speed_value);
-			HAL_Delay(10);
+			osDelay(5);//HAL_Delay(10);
+			}
           
 		    }
 			else{
@@ -796,40 +810,35 @@ void Json_Parse_Command_Fun(void)
 		   if(strstr((char *)TCMQTTRCVPUB,"open\":1")){
 		   
 			  g_wifi.app_timer_power_on_flag = 1;
-              //powerOffTunrOff_flag=1; // app power on 
-              //powerOffFanRun_flag = 1;
+
                g_pro.gpower_on = power_on;
 		
 			   MqttData_Publish_SetOpen(1);  
 			   osDelay(100);//HAL_Delay(350);
-
-               SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
-			   osDelay(10);//HAL_Delay(10);
+			   if(g_disp.g_second_disp_flag == 1){
+	               SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
+				   osDelay(10);//HAL_Delay(10);
+			   }
                
             
 			   buzzer_temp_on=0;
    
-               //gpro_t.send_ack_cmd = ack_app_timer_power_on;
-               //gpro_t.gTimer_again_send_power_on_off=0;
+
 		         
            }
 		   else if(strstr((char *)TCMQTTRCVPUB,"open\":0")){
 		   
 		   
 			    g_wifi.app_timer_power_on_flag = 0;
-               // __HAL_UART_CLEAR_OREFLAG(&huart2);
+
 		 		  MqttData_Publish_SetOpen(0);  
 			       osDelay(100);//HAL_Delay(350);
 	
 	            g_pro.gpower_on = power_off;
-               // powerOffTunrOff_flag = 1; //WT.EDIT.2025.01.04
-               // powerOffFanRun_flag = 1;
-               // gpro_t.send_ack_cmd = ack_app_power_off; //WT.EDIT 2024.12.31
-               // gpro_t.gTimer_again_send_power_on_off=0;
-
+            if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x21,0x0); //turn off power off
 			osDelay(10);//HAL_Delay(10);
-       
+            }
 		      buzzer_temp_on=0;
 				
 			}
@@ -914,15 +923,11 @@ void Parse_Json_phone_timer_power_on_ref(void)
 		}
 		else if(strstr((char *)TCMQTTRCVPUB,"ptc\":1")){
 				
-				 g_pro.gDry = 0;  // dry_open_flag=1;//gctl_t.gDry=1;
+			g_pro.gDry = 0;  // dry_open_flag=1;//gctl_t.gDry=1;
                  
-				  
-					
-		}
+		 }
 		
-	//	rx_app_timer_power_on_flag ++;
-
-  }
+}
 
 
 
@@ -932,5 +937,28 @@ uint8_t  read_wifi_dry_value(void)
 {
     return g_pro.gclose_ptc_flag;
 
+}
+
+uint8_t read_wifi_temperature_value(void)
+{
+   if(g_wifi.gTimer_disp_wifi_set_temp  < 4 && gl_wifi_set_temp==1){
+
+      g_pro.gclose_ptc_flag=0;
+
+       return  gl_wifi_set_temp;
+   
+   }
+   else if(g_wifi.gTimer_disp_wifi_set_temp  > 3 && gl_wifi_set_temp==1){
+        g_wifi.gTimer_disp_wifi_set_temp =0;
+		g_pro.gclose_ptc_flag=0;
+        gl_wifi_set_temp++;
+      
+        return 0;
+   }
+   else{
+       return 0;
+
+   }
+  
 }
 

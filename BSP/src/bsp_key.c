@@ -197,7 +197,8 @@ void set_temperature_value_handler(void)
         }
     }
     else{
-        if(key_set_temperature_flag==2){
+        if(key_set_temperature_flag==2 || read_wifi_temperature_value()==1){
+			if(read_wifi_temperature_value()==1)key_set_temperature_flag=2;
              check_time++;
              if(check_time >= 200){ //4s 
                  check_time = 0;
@@ -205,10 +206,12 @@ void set_temperature_value_handler(void)
                  if(real_read_temperture_value > g_pro.gset_temperture_value){
                      if(first_close_dry_flag==0){
                          first_close_dry_flag=1;
+						 g_pro.gDry = 0;
                          DRY_CLOSE();
 					     LED_DRY_OFF();
                      }
                      else{
+						g_pro.gDry = 0;
 
                         DRY_CLOSE();  
 						LED_DRY_OFF();
@@ -220,18 +223,20 @@ void set_temperature_value_handler(void)
 				 	 if(first_close_dry_flag==1 && read_wifi_dry_value()==0){
 					 	if(g_pro.gset_temperture_value > 21){ //温度在 20 ~ 40度
 						    if(real_read_temperture_value <= (g_pro.gset_temperture_value -2)){
+                                 g_pro.gDry = 1;
 								 DRY_OPEN();
 								 LED_DRY_ON();
 						    }
 					 	}
-						else{
-
+						else if(read_wifi_dry_value()==0){
+                         g_pro.gDry = 1;
 						DRY_OPEN();
 						LED_DRY_ON();
 
 						}
 					 }
 					 else if(read_wifi_dry_value()==0){
+					  g_pro.gDry = 1;
                       DRY_OPEN();
 					  LED_DRY_ON();
 
@@ -251,6 +256,7 @@ void set_temperature_value_handler(void)
 					     donot_define_close++;
 
 					 }
+					 g_pro.gDry = 0;
                      DRY_CLOSE();  
 					 LED_DRY_OFF();
                  }
@@ -260,11 +266,13 @@ void set_temperature_value_handler(void)
 				 	 if(donot_define_close==1 && read_wifi_dry_value()==0){
 					 	
 					    if(real_read_temperture_value <= 37){
+							      g_pro.gDry = 1;
 								 DRY_OPEN();
 								 LED_DRY_ON();
 						  }
 				 	  }
 					  else if(read_wifi_dry_value()==0){
+					  	 g_pro.gDry = 1;
 	                     DRY_OPEN();
 						 LED_DRY_ON();
 					  	}

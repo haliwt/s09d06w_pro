@@ -144,6 +144,7 @@ void power_on_run_handler(void)
 
 	   }
 	   key_referen_init();
+	   wifi_decoder_refer_init();
        
 	   g_pro.gTimer_two_hours_counter = 0;
 	   gl_run.process_off_step=0;
@@ -187,7 +188,7 @@ void power_on_run_handler(void)
 	else {
 		// 如果计时器超过阈值，切换布尔显示状态
   
-	    if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1){ //正常模式
+	    if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	        if(disp_temp_hum > 1)disp_temp_hum=0;

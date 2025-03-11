@@ -81,6 +81,7 @@ typedef struct _wifi_state_ref{
   uint8_t gTimer_auto_detected_net_state_times;
   uint8_t gTimer_link_net_timer_time;
   uint8_t  gTimer_update_dht11_data;
+  uint8_t  gTimer_disp_wifi_set_temp;
 
 
 
