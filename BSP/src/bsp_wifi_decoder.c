@@ -609,9 +609,10 @@ void Json_Parse_Command_Fun(void)
 		 g_pro.gDry = 1;
 		 DRY_OPEN();
          g_pro.gclose_ptc_flag = 0;
-    
-		 SendWifiData_To_Cmd(0x02,0x01);
-		 osDelay(5);//HAL_Delay(5);
+         if(g_disp.g_second_disp_flag == 1){
+			 SendWifiData_To_Cmd(0x02,0x01);
+			 osDelay(5);//HAL_Delay(5);
+         }
 		
          }
          }
@@ -629,9 +630,10 @@ void Json_Parse_Command_Fun(void)
 		 g_pro.gDry = 0;
 	     DRY_CLOSE();
 		 g_pro.gclose_ptc_flag = 1;
-		
+		  if(g_disp.g_second_disp_flag == 1){
 		 SendWifiData_To_Cmd(0x02,0x0);
          osDelay(5);//HAL_Delay(5);
+		  }
          }
 		buzzer_temp_on=0;
 	     gl_msg.response_wifi_signal_label = 0xff;
@@ -646,9 +648,10 @@ void Json_Parse_Command_Fun(void)
 			osDelay(100);//HAL_Delay(350);
 			g_pro.gPlasma =0 ;
 			PLASMA_CLOSE();
-          
+			  if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x03,0x0);
 	  	    osDelay(5);//HAL_Delay(5);
+			  }
 	  	}
       
 		buzzer_temp_on=0;
@@ -661,9 +664,10 @@ void Json_Parse_Command_Fun(void)
 			osDelay(100);//HAL_Delay(350);
 		      g_pro.gPlasma =1 ;
               PLASMA_OPEN();
-			
+              if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x03,0x01);
 	  	   osDelay(5);//HAL_Delay(5);
+              }
 	  	}
   
 		buzzer_temp_on=0;
@@ -678,9 +682,10 @@ void Json_Parse_Command_Fun(void)
 			g_pro.gMouse = 0;
 			
            
-	
+			  if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x04,0x0);
 			osDelay(5);
+			  }
         }
 		buzzer_temp_on=0;
 	   gl_msg.response_wifi_signal_label=0xff;
@@ -693,12 +698,12 @@ void Json_Parse_Command_Fun(void)
 			 osDelay(100);	//HAL_Delay(350);
 
                g_pro.gMouse = 1;
-               // ultrasonic_open_flag=1;//gctl_t.gUlransonic=1;
-               // gctl_t.gTimer_senddata_panel=8;
+
         
-		
+		    if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x04,0x01);
-			HAL_Delay(5);
+			osDelay(5);//HAL_Delay(5);
+		    }
         }
         
 		buzzer_temp_on=0;

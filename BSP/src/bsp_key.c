@@ -96,8 +96,8 @@ void key_dwon_fun(void)
 	   g_pro.gclose_ptc_flag =0;
        TM1639_Display_Temperature(glset_temperture_value);
 	   g_pro.gTimer_input_set_temp_times=0;
-	   key_set_temperature_flag =1;//
-	
+	   key_set_temperature_flag=1;//
+	   g_pro.gtimer_timing_mode_enable = input_temp_time_mode;
 	   g_pro.gTimer_switch_temp_hum = 0;
        
     break;
@@ -190,10 +190,27 @@ void set_temperature_value_handler(void)
         real_read_temperture_value = read_dht11_temperature_value();
         first_close_dry_flag=0;
         if(real_read_temperture_value > g_pro.gset_temperture_value){
+			g_pro.gDry = 0;
+			LED_DRY_OFF();
             DRY_CLOSE();
+			 if(g_wifi.gwifi_link_net_state_flag == 1){
+				 
+	              MqttData_Publis_SetTemp(g_pro.gset_temperture_value);
+				  osDelay(50);//HAL_Delay(350);
+				  MqttData_Publish_SetPtc(0x0);
+	              osDelay(50);//HAL_Delay(350);
+			 }
         }
         else{
+			g_pro.gDry = 1;
+			LED_DRY_ON();
             DRY_OPEN();
+			 if(g_wifi.gwifi_link_net_state_flag == 1){
+			  MqttData_Publis_SetTemp(g_pro.gset_temperture_value);
+			  osDelay(50);//HAL_Delay(350);
+			  MqttData_Publish_SetPtc(0x01);
+                  osDelay(50);//HAL_Delay(350);
+			 }
         }
     }
     else{
@@ -209,12 +226,20 @@ void set_temperature_value_handler(void)
 						 g_pro.gDry = 0;
                          DRY_CLOSE();
 					     LED_DRY_OFF();
+						 if(g_wifi.gwifi_link_net_state_flag == 1){
+							  MqttData_Publish_SetPtc(0x0);
+		  	                  osDelay(100);//HAL_Delay(350);
+						  }
                      }
                      else{
 						g_pro.gDry = 0;
 
                         DRY_CLOSE();  
 						LED_DRY_OFF();
+						if(g_wifi.gwifi_link_net_state_flag == 1){
+							  MqttData_Publish_SetPtc(0x0);
+		  	                  osDelay(100);//HAL_Delay(350);
+						 }
                      }
                      
                  }
@@ -226,12 +251,20 @@ void set_temperature_value_handler(void)
                                  g_pro.gDry = 1;
 								 DRY_OPEN();
 								 LED_DRY_ON();
+								 if(g_wifi.gwifi_link_net_state_flag == 1){
+									  MqttData_Publish_SetPtc(0x01);
+				  	                  osDelay(100);//HAL_Delay(350);
+								  }
 						    }
 					 	}
 						else if(read_wifi_dry_value()==0){
                          g_pro.gDry = 1;
 						DRY_OPEN();
 						LED_DRY_ON();
+						if(g_wifi.gwifi_link_net_state_flag == 1){
+							  MqttData_Publish_SetPtc(0x01);
+		  	                  osDelay(100);//HAL_Delay(350);
+						  }
 
 						}
 					 }
@@ -239,6 +272,10 @@ void set_temperature_value_handler(void)
 					  g_pro.gDry = 1;
                       DRY_OPEN();
 					  LED_DRY_ON();
+					  if(g_wifi.gwifi_link_net_state_flag == 1){
+							  MqttData_Publish_SetPtc(0x01);
+		  	                  osDelay(100);//HAL_Delay(350);
+						  }
 
 					}
                  }
@@ -259,22 +296,33 @@ void set_temperature_value_handler(void)
 					 g_pro.gDry = 0;
                      DRY_CLOSE();  
 					 LED_DRY_OFF();
+					 if(g_wifi.gwifi_link_net_state_flag == 1){
+							MqttData_Publish_SetPtc(0x0);
+		  	                osDelay(100);//HAL_Delay(350);
+					 }
                  }
                  else{
 
-				     real_read_temperture_value = read_dht11_temperature_value();
 				 	 if(donot_define_close==1 && read_wifi_dry_value()==0){
 					 	
 					    if(real_read_temperture_value <= 37){
-							      g_pro.gDry = 1;
+							     g_pro.gDry = 1;
 								 DRY_OPEN();
 								 LED_DRY_ON();
+								 if(g_wifi.gwifi_link_net_state_flag == 1){
+							  MqttData_Publish_SetPtc(0x01);
+		  	                  osDelay(100);//HAL_Delay(350);
+						  }
 						  }
 				 	  }
 					  else if(read_wifi_dry_value()==0){
 					  	 g_pro.gDry = 1;
 	                     DRY_OPEN();
 						 LED_DRY_ON();
+						 if(g_wifi.gwifi_link_net_state_flag == 1){
+							  MqttData_Publish_SetPtc(0x01);
+		  	                  osDelay(100);//HAL_Delay(350);
+						  }
 					  	}
 					 }
                  }
@@ -296,7 +344,7 @@ void set_temperature_value_handler(void)
 void set_timer_timing_value_handler(void)
 {
 
-    static uint8_t define_timer_mode;
+   
 	if(g_pro.gtimer_timing_mode_enable == timer_time_mode &&  input_key_timer_flag==1){
 
 	 if(g_pro.gTimer_switch_set_timer_times > 3){
@@ -307,7 +355,7 @@ void set_timer_timing_value_handler(void)
 
     	if(g_pro.gdisp_timer_hours_value>0){
           g_pro.gtimer_timing_mode_enable = timer_time_mode;
-		  define_timer_mode = timer_time_mode;
+		
 		   g_pro.gTimer_timer_time_second=0;
 		   gl_timer_minutes_value=0;
 		   g_pro.gAI = 0;
@@ -320,7 +368,7 @@ void set_timer_timing_value_handler(void)
 		   key_up_down_mode=0;
 		   input_key_timer_flag=0;
     	   g_pro.gtimer_timing_mode_enable = normal_time_mode;
-		   define_timer_mode = normal_time_mode;
+		 
 
     	}
     }
