@@ -192,6 +192,11 @@ void power_on_run_handler(void)
 
              wifi_led_slowly_blink();
        	}
+	    else if(g_wifi.gwifi_link_net_state_flag ==1){
+		
+		    LED_WIFI_ON() ; 
+		
+		}
 
 	   
 
