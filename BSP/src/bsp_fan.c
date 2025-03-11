@@ -6,7 +6,7 @@
  */
 #include "bsp.h"
 
-wifi_state_ref g_wifi;
+
 
 
 #define FAN_PWM_100     40

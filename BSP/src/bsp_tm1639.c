@@ -43,9 +43,9 @@ static void TM1639_Write_Byte(uint8_t byte)
         delay_us(2);
         
         if(byte & 0x01)
-            TM1639_DIO_SetHigh();
+            TM1639_DIO_SetHigh(); //写入数据 ‘1’
         else
-            TM1639_DIO_SetLow();
+            TM1639_DIO_SetLow(); //写入数据 ‘0’
             
         delay_us(2);
         TM1639_CLK_SetHigh();

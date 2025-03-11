@@ -17,6 +17,8 @@ void power_on_run_handler(void);
 void power_off_run_handler(void);
 
 
+void power_on_init_ref(void);
+
 
 
 #endif /* BSP_INC_BSP_POWER_H_ */

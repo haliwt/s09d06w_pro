@@ -69,7 +69,8 @@ uint8_t dht11_init(void);   /* 初始化DHT11 */
 uint8_t dht11_check(void);  /* 检测是否存在DHT11 */
 uint8_t dht11_read_data(uint8_t *temp,uint8_t *humi);   /* 读取温湿度 */
 
-//void Update_Dht11_Totencent_Value(void);
+void Update_Dht11_Totencent_Value(void);
+
 void Update_DHT11_Value(void);
 
 DHT11_Status DHT11_Display_Data(uint8_t mode);

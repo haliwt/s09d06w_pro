@@ -32,18 +32,28 @@
 #include "bsp_message.h"
 #include "bsp_cmd_link.h"
 #include "interrupt_manager.h"
-//wifi
+//wifi function
 #include "bsp_wifi.h"
+#include "bsp_esp8266.h"
+#include "bsp_publish.h"
+#include "bsp_subscribe.h"
+#include "bsp_mqtt.h"
+#include "bsp_wifi_decoder.h"
+#include "bsp_connect_wifi.h"
 
 
-//
+//second display board
+#include "bsp_second_display.h"
+
+
+//mainboard
 
 #include "adc.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
-
+//freeRtos
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
@@ -82,11 +92,12 @@ typedef enum{
 typedef struct _process{
 
    //main board reference
-   uint8_t gPower_on;
+   uint8_t gpower_on;
    uint8_t gDry;
    uint8_t gPlasma;
    uint8_t gAI;
    uint8_t gMouse;
+   uint8_t gworks_normal_two_hours;
    
 
    uint8_t gTemp_value;
@@ -96,7 +107,12 @@ typedef struct _process{
    
    uint8_t gtime_timer_define_flag;
    uint8_t gdisp_hours_value;
+   uint8_t gdisp_minutes_value;
+
    uint8_t gdisp_timer_hours_value;
+
+   uint8_t ptc_warning;
+   uint8_t fan_warning ;
 
  //  uint8_t  gdisp_time_minutes;
  //  uint8_t  gdisp_timer_time_minutes;
@@ -126,6 +142,8 @@ void bsp_init(void);
 void mainboard_fun_handler(void);
 
 void mainboard_close_all_fun(void);
+
+void works_run_two_hours_state(void);
 
 
 #endif /* BSP_INC_BSP_H_ */

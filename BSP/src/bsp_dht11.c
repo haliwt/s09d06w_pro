@@ -176,6 +176,7 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     
     // 读取DHT11数据
     status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+	osDelay(200);
     if(status != DHT11_OK)
     {
         // 读取失败，显示错误代码
@@ -237,6 +238,17 @@ void Update_DHT11_Value(void)
 
 
 
+void Update_Dht11_Totencent_Value(void)
+{
+
+    dht11_read_data(&dht11_data.temperature, &dht11_data.humidity);
+
+	//Dht11_Read_TempHumidity_Handler(&DHT11);
+
+	MqttData_Publis_ReadTempHum(dht11_data.temperature,dht11_data.humidity);
+    osDelay(100);//HAL_Delay(100);
+
+}
 
 
 

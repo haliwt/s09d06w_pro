@@ -172,7 +172,7 @@ void set_temperature_value_handler(void)
     else{
         if(g_pro.gset_temperture_flag==2){
              check_time++;
-             if(check_time >= 200){
+             if(check_time >= 200){ //4s 
                  check_time = 0;
                  real_read_temperture_value = read_dht11_temperature_value();
                  if(real_read_temperture_value > g_pro.gset_temperture_value){

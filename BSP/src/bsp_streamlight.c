@@ -107,7 +107,7 @@ void StreamLight_All_LED_Off(void)
 void Check_LED_Hardware_Test(void)
 {
     // 只在开机后3秒内且未完成测试时检查
-    if(!led_test_done && (HAL_GetTick() - power_on_time < 3000) && (g_pro.gPower_on == power_on))
+    if(!led_test_done && (HAL_GetTick() - power_on_time < 3000) && (g_pro.gpower_on == power_on))
     {
         // 检测是否同时按下UP和DOWN键
         if(KEY_DOWN_VALUE() == KEY_DOWN && KEY_UP_VALUE() == KEY_DOWN)

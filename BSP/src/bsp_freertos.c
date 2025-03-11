@@ -157,22 +157,22 @@ static void vTaskRunPro(void *pvParameters)
 				g_key.key_power_flag=0;
 				power_on_key_counter=0;
 			    buzzer_sound();
-                if(g_pro.gPower_on == power_off){
-					g_pro.gPower_on = power_on;
+                if(g_pro.gpower_on == power_off){
+					g_pro.gpower_on = power_on;
 				
 				}
 				else{
 
-					g_pro.gPower_on = power_off;
+					g_pro.gpower_on = power_off;
 				}
 		    }
-			else if(KEY_POWER_VALUE() ==KEY_DOWN && g_pro.gPower_on == power_on && (power_on_key_counter  >= 60 && power_on_key_counter < 200)){
+			else if(KEY_POWER_VALUE() ==KEY_DOWN && g_pro.gpower_on == power_on && (power_on_key_counter  >= 60 && power_on_key_counter < 200)){
 		            g_key.key_power_flag=0;
 				    power_on_key_counter=200;
 			        g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
-			        g_pro.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
-			        g_wifi.gwifi_link_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
-			
+			        g_wifi.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
+			        g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
+			        g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
 					buzzer_sound();
             }
 		}
@@ -212,7 +212,7 @@ static void vTaskRunPro(void *pvParameters)
 			
 		
 
-	  switch(g_pro.gPower_on){	
+	  switch(g_pro.gpower_on){	
 
 	   case power_on :
 
@@ -223,7 +223,8 @@ static void vTaskRunPro(void *pvParameters)
         if(!Is_LED_Testing())
         {
             power_on_run_handler();
-            //wifi_link_net_handler();
+            link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
+            works_run_two_hours_state();
             set_temperature_value_handler();
         break;
 
@@ -239,8 +240,14 @@ static void vTaskRunPro(void *pvParameters)
 
       }
 	 
+       if(g_wifi.wifi_led_fast_blink_flag==0 ){
+         wifi_communication_tnecent_handler();//
+         getBeijingTime_cofirmLinkNetState_handler();
+         wifi_auto_detected_link_state();
+        }
 
-     // send_cmd_ack_hanlder();
+	   
+       ack_cmd_second_disp_hanlder();
 
 	  
     }
@@ -282,7 +289,7 @@ static void vTaskStart(void *pvParameters)
 
             }
             else if((ulValue & MODE_BIT_1 ) != 0){   /* 接收到消息，检测那个位被按下 */
-            	 if(g_pro.gPower_on == power_on){
+            	 if(g_pro.gpower_on == power_on){
 				 	 mode_key_counter=0;
             	     g_key.key_mode_flag = KEY_MODEL_ID;
 
@@ -290,14 +297,14 @@ static void vTaskStart(void *pvParameters)
 
              }
             else if((ulValue & DOWN_BIT_2 ) != 0){
-            	  if(g_pro.gPower_on == power_on){
+            	  if(g_pro.gpower_on == power_on){
             	       g_key.key_down_flag =KEY_DOWN_ID;
             	             
             	  }
 
             }
             else if((ulValue & UP_BIT_3 ) != 0){   /* 接收到消息，检测那个位被按下 */
-            	 if(g_pro.gPower_on == power_on){
+            	 if(g_pro.gpower_on == power_on){
             	      g_key.key_up_flag = KEY_UP_ID;
             	                 
             	 }
@@ -425,6 +432,36 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 
    }
+   else if(huart->Instance==USART2)
+	   {
+	  //  DISABLE_INT();
+		if(g_wifi.linking_tencent_cloud_doing ==1){
+	
+			   g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter] =wifi_rx_inputBuf[0];
+			   g_wifi.wifi_rx_data_counter++;
+	
+			   if(*wifi_rx_inputBuf==0x0A) // 0x0A = "\n"
+			   {
+				   
+				   Wifi_Rx_InputInfo_Handler();
+				   g_wifi.wifi_rx_data_counter=0;
+			   }
+	
+		} 
+		else{
+	
+			   if(g_wifi.get_rx_beijing_time_enable==1){
+					  g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter] = wifi_rx_inputBuf[0];
+					  g_wifi.wifi_rx_data_counter++;
+					   
+			   }
+			   else
+				   Subscribe_Rx_Interrupt_Handler();
+		}
+		//	ENABLE_INT();
+		 __HAL_UART_CLEAR_OREFLAG(&huart2);
+		 HAL_UART_Receive_IT(&huart2,wifi_rx_inputBuf,1);
+	}
 }
 /**********************************************************
 **********************************************************/
@@ -454,7 +491,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
    case KEY_MODE_Pin:
 
-       if(KEY_MODE_VALUE() == KEY_DOWN && g_pro.gPower_on == power_on){
+       if(KEY_MODE_VALUE() == KEY_DOWN && g_pro.gpower_on == power_on){
         xTaskNotifyFromISR(xHandleTaskStart,  /* 目标任务 */
                MODE_BIT_1,     /* 设置目标任务事件标志位bit0  */
                eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */
@@ -473,7 +510,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
    case KEY_DOWN_Pin:
       // DISABLE_INT();
-       if(KEY_DOWN_VALUE() == KEY_DOWN && KEY_UP_VALUE() == KEY_UP && g_pro.gPower_on == power_on){
+       if(KEY_DOWN_VALUE() == KEY_DOWN && KEY_UP_VALUE() == KEY_UP && g_pro.gpower_on == power_on){
         
          xTaskNotifyFromISR(xHandleTaskStart,  /* 目标任务 */
                 DOWN_BIT_2,     /* 设置目标任务事件标志位bit0  */
@@ -489,7 +526,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
    case KEY_UP_Pin:
       ///   DISABLE_INT();
-        if(KEY_UP_VALUE() == KEY_DOWN && KEY_DOWN_VALUE() == KEY_UP && g_pro.gPower_on == power_on){
+        if(KEY_UP_VALUE() == KEY_DOWN && KEY_DOWN_VALUE() == KEY_UP && g_pro.gpower_on == power_on){
         xTaskNotifyFromISR(xHandleTaskStart,  /* 目标任务 */
                 UP_BIT_3,     /* 设置目标任务事件标志位bit0  */
                 eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */

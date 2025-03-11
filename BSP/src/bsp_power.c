@@ -8,6 +8,9 @@
 
 #define SWITCH_THRESHOLD 2
 
+
+
+
 typedef struct{
 
   uint8_t process_on_step;
@@ -26,6 +29,45 @@ typedef enum {
 
 //DisplayMode disp_temp_hum = DISPLAY_TEMP;  // 默认显示温度
 uint8_t disp_temp_hum;
+
+
+/**********************************************************************
+	*
+	*Functin Name: void power_on_init_ref(void)
+	*Function : 
+	*Input Ref: NO
+	*Return Ref: NO
+	*
+**********************************************************************/
+void power_on_init_ref(void)
+{
+	       g_pro.gAI =1;
+		   g_pro.gDry =1;
+		   g_pro.gPlasma =1;
+		   g_pro.gMouse = 1;
+		   g_pro.gTemp_value = 40;
+		   //display time timing value 
+		   g_pro.gdisp_hours_value =0;
+		   g_pro.gdisp_timer_hours_value =0; //设置定时时间，
+		   g_pro.gset_temperture_flag =0;
+		   g_pro.gtime_timer_define_flag=normal_time_mode; //
+		   
+		   // function led is turn on 
+             power_on_led();
+		   //display smg led turn on
+		    Fan_Full_Speed();
+		    DHT11_Display_Data(0); //display temperature value 
+		    
+		   
+           //timer 
+		   g_pro.gTimer_disp_time_second= 0;
+	       g_pro.gTimer_timer_time_second=0;
+		   g_wifi.set_wind_speed_value = 100;
+
+
+}
+
+
 /**********************************************************************
 	*
 	*Functin Name: power_on_run_handler(void)
@@ -43,32 +85,12 @@ void power_on_run_handler(void)
 
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
-       if(g_wifi.gwifi_link_flag == wifi_no_link){
-	       g_pro.gAI =1;
-		   g_pro.gDry =1;
-		   g_pro.gPlasma =1;
-		   g_pro.gMouse = 1;
-		   g_pro.gTemp_value = 40;
-		   //display time timing value 
-		   g_pro.gdisp_hours_value =0;
-		   g_pro.gdisp_timer_hours_value =0; //设置定时时间，
-		   g_pro.gset_temperture_flag =0;
-		   g_pro.gtime_timer_define_flag=normal_time_mode; //
-		   
-		   // function led is turn on 
-             power_on_led();
-		   //display smg led turn on
-		    Fan_Full_Speed();
-		    DHT11_Display_Data(0); //display temperature value 
-		   
-           //timer 
-		   g_pro.gTimer_disp_time_second= 0;
-	       g_pro.gTimer_timer_time_second=0;
-		   
+       if(g_wifi.gwifi_link_net_state_flag == wifi_no_link){
+	      
+		   power_on_init_ref();
        }
 	   else{ //has wifi net initial
-
-		
+		   smartphone_timer_power_handler();
 
 	   }
 
@@ -109,29 +131,29 @@ void power_on_run_handler(void)
 	if(g_pro.gtime_timer_define_flag == normal_time_mode && g_pro.gset_temperture_flag != 1){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
-	        LED_AI_ON();
-			disp_temp_hum =! disp_temp_hum;   // 切换布尔状态
+	       
+			disp_temp_hum = disp_temp_hum ^ 0x01;   // 切换布尔状态
 			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
 			
 		}
 	}
 
-	    
-
-	   gl_run.process_on_step =2;
+	  gl_run.process_on_step =2;
 
 	 break;
 
 	 case 2: //WIFI link process
 	 
-       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_flag ==0){
+       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_net_state_flag ==0){
 
              wifi_led_slowly_blink();
-        }
+       	}
 
-	    mainboard_fun_handler();
+	   
 
-	   gl_run.process_on_step =2;
+	   
+
+	   gl_run.process_on_step =3;
 
 	 break;
 
