@@ -297,8 +297,13 @@ void set_timer_timing_value_handler(void)
 		  define_timer_mode = timer_time_mode;
 		   g_pro.gTimer_timer_time_second=0;
 		   gl_timer_minutes_value=0;
+		   g_pro.gAI = 0;
+		   LED_AI_OFF();
+		   
     	}
     	else{
+		    g_pro.gAI = 1;
+			LED_AI_OFF();
 		   key_up_down_mode=0;
     	   g_pro.gtimer_timing_mode_enable = normal_time_mode;
 		   define_timer_mode = normal_time_mode;

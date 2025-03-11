@@ -113,8 +113,6 @@ void power_on_init_ref(void)
 
 
 }
-
-
 /**********************************************************************
 	*
 	*Functin Name: power_on_run_handler(void)
@@ -160,13 +158,17 @@ void power_on_run_handler(void)
 			// 根据状态调用显示函数
 			switch (disp_temp_hum) {
 				case 1:
+
 					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 					break;
 				case 2:
+
 					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
 				case 3:
 					LED_AI_OFF();
+					LED_TEMP_SINGLE_OFF();
+					LED_HUM_SINGLE_OFF();
 					TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value); // 显示时间
 					break;
 			}
@@ -178,7 +180,7 @@ void power_on_run_handler(void)
 	if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
-	       
+	        if(disp_temp_hum > 1)disp_temp_hum=0;
 			disp_temp_hum = disp_temp_hum ^ 0x01;   // 切换布尔状态
 			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
 			
