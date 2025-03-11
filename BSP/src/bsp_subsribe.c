@@ -14,13 +14,13 @@ void smartphone_timer_power_handler(void)
           power_on_init_ref();
        	
 		  MqttData_Publish_SetOpen(1);  
-		  HAL_Delay(200);
+		  osDelay(50);//HAL_Delay(200);
 		  Update_DHT11_Value();
-		  HAL_Delay(200);
+		  osDelay(50);//HAL_Delay(200);
 	        
 		
 		   MqttData_Publish_Update_Data();
-		   HAL_Delay(200);
+		   osDelay(100);//HAL_Delay(200);
 
          
   
@@ -73,8 +73,8 @@ void smartphone_timer_power_handler(void)
 
 		    
 	
-		     property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
-		     osDelay(200);//HAL_Delay(200);
+		   property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
+		   osDelay(200);//HAL_Delay(200);
            g_pro.gclose_ptc_flag = 0;
 		   g_pro.gTimer_disp_time_second= 0;
 	       g_pro.gTimer_timer_time_second=0;

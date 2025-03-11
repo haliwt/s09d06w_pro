@@ -145,6 +145,8 @@ void power_on_run_handler(void)
 	   }
 	   key_referen_init();
 	   wifi_decoder_refer_init();
+
+	   
        
 	   g_pro.gTimer_two_hours_counter = 0;
 	   gl_run.process_off_step=0;
@@ -250,7 +252,7 @@ void power_on_run_handler(void)
 void power_off_run_handler(void)
 {
 
-   static uint8_t fan_run_one_minute , fan_flag;
+   static uint8_t fan_run_one_minute,fan_flag,wifi_first_connect;
    switch(gl_run.process_off_step){
 
    case 0:
@@ -268,7 +270,9 @@ void power_off_run_handler(void)
 
 	  if(g_wifi.gwifi_link_net_state_flag == 1){
             MqttData_Publish_SetOpen(0);  
-			osDelay(100);
+			osDelay(50);
+	        MqttData_Publish_PowerOff_Ref() ;//
+	        osDelay(100);
            
 	  }
 	  if(g_disp.g_second_disp_flag ==1){
@@ -308,6 +312,15 @@ void power_off_run_handler(void)
      mainboard_close_all_fun();
 
      LED_Power_Breathing();
+
+	 if(g_wifi.gwifi_link_net_state_flag == 1 && wifi_first_connect==0){
+	 	    wifi_first_connect++;
+            MqttData_Publish_SetOpen(0);  
+			osDelay(50);
+	        MqttData_Publish_PowerOff_Ref() ;//
+	        osDelay(100);
+           
+	 }
 
    
 

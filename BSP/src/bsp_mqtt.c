@@ -149,15 +149,14 @@ static void Mqtt_phone_timer_on_update_data(void)
 ********************************************************************************/
 static void Mqtt_power_off_Value(void)
 {
-    g_wifi.set_wind_speed_value=100;
+    g_wifi.set_wind_speed_value=0;
    	sg_info.open=0;
     sg_info.state=1;
     sg_info.ptc=0; 
     sg_info.anion=0;  //灭菌
 	sg_info.sonic =0;  //驱虫
-    sg_info.find=100;
-	//if(gctl_t.set_temperature_value <20)gctl_t.set_temperature_value = 20;
-	//else if(gctl_t.set_temperature_value > 40 )gctl_t.set_temperature_value = 40;
+    sg_info.find=0;
+	
 	sg_info.set_temperature = 20; //gctl_t.set_temperature_value ;
 	
 }
