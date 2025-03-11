@@ -56,6 +56,9 @@ void power_onoff_handler(uint8_t data)
             works_run_two_hours_state();
             set_temperature_value_handler();
 			set_timer_timing_value_handler();
+			if(g_wifi.wifi_led_fast_blink_flag==1){
+			 wifi_led_fast_blink();
+			}
         break;
 
 	  case power_off:
@@ -100,11 +103,13 @@ void power_on_init_ref(void)
 		
 		   
 		   // function led is turn on 
-             power_on_led();
+            power_on_led();
 		   //display smg led turn on
 		    Fan_Full_Speed();
 		    DHT11_Display_Data(0); //display temperature value 
-		    
+		    DRY_OPEN();
+			PLASMA_OPEN();
+			mouse_open();
 		   
            //timer 
 		   g_pro.gTimer_disp_time_second= 0;
