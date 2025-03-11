@@ -118,7 +118,7 @@ void wifi_led_slowly_blink(void)
    
     
     breathing_time++;
-    if(breathing_time >= 50)  // 呼吸周期1秒
+    if(breathing_time > 25)  // 1.5s // blink 周期1秒 =50 =3s
     {
         breathing_time = 0;
        
