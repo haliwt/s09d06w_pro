@@ -145,6 +145,7 @@ void power_on_run_handler(void)
 	   key_referen_init();
 
 	   g_pro.gTimer_two_hours_counter = 0;
+	   gl_run.process_off_step=0;
 	   gl_run.process_on_step =1;
 	 break;
 
@@ -163,11 +164,14 @@ void power_on_run_handler(void)
 			// 根据状态调用显示函数
 			switch (disp_temp_hum) {
 				case 1:
+					LED_TEMP_SINGLE_ON();
+					LED_HUM_SINGLE_OFF();
 
 					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 					break;
 				case 2:
-
+                    LED_TEMP_SINGLE_OFF();
+					LED_HUM_SINGLE_ON();
 					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
 				case 3:
@@ -182,16 +186,16 @@ void power_on_run_handler(void)
 	else {
 		// 如果计时器超过阈值，切换布尔显示状态
   
-	if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1){ //正常模式
+	    if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	        if(disp_temp_hum > 1)disp_temp_hum=0;
 			disp_temp_hum = disp_temp_hum ^ 0x01;   // 切换布尔状态
 			DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
 			
+		 }
+	      }
 		}
-	}
-
 	  gl_run.process_on_step =2;
 
 	 break;
@@ -213,10 +217,6 @@ void power_on_run_handler(void)
             }
 		}
 
-	   
-
-	   
-
 	   gl_run.process_on_step =3;
 
 	 break;
@@ -229,10 +229,14 @@ void power_on_run_handler(void)
 
 	 break;
 
+	 default :
+
+	  break;
+
 	}
    
-     }
-}
+ }
+
 /**********************************************************************
 	*
 	*Functin Name: void power_off_run_handler(void)

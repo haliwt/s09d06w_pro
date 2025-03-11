@@ -440,6 +440,7 @@ void Tencent_Cloud_Rx_Handler(void)
             if(g_pro.gpower_on ==power_on){
 				 // dry_open_flag=0;//gctl_t.gDry=0;
                  g_pro.gDry = 0;
+				 LED_DRY_OFF();
 	           gl_msg.response_wifi_signal_label = PTC_OFF_ITEM;
 	         
              }
@@ -449,6 +450,7 @@ void Tencent_Cloud_Rx_Handler(void)
             if(g_pro.gpower_on ==power_on){
 	          //dry_open_flag=1;//gctl_t.gDry=1;
               g_pro.gDry = 1;
+			  LED_DRY_ON();
 			 gl_msg.response_wifi_signal_label = PTC_ON_ITEM;
 				
             }
@@ -459,6 +461,8 @@ void Tencent_Cloud_Rx_Handler(void)
           if(g_pro.gpower_on ==power_on){
 	          //  gctl_t.gPlasma=0;
 	          g_pro.gPlasma = 0;
+			  LED_PLASMA_OFF();
+			  
 			gl_msg.response_wifi_signal_label = ANION_OFF_ITEM;
 		    
              }
@@ -468,6 +472,7 @@ void Tencent_Cloud_Rx_Handler(void)
             if(g_pro.gpower_on ==power_on){
             //gctl_t.gPlasma=1;
              g_pro.gPlasma =1;
+			 LED_PLASMA_ON();
 			gl_msg.response_wifi_signal_label = ANION_ON_ITEM;
 		
             }
@@ -477,6 +482,7 @@ void Tencent_Cloud_Rx_Handler(void)
             if(g_pro.gpower_on ==power_on){
            // gctl_t.gUlransonic=0;
              g_pro.gMouse = 0;
+		     LED_MOUSE_ON();
 			gl_msg.response_wifi_signal_label = SONIC_OFF_ITEM;
         
                 
@@ -487,6 +493,7 @@ void Tencent_Cloud_Rx_Handler(void)
             if(g_pro.gpower_on ==power_on){
             //ultrasonic_open_flag=1;//gctl_t.gUlransonic=1;
              g_pro.gMouse = 1;
+			 LED_MOUSE_OFF();
 			gl_msg.response_wifi_signal_label = SONIC_ON_ITEM;
        
            }
@@ -497,6 +504,7 @@ void Tencent_Cloud_Rx_Handler(void)
     if(strstr((char *)g_wifi.wifi_rx_data_array,"state\":1")){
            if(g_pro.gpower_on ==power_on){
             g_pro.gAI=1;
+			LED_AI_ON();
 			gl_msg.response_wifi_signal_label = STATE_AI_MODEL_ITEM;
         	}
 		  
@@ -504,6 +512,7 @@ void Tencent_Cloud_Rx_Handler(void)
     else if(strstr((char *)g_wifi.wifi_rx_data_array,"state\":2")){
             if(g_pro.gpower_on ==power_on){
             g_pro.gAI=2;
+			LED_AI_OFF();
 			gl_msg.response_wifi_signal_label = STATE_TIMER_MODEL_ITEM;
             }
 			

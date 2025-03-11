@@ -93,6 +93,8 @@ typedef enum{
 typedef struct _process{
 
    //main board reference
+
+   uint16_t gTimer_two_hours_counter;
    uint8_t gpower_on;
    uint8_t gDry;
    uint8_t gPlasma;
@@ -125,8 +127,8 @@ typedef struct _process{
 
 
    //timer
-   uint8_t 	gTimer_two_hours_counter;
-   uint16_t  gTimer_disp_time_second;
+   
+   uint8_t  gTimer_disp_time_second;
    uint8_t  gTimer_timer_time_second;
    uint8_t  gTimer_wifi_led_fast_blink;
    uint8_t  gTimer_switch_temp_hum;

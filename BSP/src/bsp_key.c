@@ -315,7 +315,8 @@ void set_timer_timing_value_handler(void)
 
        if(g_pro.gTimer_timer_time_second > 59){
 	       g_pro.gTimer_timer_time_second=0;
-		   gl_timer_minutes_value--;
+		   gl_timer_minutes_value = gl_timer_minutes_value - 40;
+		  // gl_timer_minutes_value--;
 
 		   if(gl_timer_minutes_value< 0){
 			  gl_timer_minutes_value =59;

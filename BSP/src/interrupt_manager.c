@@ -31,6 +31,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		   g_pro.gTimer_input_set_temp_times++;
 		   g_pro.gTimer_fan_run_one_minute++;
 		   g_pro.gTimer_input_set_temp_temp_time++;
+		   g_pro.gTimer_two_hours_counter++;
 		   
 		  
 

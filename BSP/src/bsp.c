@@ -58,23 +58,29 @@ void mainboard_fun_handler(void)
 
 	if(g_pro.gDry == 1){
 		DRY_OPEN();
+		LED_DRY_ON();
 	}
 	else{
+		LED_DRY_OFF();
 		DRY_CLOSE();
 
 	}
 
 	if(g_pro.gMouse == 1){
+		LED_MOUSE_ON();
 		mouse_open();
 	}
 	else{
+		LED_MOUSE_OFF();
 		mouse_close();
 	}
 
 	if(g_pro.gPlasma == 1){
+		LED_PLASMA_ON();
 		PLASMA_OPEN();
 	}
 	else{
+		LED_PLASMA_OFF();
 		PLASMA_CLOSE();
 	}
 
