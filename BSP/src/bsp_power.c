@@ -99,7 +99,7 @@ void power_on_init_ref(void)
 		   g_pro.gdisp_timer_hours_value =0; //设置定时时间，
 
 		   g_pro.key_gtime_timer_define_flag=normal_time_mode; //
-		   g_pro.gtimer_timing_mode_enable = normal_time_mode;
+		   g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
 		
 		   
 		   // function led is turn on 
@@ -155,7 +155,7 @@ void power_on_run_handler(void)
 
 	 case 1:
 
-	 if(g_pro.gtimer_timing_mode_enable == timer_time_mode &&  read_key_up_down_mode()!=2){
+	 if(g_pro.g_disp_timer_or_temp_flag == timer_time_mode){
 		// 如果计时器超过阈值，切换显示模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
@@ -190,7 +190,7 @@ void power_on_run_handler(void)
 	else {
 		// 如果计时器超过阈值，切换布尔显示状态
   
-	    if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
+	    if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode && read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	        if(disp_temp_hum > 1)disp_temp_hum=0;

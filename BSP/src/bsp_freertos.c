@@ -188,7 +188,7 @@ static void vTaskRunPro(void *pvParameters)
 					mode_key_counter=200;
 					buzzer_sound();
                     g_pro.key_gtime_timer_define_flag = timer_time_mode;
-					g_pro.gtimer_timing_mode_enable = timer_time_mode;
+					g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
 					g_pro.gTimer_switch_set_timer_times = 0;
 
 				

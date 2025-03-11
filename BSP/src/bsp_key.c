@@ -13,15 +13,16 @@ uint8_t temperature_init_value ;
 uint8_t  key_set_temperature_flag;
 uint16_t check_time;
 int8_t  gl_timer_minutes_value;
-uint8_t define_timer_mode,key_up_down_mode;
-uint8_t input_key_timer_flag;
+uint8_t define_timer_mode;
+uint8_t key_set_timer_flag,key_up_down_pressed_flag;
 
 void key_referen_init(void)
 {
-  key_set_temperature_flag=0;
+   key_set_temperature_flag=0;
   gl_timer_minutes_value =0;
   define_timer_mode=0;
-  key_up_down_mode =0 ;
+  key_up_down_pressed_flag;
+  key_set_timer_flag=0;
   
 }
 
@@ -92,22 +93,24 @@ void key_dwon_fun(void)
 
 	   }
 	   
-        key_up_down_mode=1;
+      
 	   g_pro.gclose_ptc_flag =0;
+	   key_up_down_pressed_flag=1;
+	    key_set_temperature_flag=1;//
        TM1639_Display_Temperature(glset_temperture_value);
 	   g_pro.gTimer_input_set_temp_times=0;
-	   key_set_temperature_flag=1;//
-	   g_pro.gtimer_timing_mode_enable = input_temp_time_mode;
+	   
+	
 	   g_pro.gTimer_switch_temp_hum = 0;
        
     break;
     case timer_time_mode://set timer timing numbers 
           g_pro.gTimer_switch_set_timer_times =0;
-		    input_key_timer_flag=1;
+		    key_set_timer_flag=1;
 		 
           g_pro.gdisp_timer_hours_value--;
 		  if(g_pro.gdisp_timer_hours_value < 0) g_pro.gdisp_timer_hours_value=0; //24 hours
-		   key_up_down_mode=2;
+		  g_pro.g_disp_timer_or_temp_flag = input_temp_time_mode;
 		  TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
    
     break;
@@ -137,13 +140,14 @@ void key_dwon_fun(void)
 		   if(glset_temperture_value > 40)glset_temperture_value =40;
 		  
        }
-	    key_up_down_mode=1;
-	    g_pro.gclose_ptc_flag =0;
+	 
+	   g_pro.gclose_ptc_flag =0;
+	   key_up_down_pressed_flag=1;
+	   key_set_temperature_flag=1;//
        
        TM1639_Display_Temperature(glset_temperture_value);
 	   g_pro.gTimer_input_set_temp_times=0;
-	   key_set_temperature_flag=1;//
-	   g_pro.gtimer_timing_mode_enable = input_temp_time_mode;
+	   
 	   g_pro.gTimer_switch_temp_hum = 0;
 	   
        
@@ -151,11 +155,11 @@ void key_dwon_fun(void)
     case timer_time_mode://set timer timing numbers 
    
 		g_pro.gTimer_switch_set_timer_times=0;
-        input_key_timer_flag=1;
+        key_set_timer_flag=1;
 
         g_pro.gdisp_timer_hours_value++;
 		if(g_pro.gdisp_timer_hours_value > 24) g_pro.gdisp_timer_hours_value=24; //24 hours
-		 key_up_down_mode=2;
+		g_pro.g_disp_timer_or_temp_flag = input_temp_time_mode;
 		
 		TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
     
@@ -180,16 +184,17 @@ void set_temperature_value_handler(void)
 	
     uint8_t real_read_temperture_value;
     static uint8_t first_close_dry_flag, donot_define_close;
-    if(key_set_temperature_flag == 1 && g_pro.gTimer_input_set_temp_temp_time >= 3)
+    if((key_set_temperature_flag==1) && g_pro.gTimer_input_set_temp_temp_time >= 3)
 	{
-		key_set_temperature_flag++;//
-		 key_up_down_mode=0;
 		
+		key_set_temperature_flag++;
 		g_pro.gset_temperture_value = glset_temperture_value;
-		g_pro.gTimer_switch_temp_hum=5;
+		first_close_dry_flag=0;
+
         real_read_temperture_value = read_dht11_temperature_value();
-        first_close_dry_flag=0;
+        
         if(real_read_temperture_value > g_pro.gset_temperture_value){
+			key_set_temperature_flag=1;//
 			g_pro.gDry = 0;
 			LED_DRY_OFF();
             DRY_CLOSE();
@@ -200,6 +205,8 @@ void set_temperature_value_handler(void)
 				  MqttData_Publish_SetPtc(0x0);
 	              osDelay(50);//HAL_Delay(350);
 			 }
+			
+			
         }
         else{
 			g_pro.gDry = 1;
@@ -211,14 +218,18 @@ void set_temperature_value_handler(void)
 			  MqttData_Publish_SetPtc(0x01);
                   osDelay(50);//HAL_Delay(350);
 			 }
+			
         }
+		key_up_down_pressed_flag=0;
     }
     else{
         if(key_set_temperature_flag==2 || read_wifi_temperature_value()==1){
 			if(read_wifi_temperature_value()==1)key_set_temperature_flag=2;
+			
              check_time++;
              if(check_time >= 200){ //4s 
                  check_time = 0;
+				 if(read_wifi_temperature_value()==1)g_pro.gclose_ptc_flag=0;
                  real_read_temperture_value = read_dht11_temperature_value();
                  if(real_read_temperture_value > g_pro.gset_temperture_value){
                      if(first_close_dry_flag==0){
@@ -345,35 +356,32 @@ void set_timer_timing_value_handler(void)
 {
 
    
-	if(g_pro.gtimer_timing_mode_enable == timer_time_mode &&  input_key_timer_flag==1){
+	if(key_set_timer_flag==1 && g_pro.gTimer_switch_set_timer_times > 3 ){
 
-	 if(g_pro.gTimer_switch_set_timer_times > 3){
 		g_pro.gTimer_switch_set_timer_times=0;
-	
-		 key_up_down_mode=0;
-	     input_key_timer_flag=0;
-
-    	if(g_pro.gdisp_timer_hours_value>0){
-          g_pro.gtimer_timing_mode_enable = timer_time_mode;
 		
+	
+	    if(g_pro.gdisp_timer_hours_value>0){
+          g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
+		  key_set_timer_flag++;
 		   g_pro.gTimer_timer_time_second=0;
 		   gl_timer_minutes_value=0;
 		   g_pro.gAI = 0;
 		   LED_AI_OFF();
+		  
+		   
 		   
     	}
     	else{
 		    g_pro.gAI = 1;
 			LED_AI_OFF();
-		   key_up_down_mode=0;
-		   input_key_timer_flag=0;
-    	   g_pro.gtimer_timing_mode_enable = normal_time_mode;
-		 
 
-    	}
+		   key_set_timer_flag=0;
+    	  
+		   g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
+		}
     }
-    }
-	if(g_pro.gtimer_timing_mode_enable == timer_time_mode &&  input_key_timer_flag==0){
+    else if(key_set_timer_flag==2){
 
        if(g_pro.gTimer_timer_time_second > 59){
 	       g_pro.gTimer_timer_time_second=0;
@@ -403,6 +411,6 @@ void set_timer_timing_value_handler(void)
 
 uint8_t read_key_up_down_mode(void)
 {
-       return key_up_down_mode;
+       return key_up_down_pressed_flag;
 }
 
