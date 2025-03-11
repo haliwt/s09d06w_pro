@@ -112,6 +112,7 @@ void power_on_init_ref(void)
 			mouse_open();
 		   
            //timer 
+           g_pro.gclose_ptc_flag = 0;
 		   g_pro.gTimer_disp_time_second= 0;
 	       g_pro.gTimer_timer_time_second=0;
 		   g_wifi.set_wind_speed_value = 100;
@@ -143,7 +144,7 @@ void power_on_run_handler(void)
 
 	   }
 	   key_referen_init();
-
+       
 	   g_pro.gTimer_two_hours_counter = 0;
 	   gl_run.process_off_step=0;
 	   gl_run.process_on_step =1;
@@ -264,7 +265,19 @@ void power_off_run_handler(void)
 	  fan_run_one_minute = 1;
 	  g_pro.gTimer_fan_run_one_minute =0;
 
+	  if(g_wifi.gwifi_link_net_state_flag == 1){
+            MqttData_Publish_SetOpen(0);  
+			osDelay(100);
+           
+	  }
+	  if(g_disp.g_second_disp_flag ==1){
+          SendWifiData_To_Cmd(0x31,0x0); //smart phone is power off
+		  osDelay(5);//HAL_Delay(5);
+
+       }
+
       gl_run.process_off_step = 1;
+	  
 	  
 
    break;

@@ -56,7 +56,7 @@ void mainboard_fun_handler(void)
 
 	}
 
-	if(g_pro.gDry == 1){
+	if(g_pro.gDry == 1 && read_wifi_dry_value()==0){
 		DRY_OPEN();
 		LED_DRY_ON();
 	}

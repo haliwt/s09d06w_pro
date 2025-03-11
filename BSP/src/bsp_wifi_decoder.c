@@ -26,6 +26,9 @@ typedef struct{
 
 local_ref_t gl_msg;
 
+
+
+
  
 //处理腾讯云下发的数据
 /*******************************************************************************
@@ -582,10 +585,6 @@ void Json_Parse_Command_Fun(void)
 			osDelay(100);
 
             g_pro.gpower_on = power_off;
-            //powerOffTunrOff_flag=1; //WT.EDIT 2025.01.04
-            //powerOffFanRun_flag = 1;
-            //gpro_t.send_ack_cmd = ack_app_power_off;
-            //gpro_t.gTimer_again_send_power_on_off=0;
 	
             SendWifiData_To_Cmd(0x31,0x0); //smart phone is power off
 			osDelay(5);//HAL_Delay(5);
@@ -602,11 +601,12 @@ void Json_Parse_Command_Fun(void)
 	    if(g_pro.ptc_warning ==0){
          MqttData_Publish_SetPtc(0x01);
 	  	 osDelay(100);//HAL_Delay(350);
-
-         //gctl_t.gTimer_senddata_panel=8;   
+		 g_pro.gDry = 1;
+		 DRY_OPEN();
+         g_pro.gclose_ptc_flag = 0;
     
 		 SendWifiData_To_Cmd(0x02,0x01);
-		 HAL_Delay(5);
+		 osDelay(5);//HAL_Delay(5);
 		
          }
          }
@@ -621,12 +621,12 @@ void Json_Parse_Command_Fun(void)
 	
          MqttData_Publish_SetPtc(0);
 		 osDelay(100);//HAL_Delay(350);
-		 g_pro.gDry = 1;
-	     //dry_open_flag=0;//gctl_t.gDry=0;
-        // gctl_t.gTimer_senddata_panel=8;
+		 g_pro.gDry = 0;
+	     DRY_CLOSE();
+		 g_pro.gclose_ptc_flag = 1;
 		
 		 SendWifiData_To_Cmd(0x02,0x0);
-         HAL_Delay(5);
+         osDelay(5);//HAL_Delay(5);
          }
 		buzzer_temp_on=0;
 	     gl_msg.response_wifi_signal_label = 0xff;
@@ -640,10 +640,10 @@ void Json_Parse_Command_Fun(void)
             MqttData_Publish_SetPlasma(0);
 			osDelay(100);//HAL_Delay(350);
 			g_pro.gPlasma =0 ;
-            //plasma_open_flag=0;//gctl_t.gPlasma=0;
-			//gctl_t.gTimer_senddata_panel=8;
+			PLASMA_CLOSE();
+          
 			SendWifiData_To_Cmd(0x03,0x0);
-	  	   HAL_Delay(5);
+	  	    osDelay(5);//HAL_Delay(5);
 	  	}
       
 		buzzer_temp_on=0;
@@ -655,11 +655,10 @@ void Json_Parse_Command_Fun(void)
             MqttData_Publish_SetPlasma(1);
 			osDelay(100);//HAL_Delay(350);
 		      g_pro.gPlasma =1 ;
-             // plasma_open_flag=1;//gctl_t.gPlasma=1;
-             // gctl_t.gTimer_senddata_panel=8;
+              PLASMA_OPEN();
 			
 			SendWifiData_To_Cmd(0x03,0x01);
-	  	   HAL_Delay(5);
+	  	   osDelay(5);//HAL_Delay(5);
 	  	}
   
 		buzzer_temp_on=0;
@@ -672,11 +671,11 @@ void Json_Parse_Command_Fun(void)
             MqttData_Publish_SetUltrasonic(0);
 			osDelay(100);	//HAL_Delay(350);
 			g_pro.gMouse = 0;
-             //ultrasonic_open_flag=0;// gctl_t.gUlransonic=0;
-             //gctl_t.gTimer_senddata_panel=8; 
+			
+           
 	
 			SendWifiData_To_Cmd(0x04,0x0);
-			HAL_Delay(5);
+			osDelay(5);
         }
 		buzzer_temp_on=0;
 	   gl_msg.response_wifi_signal_label=0xff;
@@ -929,4 +928,9 @@ void Parse_Json_phone_timer_power_on_ref(void)
 
 
 
+uint8_t  read_wifi_dry_value(void)
+{
+    return g_pro.gclose_ptc_flag;
+
+}
 

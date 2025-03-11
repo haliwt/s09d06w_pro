@@ -71,10 +71,14 @@ void smartphone_timer_power_handler(void)
 
 			}
 
-		     g_wifi.set_wind_speed_value =100;
+		    
 	
 		     property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
-		     HAL_Delay(200);
+		     osDelay(200);//HAL_Delay(200);
+           g_pro.gclose_ptc_flag = 0;
+		   g_pro.gTimer_disp_time_second= 0;
+	       g_pro.gTimer_timer_time_second=0;
+		   g_wifi.set_wind_speed_value = 100;
 
 			
 	     break;

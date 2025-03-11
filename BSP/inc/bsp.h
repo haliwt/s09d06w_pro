@@ -101,6 +101,7 @@ typedef struct _process{
    uint8_t gAI;
    uint8_t gMouse;
    uint8_t gworks_normal_two_hours;
+   uint8_t gclose_ptc_flag;
    
 
    uint8_t gTemp_value;
@@ -115,7 +116,7 @@ typedef struct _process{
 
    int8_t gdisp_timer_hours_value;
    
-
+   
    uint8_t ptc_warning;
    uint8_t fan_warning ;
 

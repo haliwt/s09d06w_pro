@@ -98,7 +98,7 @@ void clear_rx_copy_data(void);
 
 
 
-
+uint8_t  read_wifi_dry_value(void);
 
 
 
