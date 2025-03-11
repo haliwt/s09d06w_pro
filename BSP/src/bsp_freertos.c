@@ -143,11 +143,7 @@ static void vTaskDecoderPro(void *pvParameters)
 **********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters)
 {
-  
-   
-    static uint8_t power_on_flag;
-
-    while(1)
+  while(1)
     {
       if(g_key.key_power_flag == KEY_POWER_ID){
 
@@ -212,33 +208,8 @@ static void vTaskRunPro(void *pvParameters)
 			
 		
 
-	  switch(g_pro.gpower_on){	
-
-	   case power_on :
-
-		// 检查LED硬件测试
-		Check_LED_Hardware_Test();
-
-        // 只有在不进行LED测试时才执行正常的power_on处理
-        if(!Is_LED_Testing())
-        {
-            power_on_run_handler();
-            link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
-            works_run_two_hours_state();
-            set_temperature_value_handler();
-        break;
-
-	  case power_off:
-  
-         if(power_on_flag==0){
-             power_on_flag ++;
-			 buzzer_sound();
-		 }
-         power_off_run_handler();
-
-	   break;
-
-      }
+	
+         power_onoff_handler(g_pro.gpower_on);
 	 
        if(g_wifi.wifi_led_fast_blink_flag==0 ){
          wifi_communication_tnecent_handler();//
@@ -248,13 +219,14 @@ static void vTaskRunPro(void *pvParameters)
 
 	   
        ack_cmd_second_disp_hanlder();
+	   vTaskDelay(20);
 
 	  
     }
 	  
-	vTaskDelay(20);
-   }
-}
+	
+ }
+
 
 /**********************************************************************************************************
 *

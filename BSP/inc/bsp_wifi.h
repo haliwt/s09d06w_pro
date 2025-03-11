@@ -83,6 +83,7 @@ typedef struct _wifi_state_ref{
 
 
 
+
 }wifi_state_ref;
 
 extern wifi_state_ref g_wifi;

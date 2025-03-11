@@ -24,10 +24,11 @@ void FAN_Stop(void);
 void Fan_Full_Speed(void);
 
 
+void Fan_RunSpeed_Fun(void);
 
 
 
-void fan_run_handler(void);
+//void fan_run_handler(void);
 
 
 

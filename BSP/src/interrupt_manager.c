@@ -39,6 +39,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		   g_wifi.gTimer_auto_link_net_time++;
 		   g_wifi.gTimer_auto_detected_net_state_times++;
 		   g_wifi.gTimer_link_net_timer_time++;
+		   g_wifi.gTimer_get_beijing_time++;
 
    
 

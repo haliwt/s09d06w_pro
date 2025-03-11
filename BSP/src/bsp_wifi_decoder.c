@@ -298,6 +298,7 @@ void Wifi_Rx_InputInfo_Handler(void)
     g_wifi.gwifi_link_net_state_flag=1;
     g_wifi.linking_tencent_cloud_doing=0;
     g_wifi.auto_link_cloud_flag=0xff;
+    g_wifi.soft_ap_config_flag=0;
 
    
   }

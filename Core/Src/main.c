@@ -86,6 +86,8 @@ int main(void)
     /* USER CODE BEGIN 2 */
     bsp_init();
     HAL_TIM_Base_Start_IT(&htim17);
+	UART_Start_Receive_IT(&huart1,inputBuf,1);
+    UART_Start_Receive_IT(&huart2,wifi_rx_inputBuf,1);
     /* USER CODE END 2 */
      freeRTOS_Handler();
     /* Infinite loop */

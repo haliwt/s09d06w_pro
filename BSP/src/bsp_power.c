@@ -30,6 +30,50 @@ typedef enum {
 //DisplayMode disp_temp_hum = DISPLAY_TEMP;  // 默认显示温度
 uint8_t disp_temp_hum;
 
+/**********************************************************************
+	*
+	*Functin Name: void power_on_init_ref(void)
+	*Function : 
+	*Input Ref: NO
+	*Return Ref: NO
+	*
+**********************************************************************/
+void power_onoff_handler(uint8_t data)
+{
+  static uint8_t power_on_flag;
+   switch(data){	
+
+	   case power_on :
+
+		// 检查LED硬件测试
+		Check_LED_Hardware_Test();
+
+        // 只有在不进行LED测试时才执行正常的power_on处理
+        if(!Is_LED_Testing())
+        {
+            power_on_run_handler();
+            link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
+            works_run_two_hours_state();
+            set_temperature_value_handler();
+        break;
+
+	  case power_off:
+  
+         if(power_on_flag==0){
+             power_on_flag ++;
+			 buzzer_sound();
+		 }
+         power_off_run_handler();
+
+	   break;
+  
+         }
+	  }
+
+
+
+}
+
 
 /**********************************************************************
 	*
