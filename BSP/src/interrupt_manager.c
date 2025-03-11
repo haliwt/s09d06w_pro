@@ -31,6 +31,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		   g_pro.gTimer_input_set_temp_times++;
 		   g_pro.gTimer_fan_run_one_minute++;
 		   g_pro.gTimer_input_set_temp_temp_time++;
+		   
 		  
 
 		   //wifi timer 
@@ -41,6 +42,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		   g_wifi.gTimer_auto_detected_net_state_times++;
 		   g_wifi.gTimer_link_net_timer_time++;
 		   g_wifi.gTimer_get_beijing_time++;
+		   g_wifi.gTimer_update_dht11_data++;
 
    
 

@@ -10,8 +10,20 @@ KEY_PROCESS_TYPEDEF  g_key;
 
 uint8_t glset_temperture_value;
 uint8_t temperature_init_value ;
+uint8_t  key_set_temperature_flag;
+uint16_t check_time;
+int8_t  gl_timer_minutes_value;
+uint8_t define_timer_mode,key_up_down_mode;
 
 
+void key_referen_init(void)
+{
+  key_set_temperature_flag=0;
+  gl_timer_minutes_value =0;
+  define_timer_mode=0;
+  key_up_down_mode =0 ;
+  
+}
 
 /**
  * @brief       设置GPIO某个引脚的输出状态
@@ -65,7 +77,7 @@ void key_dwon_fun(void)
 {
 
   
-  switch(g_pro.gtime_timer_define_flag ){
+  switch(g_pro.key_gtime_timer_define_flag ){
     case normal_time_mode: //set temperature number 
        
        if(temperature_init_value==0){
@@ -80,20 +92,22 @@ void key_dwon_fun(void)
 
 	   }
 	   
-       
+        key_up_down_mode=1;
        TM1639_Display_Temperature(glset_temperture_value);
 	   g_pro.gTimer_input_set_temp_times=0;
-	   g_pro.gset_temperture_flag = 1;
+	   key_set_temperature_flag =1;//
+	
 	   g_pro.gTimer_switch_temp_hum = 0;
        
     break;
     case timer_time_mode://set timer timing numbers 
-    if(g_pro.gTimer_switch_set_timer_times < 4){
-        
-    }
-    else {
-        g_pro.gtime_timer_define_flag = normal_time_mode;
-    }
+          g_pro.gTimer_switch_set_timer_times =0;
+		 
+          g_pro.gdisp_timer_hours_value--;
+		  if(g_pro.gdisp_timer_hours_value < 0) g_pro.gdisp_timer_hours_value=0; //24 hours
+		   key_up_down_mode=2;
+		  TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+   
     break;
     default:
         break;
@@ -107,7 +121,7 @@ void key_dwon_fun(void)
  */
  void key_up_fun(void)
 {
-	switch(g_pro.gtime_timer_define_flag ){
+	switch(g_pro.key_gtime_timer_define_flag ){
     case normal_time_mode: //set temperature number 
 
 		if(temperature_init_value==0){
@@ -121,20 +135,27 @@ void key_dwon_fun(void)
 		   if(glset_temperture_value > 40)glset_temperture_value =40;
 		  
        }
+	    key_up_down_mode=1;
        
        TM1639_Display_Temperature(glset_temperture_value);
 	   g_pro.gTimer_input_set_temp_times=0;
-	   g_pro.gset_temperture_flag = 1;
+	   key_set_temperature_flag=1;//
+	   g_pro.gtimer_timing_mode_enable = input_temp_time_mode;
 	   g_pro.gTimer_switch_temp_hum = 0;
+	   
        
     break;
     case timer_time_mode://set timer timing numbers 
-    if(g_pro.gTimer_switch_set_timer_times < 4){
-        
-    }
-    else {
-        g_pro.gtime_timer_define_flag = normal_time_mode;
-    }
+   
+		g_pro.gTimer_switch_set_timer_times=0;
+
+
+        g_pro.gdisp_timer_hours_value++;
+		if(g_pro.gdisp_timer_hours_value > 24) g_pro.gdisp_timer_hours_value=24; //24 hours
+		 key_up_down_mode=2;
+		TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+    
+   
     break;
     default:
         break;
@@ -152,12 +173,14 @@ void key_dwon_fun(void)
 ******************************************************************************/
 void set_temperature_value_handler(void)
 {
-	static uint16_t check_time;
+	
     uint8_t real_read_temperture_value;
     static uint8_t first_close_dry_flag, donot_define_close;
-    if(g_pro.gset_temperture_flag == 1 && g_pro.gTimer_input_set_temp_temp_time >= 3)
+    if(key_set_temperature_flag == 1 && g_pro.gTimer_input_set_temp_temp_time >= 3)
 	{
-		g_pro.gset_temperture_flag ++;
+		key_set_temperature_flag++;//
+		 key_up_down_mode=0;
+		
 		g_pro.gset_temperture_value = glset_temperture_value;
 		g_pro.gTimer_switch_temp_hum=5;
         real_read_temperture_value = read_dht11_temperature_value();
@@ -170,7 +193,7 @@ void set_temperature_value_handler(void)
         }
     }
     else{
-        if(g_pro.gset_temperture_flag==2){
+        if(key_set_temperature_flag==2){
              check_time++;
              if(check_time >= 200){ //4s 
                  check_time = 0;
@@ -191,11 +214,11 @@ void set_temperature_value_handler(void)
                  else{
 				 	 real_read_temperture_value = read_dht11_temperature_value();
 				 	 if(first_close_dry_flag==1){
-					 	if(g_pro.gset_temperture_value > 23){ //温度在 20 ~ 40度
-					    if(real_read_temperture_value <= (g_pro.gset_temperture_value -2)){
-							 DRY_OPEN();
-							 LED_DRY_ON();
-					    }
+					 	if(g_pro.gset_temperture_value > 21){ //温度在 20 ~ 40度
+						    if(real_read_temperture_value <= (g_pro.gset_temperture_value -2)){
+								 DRY_OPEN();
+								 LED_DRY_ON();
+						    }
 					 	}
 						else{
 
@@ -213,7 +236,7 @@ void set_temperature_value_handler(void)
              }
           
         }
-		else if(g_pro.gset_temperture_flag == 0){
+		else if(key_set_temperature_flag==0){
 
              check_time++;
              if(check_time > 150){ //50~=1s ,3s
@@ -250,6 +273,68 @@ void set_temperature_value_handler(void)
  }
 
 
+/******************************************************************************
+	*
+	*Function Name:void set_timer_timing_value_handler(void)
+	*Funcion: 
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
+void set_timer_timing_value_handler(void)
+{
+
+    static uint8_t define_timer_mode;
+	if(g_pro.gtimer_timing_mode_enable == timer_time_mode){
+
+	 if(g_pro.gTimer_switch_set_timer_times > 3){
+		g_pro.gTimer_switch_set_timer_times=0;
+	
+		 key_up_down_mode=0;
+
+    	if(g_pro.gdisp_timer_hours_value>0){
+          g_pro.gtimer_timing_mode_enable = timer_time_mode;
+		  define_timer_mode = timer_time_mode;
+		   g_pro.gTimer_timer_time_second=0;
+		   gl_timer_minutes_value=0;
+    	}
+    	else{
+		   key_up_down_mode=0;
+    	   g_pro.gtimer_timing_mode_enable = normal_time_mode;
+		   define_timer_mode = normal_time_mode;
+
+    	}
+    }
+    }
+	if(define_timer_mode==timer_time_mode){
+
+       if(g_pro.gTimer_timer_time_second > 59){
+	       g_pro.gTimer_timer_time_second=0;
+		   gl_timer_minutes_value--;
+
+		   if(gl_timer_minutes_value< 0){
+			  gl_timer_minutes_value =59;
+			  g_pro.gdisp_timer_hours_value--;
+
+			  if(g_pro.gdisp_timer_hours_value < 0){
+
+			       g_pro.gpower_on = power_off;
+			  	
+			  }
+			 
+
+            }
 
 
+
+	   }
+
+   }
+}
+
+
+uint8_t read_key_up_down_mode(void)
+{
+       return key_up_down_mode;
+}
 

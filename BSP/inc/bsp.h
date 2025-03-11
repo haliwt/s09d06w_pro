@@ -86,7 +86,8 @@ typedef enum{
 typedef enum{
 	normal_time_mode,
 	timer_time_mode,
-	beijing_time_mode
+	beijing_time_mode,
+	input_temp_time_mode,
 }time_state;
 
 typedef struct _process{
@@ -102,14 +103,16 @@ typedef struct _process{
 
    uint8_t gTemp_value;
    uint8_t gset_temperture_value;
-   uint8_t gset_temperture_flag ;
+  
   
    
-   uint8_t gtime_timer_define_flag;
+   uint8_t key_gtime_timer_define_flag;
+   uint8_t gtimer_timing_mode_enable;
    uint8_t gdisp_hours_value;
    uint8_t gdisp_minutes_value;
 
-   uint8_t gdisp_timer_hours_value;
+   int8_t gdisp_timer_hours_value;
+   
 
    uint8_t ptc_warning;
    uint8_t fan_warning ;

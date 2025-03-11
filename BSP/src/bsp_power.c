@@ -55,6 +55,7 @@ void power_onoff_handler(uint8_t data)
             link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
             works_run_two_hours_state();
             set_temperature_value_handler();
+			set_timer_timing_value_handler();
         break;
 
 	  case power_off:
@@ -93,8 +94,10 @@ void power_on_init_ref(void)
 		   //display time timing value 
 		   g_pro.gdisp_hours_value =0;
 		   g_pro.gdisp_timer_hours_value =0; //设置定时时间，
-		   g_pro.gset_temperture_flag =0;
-		   g_pro.gtime_timer_define_flag=normal_time_mode; //
+
+		   g_pro.key_gtime_timer_define_flag=normal_time_mode; //
+		   g_pro.gtimer_timing_mode_enable = normal_time_mode;
+		
 		   
 		   // function led is turn on 
              power_on_led();
@@ -122,13 +125,12 @@ void power_on_init_ref(void)
 **********************************************************************/
 void power_on_run_handler(void)
 {
- 
-	
-	switch(gl_run.process_on_step){
+    switch(gl_run.process_on_step){
 
 
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
+      
        if(g_wifi.gwifi_link_net_state_flag == wifi_no_link){
 	      
 		   power_on_init_ref();
@@ -137,6 +139,7 @@ void power_on_run_handler(void)
 		   smartphone_timer_power_handler();
 
 	   }
+	   key_referen_init();
 
 	   g_pro.gTimer_two_hours_counter = 0;
 	   gl_run.process_on_step =1;
@@ -144,14 +147,14 @@ void power_on_run_handler(void)
 
 	 case 1:
 
-	 if (g_pro.gtime_timer_define_flag == timer_time_mode) {
+	 if(g_pro.gtimer_timing_mode_enable == timer_time_mode &&  read_key_up_down_mode()!=2){
 		// 如果计时器超过阈值，切换显示模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	
 			disp_temp_hum++;
 			if (disp_temp_hum > 3) {
-				disp_temp_hum = 0; // 循环显示状态
+				disp_temp_hum = 1; // 循环显示状态
 			}
 	
 			// 根据状态调用显示函数
@@ -164,7 +167,7 @@ void power_on_run_handler(void)
 					break;
 				case 3:
 					LED_AI_OFF();
-					TM1639_Display_3_Digit(g_pro.gdisp_hours_value); // 显示时间
+					TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value); // 显示时间
 					break;
 			}
 		}
@@ -172,8 +175,8 @@ void power_on_run_handler(void)
 	else {
 		// 如果计时器超过阈值，切换布尔显示状态
   
-	if(g_pro.gtime_timer_define_flag == normal_time_mode && g_pro.gset_temperture_flag != 1){ //正常模式
-		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
+	if(g_pro.gtimer_timing_mode_enable == normal_time_mode && read_key_up_down_mode()!=1){ //正常模式
+		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	       
 			disp_temp_hum = disp_temp_hum ^ 0x01;   // 切换布尔状态
@@ -195,7 +198,12 @@ void power_on_run_handler(void)
 	    else if(g_wifi.gwifi_link_net_state_flag ==1){
 		
 		    LED_WIFI_ON() ; 
-		
+			if(g_wifi.gTimer_update_dht11_data > 7){
+			   g_wifi.gTimer_update_dht11_data=0;
+		       Update_Dht11_Totencent_Value()  ;
+
+
+            }
 		}
 
 	   
@@ -208,6 +216,8 @@ void power_on_run_handler(void)
 
 	 case 3: // wifi function
 
+	    
+		    
 	    gl_run.process_on_step =1;
 
 	 break;
@@ -237,8 +247,8 @@ void power_off_run_handler(void)
       TM1639_Display_ON_OFF(0);
 	  g_key.key_long_power_flag  = 0;
 	  g_key.key_long_mode_flag = 0;
-	  g_pro.gset_temperture_flag =0;   //set temperature flag 
-	  g_pro.gtime_timer_define_flag = normal_time_mode;
+	
+	  g_pro.key_gtime_timer_define_flag = normal_time_mode;
 
 	  fan_run_one_minute = 1;
 	  g_pro.gTimer_fan_run_one_minute =0;

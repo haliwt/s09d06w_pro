@@ -240,8 +240,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
                SendWifiData_To_Data(0x1F,0x0); //0x1F: 0x1=wifi link net is succes ,0x0 = wifi link net is fail
                g_wifi.wifi_get_beijing_step = 10;
                g_wifi.linking_tencent_cloud_doing  =1; //receive from tencent command state .
-               //gpro_t.send_ack_cmd = ack_wifi_on;
-               //gpro_t.gTimer_again_send_power_on_off=0;
+             
          }
 	
        }
@@ -304,9 +303,9 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
         		g_wifi.wifi_rx_data_counter =0;
         		Get_Beijing_Time();
               
-        	    osDelay(100);//HAL_Delay(20); //WT.EDIT .2024.08.10
+        	    osDelay(200);//HAL_Delay(20); //WT.EDIT .2024.08.10
                 
-        	
+        	    //g_wifi.get_rx_beijing_time_enable=0; //WT.EDIT .2025.03.11
                 beijing_step =2;
           
          

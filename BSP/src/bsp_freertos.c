@@ -178,6 +178,7 @@ static void vTaskRunPro(void *pvParameters)
 		        if(KEY_MODE_VALUE() == KEY_UP && mode_key_counter < 60){
 					g_key.key_mode_flag = KEY_NULL;
 					mode_key_counter=0;
+				    g_pro.key_gtime_timer_define_flag = normal_time_mode;
 				    buzzer_sound();
 				    //mode_key_fun();
 		        }
@@ -186,8 +187,8 @@ static void vTaskRunPro(void *pvParameters)
                     g_key.key_mode_flag = KEY_NULL;
 					mode_key_counter=200;
 					buzzer_sound();
-                    //g_key.key_long_mode_flag = KEY_LONG_MODE; // input set up timer timing mode .
-                    g_pro.gtime_timer_define_flag = timer_time_mode;
+                    g_pro.key_gtime_timer_define_flag = timer_time_mode;
+					g_pro.gtimer_timing_mode_enable = timer_time_mode;
 					g_pro.gTimer_switch_set_timer_times = 0;
 
 				
