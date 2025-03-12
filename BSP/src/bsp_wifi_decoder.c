@@ -755,7 +755,11 @@ void Json_Parse_Command_Fun(void)
             gl_wifi_set_temp = 1;
 			
             g_pro.gset_temperture_value = g_wifi.wifi_set_temperature_value;
-			g_wifi.gTimer_disp_wifi_set_temp = 0;
+			
+			g_wifi.g_wifi_set_temp_flag=1;
+			g_pro.gTimer_input_set_temp_timer= 0;
+			g_pro.gclose_ptc_flag=0;
+			
 			
             MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
 		    osDelay(100);//HAL_Delay(350);
@@ -764,6 +768,7 @@ void Json_Parse_Command_Fun(void)
 				SendWifiData_To_Data(0x3A, g_wifi.wifi_set_temperature_value); //smart phone set temperature value .
 				osDelay(5);//HAL_Delay(10);
 		    }
+			
        }
      
 	  buzzer_temp_on=0;
@@ -946,19 +951,10 @@ uint8_t  read_wifi_dry_value(void)
 
 uint8_t read_wifi_temperature_value(void)
 {
-   if(g_wifi.gTimer_disp_wifi_set_temp  < 4 && gl_wifi_set_temp==1){
-
-      g_pro.gclose_ptc_flag=0;
-
-       return  gl_wifi_set_temp;
-   
-   }
-   else if(g_wifi.gTimer_disp_wifi_set_temp  > 3 && gl_wifi_set_temp==1){
-        g_wifi.gTimer_disp_wifi_set_temp =0;
-		g_pro.gclose_ptc_flag=0;
-        gl_wifi_set_temp++;
-      
-        return 0;
+   if(g_wifi.g_wifi_set_temp_flag==1){
+        
+	
+       return 1;
    }
    else{
        return 0;

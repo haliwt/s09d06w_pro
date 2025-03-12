@@ -155,7 +155,7 @@ void power_on_run_handler(void)
 
 	 case 1:
 
-	 if(g_pro.g_disp_timer_or_temp_flag == timer_time_mode){
+	 if(g_pro.g_disp_timer_or_temp_flag == timer_time_mode && read_wifi_temperature_value()==0){
 		// 如果计时器超过阈值，切换显示模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器

@@ -16,12 +16,17 @@ int8_t  gl_timer_minutes_value;
 uint8_t define_timer_mode;
 uint8_t key_set_timer_flag,key_up_down_pressed_flag;
 
+
+static void adjust_temperature(int8_t delta) ;
+static void adjust_timer(int8_t delta) ;
+
+
 void key_referen_init(void)
 {
    key_set_temperature_flag=0;
   gl_timer_minutes_value =0;
   define_timer_mode=0;
-  key_up_down_pressed_flag;
+  key_up_down_pressed_flag=0;
   key_set_timer_flag=0;
   
 }
@@ -65,6 +70,46 @@ uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx)
     {
         return 0;   /* pinx的状态为0 */
     }
+}
+
+
+/**
+ * @brief  void adjust_temperature(int8_t delta)
+ * @param  NO: 
+ * @retval None
+ */
+static void adjust_temperature(int8_t delta) 
+{
+    if (temperature_init_value == 0) {
+        temperature_init_value++;
+        glset_temperture_value = (delta > 0) ? 21 : 39;
+    } else {
+        glset_temperture_value += delta;
+        if (glset_temperture_value > MAX_TEMPERATURE) glset_temperture_value = MAX_TEMPERATURE;
+        if (glset_temperture_value < MIN_TEMPERATURE) glset_temperture_value = MIN_TEMPERATURE;
+    }
+    g_pro.gclose_ptc_flag = 0;
+    key_up_down_pressed_flag = 1;
+    key_set_temperature_flag = 1;
+    TM1639_Display_Temperature(glset_temperture_value);
+    g_pro.gTimer_input_set_temp_times = 0;
+    g_pro.gTimer_switch_temp_hum = 0;
+}
+
+/**
+ * @brief  void adjust_timer(int8_t delta)
+ * @param  NO: 
+ * @retval None
+ */
+static void adjust_timer(int8_t delta) 
+{
+    g_pro.gTimer_switch_set_timer_times = 0;
+    key_set_timer_flag = 1;
+    g_pro.gdisp_timer_hours_value += delta;
+    if (g_pro.gdisp_timer_hours_value > MAX_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MAX_TIMER_HOURS;
+    if (g_pro.gdisp_timer_hours_value < MIN_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MIN_TIMER_HOURS;
+    g_pro.g_disp_timer_or_temp_flag = INPUT_TEMP_TIME_MODE;
+    TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
 }
 
 
@@ -184,17 +229,22 @@ void set_temperature_value_handler(void)
 	
     uint8_t real_read_temperture_value;
     static uint8_t first_close_dry_flag, donot_define_close;
-    if((key_set_temperature_flag==1) && g_pro.gTimer_input_set_temp_temp_time >= 3)
+    if((key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 3)
 	{
+        key_set_temperature_flag=2;
+		if(read_wifi_temperature_value()==1){
+			g_wifi.g_wifi_set_temp_flag=0;
 		
-		key_set_temperature_flag++;
-		g_pro.gset_temperture_value = glset_temperture_value;
+		}
+		else{
+			g_pro.gset_temperture_value = glset_temperture_value;
+		}
 		first_close_dry_flag=0;
 
         real_read_temperture_value = read_dht11_temperature_value();
         
         if(real_read_temperture_value > g_pro.gset_temperture_value){
-			key_set_temperature_flag=1;//
+		
 			g_pro.gDry = 0;
 			LED_DRY_OFF();
             DRY_CLOSE();
@@ -223,14 +273,12 @@ void set_temperature_value_handler(void)
 		key_up_down_pressed_flag=0;
     }
     else{
-        if(key_set_temperature_flag==2 || read_wifi_temperature_value()==1){
-			if(read_wifi_temperature_value()==1)key_set_temperature_flag=2;
-			
-             check_time++;
+        if(key_set_temperature_flag==2  && read_wifi_temperature_value()==0){
+		
+			check_time++;
              if(check_time >= 200){ //4s 
                  check_time = 0;
-				 if(read_wifi_temperature_value()==1)g_pro.gclose_ptc_flag=0;
-                 real_read_temperture_value = read_dht11_temperature_value();
+			     real_read_temperture_value = read_dht11_temperature_value();
                  if(real_read_temperture_value > g_pro.gset_temperture_value){
                      if(first_close_dry_flag==0){
                          first_close_dry_flag=1;
@@ -255,7 +303,7 @@ void set_temperature_value_handler(void)
                      
                  }
                  else{
-				 	 real_read_temperture_value = read_dht11_temperature_value();
+
 				 	 if(first_close_dry_flag==1 && read_wifi_dry_value()==0){
 					 	if(g_pro.gset_temperture_value > 21){ //温度在 20 ~ 40度
 						    if(real_read_temperture_value <= (g_pro.gset_temperture_value -2)){

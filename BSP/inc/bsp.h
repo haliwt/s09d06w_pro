@@ -138,7 +138,7 @@ typedef struct _process{
    uint8_t  gTimer_switch_set_timer_times;
    uint8_t  gTimer_input_set_temp_times;
    uint8_t   gTimer_fan_run_one_minute;
-   uint8_t   gTimer_input_set_temp_temp_time;
+   uint8_t   gTimer_input_set_temp_timer;
 }process_t;
 
 extern process_t g_pro;
