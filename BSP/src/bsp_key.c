@@ -6,6 +6,16 @@
  */
 #include "bsp.h"
 
+
+#define MAX_TEMPERATURE 	40
+#define MIN_TEMPERATURE 	20
+#define MAX_TIMER_HOURS 	24
+#define MIN_TIMER_HOURS 	0
+#define TIMER_SECONDS_PER_MINUTE 60
+
+
+
+
 KEY_PROCESS_TYPEDEF  g_key;
 
 uint8_t glset_temperture_value;
@@ -108,7 +118,7 @@ static void adjust_timer(int8_t delta)
     g_pro.gdisp_timer_hours_value += delta;
     if (g_pro.gdisp_timer_hours_value > MAX_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MAX_TIMER_HOURS;
     if (g_pro.gdisp_timer_hours_value < MIN_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MIN_TIMER_HOURS;
-    g_pro.g_disp_timer_or_temp_flag = INPUT_TEMP_TIME_MODE;
+    g_pro.g_disp_timer_or_temp_flag = input_temp_time_mode  ;
     TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
 }
 
@@ -121,48 +131,16 @@ static void adjust_timer(int8_t delta)
  */
 void key_dwon_fun(void)
 {
-
-  
-  switch(g_pro.key_gtime_timer_define_flag ){
-    case normal_time_mode: //set temperature number 
-       
-       if(temperature_init_value==0){
-		   temperature_init_value++;
-
-	       glset_temperture_value = 39;
-
-	   }
-	   else{
-	       glset_temperture_value --; //20 ~40 degree
-		   if(glset_temperture_value < 20)glset_temperture_value =20;
-
-	   }
-	   
-      
-	   g_pro.gclose_ptc_flag =0;
-	   key_up_down_pressed_flag=1;
-	    key_set_temperature_flag=1;//
-       TM1639_Display_Temperature(glset_temperture_value);
-	   g_pro.gTimer_input_set_temp_times=0;
-	   
-	
-	   g_pro.gTimer_switch_temp_hum = 0;
-       
-    break;
-    case timer_time_mode://set timer timing numbers 
-          g_pro.gTimer_switch_set_timer_times =0;
-		    key_set_timer_flag=1;
-		 
-          g_pro.gdisp_timer_hours_value--;
-		  if(g_pro.gdisp_timer_hours_value < 0) g_pro.gdisp_timer_hours_value=0; //24 hours
-		  g_pro.g_disp_timer_or_temp_flag = input_temp_time_mode;
-		  TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
-   
-    break;
-    default:
-        break;
-  }
-
+    switch (g_pro.key_gtime_timer_define_flag) {
+        case normal_time_mode:
+            adjust_temperature(-1);
+            break;
+        case timer_time_mode:
+            adjust_timer(-1);
+            break;
+        default:
+            break;
+    }
 }
 /**
  * @brief : void key_up_fun(void)
@@ -171,48 +149,17 @@ void key_dwon_fun(void)
  */
  void key_up_fun(void)
 {
-	switch(g_pro.key_gtime_timer_define_flag ){
-    case normal_time_mode: //set temperature number 
-    
-		if(temperature_init_value==0){
-		   temperature_init_value++;
-
-	       glset_temperture_value = 21;
-
-	   }
-       else{
-		   glset_temperture_value ++; //20 ~40 degree
-		   if(glset_temperture_value > 40)glset_temperture_value =40;
-		  
-       }
-	 
-	   g_pro.gclose_ptc_flag =0;
-	   key_up_down_pressed_flag=1;
-	   key_set_temperature_flag=1;//
-       
-       TM1639_Display_Temperature(glset_temperture_value);
-	   g_pro.gTimer_input_set_temp_times=0;
-	   
-	   g_pro.gTimer_switch_temp_hum = 0;
-	   
-       
-    break;
-    case timer_time_mode://set timer timing numbers 
-   
-		g_pro.gTimer_switch_set_timer_times=0;
-        key_set_timer_flag=1;
-
-        g_pro.gdisp_timer_hours_value++;
-		if(g_pro.gdisp_timer_hours_value > 24) g_pro.gdisp_timer_hours_value=24; //24 hours
-		g_pro.g_disp_timer_or_temp_flag = input_temp_time_mode;
-		
-		TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
-    
-   
-    break;
-    default:
-        break;
-  }
+	 switch (g_pro.key_gtime_timer_define_flag) {
+        case normal_time_mode:
+            adjust_temperature(1);
+            break;
+        case timer_time_mode:
+            adjust_timer(1);
+            break;
+        default:
+            break;
+    }
+  
 
 }
 
