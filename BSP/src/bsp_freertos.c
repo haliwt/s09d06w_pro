@@ -170,6 +170,10 @@ static void vTaskRunPro(void *pvParameters)
 			        g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
 			        g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
 					buzzer_sound();
+					if(g_disp.g_second_disp_flag ==1){
+
+						SendData_Set_Command(CMD_CONNECT_WIFI,0x01);
+					}
             }
 		}
 		else if(g_key.key_mode_flag == KEY_MODEL_ID ){ //&& MODEL_KEY_VALUE()==KEY_UP){
@@ -342,7 +346,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
        switch(state)
 		{
 		case 0:  //#0
-			if(inputBuf[0] == 0x5A){  // 0x5A --main board singla
+			if(inputBuf[0] == 0xA5){  // 0xA5 -- second display board ID
                gl_tMsg.rx_data_counter=0;
                gl_tMsg.usData[gl_tMsg.rx_data_counter] = inputBuf[0];
 				state=1; //=1

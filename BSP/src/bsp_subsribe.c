@@ -15,7 +15,7 @@ void smartphone_timer_power_handler(void)
        	
 		  MqttData_Publish_SetOpen(1);  
 		  osDelay(50);//HAL_Delay(200);
-		  Update_DHT11_Value();
+		  Update_DHT11_ToDisplayBoard_Value();
 		  osDelay(50);//HAL_Delay(200);
 	        
 		

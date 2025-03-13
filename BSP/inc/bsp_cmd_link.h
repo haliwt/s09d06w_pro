@@ -35,6 +35,7 @@ void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data);
 void SendWifiData_To_Data(uint8_t cmd,uint8_t data);
 void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data);
 
+void SendData_Set_Command(uint8_t cmd,uint8_t data);
 
 
 #endif /* BSP_INC_BSP_CMD_LINK_H_ */

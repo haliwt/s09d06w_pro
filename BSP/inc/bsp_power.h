@@ -9,6 +9,12 @@
 #define BSP_INC_BSP_POWER_H_
 #include "main.h"
 
+typedef enum{
+  close,
+  open,
+
+}disp_powert_state;
+
 
 void power_onoff_handler(uint8_t data);
 

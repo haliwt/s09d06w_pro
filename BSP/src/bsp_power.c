@@ -56,9 +56,9 @@ void power_onoff_handler(uint8_t data)
             works_run_two_hours_state();
             set_temperature_value_handler();
 			set_timer_timing_value_handler();
-			if(g_wifi.wifi_led_fast_blink_flag==1){
+			
 			 wifi_led_fast_blink();
-			}
+			
         break;
 
 	  case power_off:
@@ -145,7 +145,10 @@ void power_on_run_handler(void)
 	   }
 	   key_referen_init();
 	   wifi_decoder_refer_init();
-
+	   if(g_disp.g_second_disp_flag == 1){
+	   	  SendData_Set_Command(CMD_POWER,open);
+          Update_DHT11_ToDisplayBoard_Value();
+	   }
 	   
        
 	   g_pro.gTimer_two_hours_counter = 0;
@@ -154,6 +157,8 @@ void power_on_run_handler(void)
 	 break;
 
 	 case 1:
+
+	 
 
 	 if(g_pro.g_disp_timer_or_temp_flag == timer_time_mode && read_wifi_temperature_value()==0){
 		// 如果计时器超过阈值，切换显示模式
@@ -210,15 +215,28 @@ void power_on_run_handler(void)
 
              wifi_led_slowly_blink();
        	}
-	    else if(g_wifi.gwifi_link_net_state_flag ==1){
+	    else if(g_wifi.gwifi_link_net_state_flag ==1 || g_disp.g_second_disp_flag == 1){
 		
 		    LED_WIFI_ON() ; 
-			if(g_wifi.gTimer_update_dht11_data > 7){
+			if(g_wifi.gTimer_update_dht11_data > 7 && (g_wifi.gwifi_link_net_state_flag ==1 || g_wifi.gwifi_link_net_state_flag ==1)){
 			   g_wifi.gTimer_update_dht11_data=0;
-		       Update_Dht11_Totencent_Value()  ;
 
+			   if(g_wifi.gwifi_link_net_state_flag ==1){
+		           Update_Dht11_Totencent_Value()  ;
+				   
+			   	}
 
-            }
+            
+				if(g_disp.g_second_disp_flag == 1){
+                      if(g_wifi.gwifi_link_net_state_flag ==1){
+							sendData_Real_TimeHum(g_pro.g_humidity_value, g_pro.g_temperature_value);
+					  }
+					  else{
+	                     Update_DHT11_ToDisplayBoard_Value();
+					  }
+
+				}
+		    }
 		}
 
 	   gl_run.process_on_step =3;
@@ -257,7 +275,7 @@ void power_off_run_handler(void)
 
    case 0:
    	  gl_run.process_on_step =0;
-
+   g_disp.g_second_disp_flag=1;
    	  power_off_led();
       TM1639_Display_ON_OFF(0);
 	  g_key.key_long_power_flag  = 0;
@@ -276,8 +294,12 @@ void power_off_run_handler(void)
            
 	  }
 	  if(g_disp.g_second_disp_flag ==1){
-          SendWifiData_To_Cmd(0x31,0x0); //smart phone is power off
-		  osDelay(5);//HAL_Delay(5);
+
+	  
+	   	  SendData_Set_Command(CMD_POWER,close);
+         
+	
+         
 
        }
 

@@ -217,20 +217,21 @@ uint8_t read_dht11_temperature_value(void)
 {
 	 
 	  dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+	 
      return dht11_data.temperature;
 }
 
 
 
-void Update_DHT11_Value(void)
+void Update_DHT11_ToDisplayBoard_Value(void)
 {
     
-     DISABLE_INT();
+    
 	 dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-     ENABLE_INT();
+    
 	
 
-	//sendData_Real_TimeHum(run_t.gDht11_humidity,run_t.gDht11_temperature);
+	sendData_Real_TimeHum(dht11_data.humidity,dht11_data.temperature);
 	
     
 }
@@ -244,6 +245,8 @@ void Update_Dht11_Totencent_Value(void)
     dht11_read_data(&dht11_data.temperature, &dht11_data.humidity);
 
 	//Dht11_Read_TempHumidity_Handler(&DHT11);
+	 g_pro.g_temperature_value = dht11_data.temperature;
+	 g_pro.g_humidity_value= dht11_data.humidity;
 
 	MqttData_Publis_ReadTempHum(dht11_data.temperature,dht11_data.humidity);
     osDelay(100);//HAL_Delay(100);

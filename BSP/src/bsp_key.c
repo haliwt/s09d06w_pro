@@ -72,7 +72,8 @@ void sys_write_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx, uint8_t stat
  */
 uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx)
 {
-    if (p_gpiox->IDR & pinx)
+   #if 0
+	if (p_gpiox->IDR & pinx)
     {
         return 1;   /* pinx的状态为1 */
     }
@@ -80,6 +81,8 @@ uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx)
     {
         return 0;   /* pinx的状态为0 */
     }
+   #endif 
+	 return (p_gpiox->IDR & pinx) ? 1 : 0;
 }
 
 
@@ -288,7 +291,7 @@ void set_temperature_value_handler(void)
              }
           
         }
-		else if(key_set_temperature_flag==0){
+		else if(key_set_temperature_flag==0){ //don't set temperature value 
 
              check_time++;
              if(check_time > 150){ //50~=1s ,3s

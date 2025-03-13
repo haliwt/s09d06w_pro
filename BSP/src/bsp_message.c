@@ -6,6 +6,7 @@
  */
 #include "bsp.h"
 
+static void answerk_cmd(uint8_t *point);
 
 /**********************************************************************
     *
@@ -33,8 +34,8 @@ uint8_t bcc_check(const unsigned char *data, int len)
 **********************************************************************/
 void receive_data_fromm_display(uint8_t *pdata)
 {
-  #if 0
-   if(pdata[1] == 0x01){
+  
+   if(pdata[1] == 0x02){ //the second display board DEVICE_ID 
 
     switch(pdata[2]){
 
@@ -46,44 +47,19 @@ void receive_data_fromm_display(uint8_t *pdata)
      case 0x01: //表示开机指令
 
         if(pdata[3] == 0x01){ //open
-          
+          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07
+          buzzer_sound();
+		  g_disp.g_second_disp_flag = 1;
+		  g_pro.gpower_on = power_on;
            
-       
-            #if 0
-            gpro_t.gpower_on = power_on;
-            gctl_t.gModel=1;
-    	    gctl_t.gFan = 1;
-    		dry_open_flag=1;//gctl_t.gDry = 1;
-         
-    		//gctl_t.gPlasma =1;       //"杀菌"
-    		plasma_open_flag =1;
-    		ultrasonic_open_flag=1;//gctl_t.gUlransonic = 1; // "驱虫"
-    	    gctl_t.gTimer_fan_run_one_minute=0;
-            gpro_t.process_run_step=0;     //WT.EDIT 2025.01.11
-            fan_run_fun();//SetLevel_Fan_PWMA(10); //WT.EDIT 2024.12.24
-            PTC_SetHigh(); // the moment open ptc  //WT.EDIT 2025.01.11
-            SendWifiData_Answer_Cmd(0x01,0x01);
-            buzzer_sound();//buzzer_sound_fun();
-
-            #endif 
            
-            
-
         }
         else if(pdata[3] == 0x0){ //close 
+          SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
+          buzzer_sound();
+		  g_disp.g_second_disp_flag = 1;
+		  g_pro.gpower_on = power_off;
            
-           do{
-		   	#if 0
-              power_off_action_fun();
-              powerOffTunrOff_flag=1;
-              gpro_t.gpower_on = power_off;
-              SendWifiData_Answer_Cmd(0x01,0x02); //power off .
-              buzzer_sound();
-			  #endif 
-              
-
-           }while(0);
-
 
         }
 
@@ -92,93 +68,130 @@ void receive_data_fromm_display(uint8_t *pdata)
      case 0x02: //PTC打开关闭指令
 
      if(pdata[3] == 0x01){
+	 	if(g_pro.gpower_on == power_on){
+		  SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
           buzzer_sound();
-         dry_open_flag=1;//gctl_t.gDry = 1;
-       
+          g_pro.gDry = 1;
+		   LED_DRY_ON();
+		  //manual close flag :
+		  g_pro.gclose_ptc_flag = 0;
+		  if(g_pro.gworks_normal_two_hours==0){
+		      DRY_OPEN();
+		  }
 
-      if(gpro_t.stopTwoHours_flag==0){
-           PTC_SetHigh();
-          if(wifi_link_net_state()==1){
+	 	 
+         if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x01);
-	  	      osDelay(100);//HAL_Delay(350);
-           }
+	  	      osDelay(50);//HAL_Delay(350);
+          }
        
        }
        }
        else if(pdata[3] == 0x0){
+	   	 if(g_pro.gpower_on == power_on){
+		  SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
           buzzer_sound();
-          dry_open_flag=0;//gctl_t.gDry =0;
-        
-         PTC_SetLow();
-         if(wifi_link_net_state()==1){
+          g_pro.gDry =0;
+		  LED_DRY_OFF();
+          DRY_CLOSE();
+		  //manual close flag :
+           g_pro.gclose_ptc_flag = 1;
+            
+         if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x0);
-	  	      osDelay(100);//HAL_Delay(350);
+	  	      osDelay(50);//HAL_Delay(350);
           }
-
+	   	 }
        }
-
+    
      break;
 
      case 0x03: //PLASMA 打开关闭指令
 
         if(pdata[3] == 0x01){
-           
+       if(g_pro.gpower_on == power_on){
+	   	  
             buzzer_sound();
+			g_pro.gPlasma = 1;
+		    LED_PLASMA_ON();
+		    if(g_pro.gworks_normal_two_hours==0){
+                PLASMA_OPEN();
+		   }
+		if(g_wifi.gwifi_link_net_state_flag==1){
+           MqttData_Publish_SetPlasma(1);
+		       osDelay(50);//HAL_Delay(350);
+          }
            
-           //gctl_t.gPlasma = 1;
-           plasma_open_flag=1;
-          
-           PLASMA_SetHigh();
+        }
         }
         else if(pdata[3] == 0x0){
-           buzzer_sound();
+        if(g_pro.gpower_on == power_on){ 
+            buzzer_sound();
+			g_pro.gPlasma = 0;
+		    LED_PLASMA_OFF();
+		     PLASMA_CLOSE();
+		   
+		    if(g_wifi.gwifi_link_net_state_flag==1){
+              MqttData_Publish_SetPlasma(0);
+		       osDelay(50);//HAL_Delay(350);
+            }
            
-         // gctl_t.gPlasma = 0;
-           plasma_open_flag=0;
-        
-          PLASMA_SetLow();
-
         }
-
-
-     break;
+        }   
+      break;
 
 
       case 0x04: //ultrasonic  打开关闭指令
 
         if(pdata[3] == 0x01){  //open 
-          
-           ultrasonic_open_flag=1;//gctl_t.gUlransonic =1;
-
-        }
+          if(g_pro.gpower_on == power_on){ 
+            buzzer_sound();
+			g_pro.gMouse = 1;
+		    LED_MOUSE_ON();
+		    if(g_pro.gworks_normal_two_hours==0){
+                mouse_open();
+		   }
+		if(g_wifi.gwifi_link_net_state_flag==1){
+           MqttData_Publish_SetUltrasonic(1);
+		       osDelay(50);//HAL_Delay(350);
+          }
+           
+          }
+       }
         else if(pdata[3] == 0x0){ //close 
+		 if(g_pro.gpower_on == power_on){ 
+					buzzer_sound();
+					g_pro.gMouse = 0;
+					LED_MOUSE_OFF();
+					mouse_close();
 
-          ultrasonic_open_flag=0; //gctl_t.gUlransonic = 0;
+          
+		 if(g_wifi.gwifi_link_net_state_flag==1){
+				MqttData_Publish_SetUltrasonic(0);
+			    osDelay(50);//HAL_Delay(350);
+			}
 
         }
-
+       }
+    
 
      break;
 
       case 0x05: // link wifi command
 
        if(pdata[3] == 0x01){  // link wifi 
-         //  buzzer_sound();
-         
-          gpro_t.link_net_step =0;
-	      net_t.wifi_link_net_success=0;
-          gpro_t.wifi_led_fast_blink_flag =1;
-          gctl_t.wifi_config_net_lable=wifi_set_restor;
-		  wifi_t.runCommand_order_lable= wifi_link_tencent_cloud;//2 
+        if(g_pro.gpower_on == power_on){ 
+		  SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
+          buzzer_sound();
 		  
-          gctl_t.gTimer_linkTencentCounter=0; //total times is 120s
-          SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
-
-        }
-        else if(pdata[3] == 0x0){ //don't link wifi 
-
-        }
-
+        
+	      g_wifi.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
+	      g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
+		  g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
+        
+         }
+        
+       	}
 
      break;
 
@@ -186,17 +199,10 @@ void receive_data_fromm_display(uint8_t *pdata)
 
         if(pdata[3] == 0x01){  //buzzer sound 
 
-         do{
-            buzzer_sound();
-             pdata[2] =0xff;
-          }while(0);
-           
-
+          buzzer_sound();
         }
         else if(pdata[3] == 0x0){ // don't buzzer sound .
-
-
-
+        
         }
 
 
@@ -207,16 +213,13 @@ void receive_data_fromm_display(uint8_t *pdata)
       
        if(pdata[3] == 0x01){  //buzzer sound 
 
-           do{
-            SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.01.07
-            buzzer_sound();
-            
-            pdata[2] =0xff;
+          if(g_pro.gpower_on == power_on){  
+          SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.01.07
+          buzzer_sound();
 
-            }while(0);
-           
- 
-        }
+          }
+            
+       }
         else if(pdata[3] == 0x0){ // don't buzzer sound .
  
  
@@ -227,18 +230,37 @@ void receive_data_fromm_display(uint8_t *pdata)
      break;
 
 
-      case 0x1A: //温度数据
+      case 0x1A: //read 温度数据
 
-        if(pdata[3] == 0x0F){ //数据
+       if(pdata[3] == 0x0F){ //数据
+       
+	     
 
-           gctl_t.set_temperature_value = pdata[5] ;
-           if(wifi_link_net_state()==1){
-             MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-		     osDelay(20);//HAL_Delay(350);
-            }
+          
 
-        }
+	   }
       break;
+
+	  case 0x2A : //display board set temperture value .
+
+        if(pdata[4] == 0x01){  //no buzzer sound, 
+             
+             if(g_pro.gpower_on == power_on){ 
+
+			    g_wifi.g_wifi_set_temp_flag=1;
+			    g_pro.gTimer_input_set_temp_timer= 0;
+			    g_pro.gclose_ptc_flag=0;
+
+  				g_pro.gset_temperture_value = pdata[5];
+				g_wifi.wifi_set_temperature_value = pdata[5];
+				 if(g_wifi.gwifi_link_net_state_flag==1){
+			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
+		           osDelay(50);//HAL_Delay(350);
+				 }
+             }
+        }
+
+	  break;
 
       case 0x1B: //湿度数据
 
@@ -252,7 +274,6 @@ void receive_data_fromm_display(uint8_t *pdata)
 
         if(pdata[3] == 0x0F){ //数据
 
-          
 
 
         }
@@ -268,110 +289,82 @@ void receive_data_fromm_display(uint8_t *pdata)
         }
       break;
 
-     case 0x22: //PTC打开关闭指令,没有蜂鸣器声音。
+     case 0x22: //PTC打开关闭指令,温度对比后的指令
 
       if(pdata[3] == 0x01){
         
+        if(g_pro.gpower_on == power_on){
+        
+          g_pro.gDry = 1;
+		  //manual close flag :
+		  // g_pro.gclose_ptc_flag = 0;
+		  if(g_pro.gworks_normal_two_hours==0){
+		     //LED_DRY_ON();
+		  }
 
-         dry_open_flag=1;//gctl_t.gDry = 1;
-   
-        if(gpro_t.stopTwoHours_flag ==0){
-              PTC_SetHigh();
-             if(wifi_link_net_state()==1){
-                  MqttData_Publish_SetPtc(0x01);
-    	  	      osDelay(100);//HAL_Delay(350);
-               }
+	 	 
+         if(g_wifi.gwifi_link_net_state_flag==1){
+              MqttData_Publish_SetPtc(0x01);
+	  	      osDelay(50);//HAL_Delay(350);
           }
-          
+       
+       }
       }
       else if(pdata[3] == 0x0){
-        
-         dry_open_flag=0;//gctl_t.gDry =0;
-        
-      if(gpro_t.stopTwoHours_flag ==0){
-        PTC_SetLow();
-          if(wifi_link_net_state()==1){
+         if(g_pro.gpower_on == power_on){
+         
+          g_pro.gDry =0;
+		  //LED_DRY_OFF();
+          //DRY_CLOSE();
+		  //manual close flag : 
+          // g_pro.gclose_ptc_flag = 1;
+            
+         if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x0);
-	  	      osDelay(100);//HAL_Delay(350);
-           }
-
-       }
+	  	      osDelay(50);//HAL_Delay(350);
+          }
+	   	 }
+       
       }
 
      break;
 
-     case 0x27:
+     case 0x27: //smart phone set AI mode
 
-      if(pdata[3] == 0x02){
+      if(pdata[3] == 0x02){ //don't AI
        
-         gctl_t.gModel=2;
-         //SendWifiData_Answer_Cmd(0x27,0x02); //don't AI mode,   WT.EDIT 2025.01.06
-          if(wifi_link_net_state()==1){
-            MqttData_Publish_SetState(2);
-	        osDelay(100);//HAL_Delay(350);
-           }
         
           
        }
        else if(pdata[3] == 0x01){ //AI mode 
        
-         gctl_t.gModel=1;
-        // SendWifiData_Answer_Cmd(0x27,0x01); //AI mode,WT.EDIT 2025.01.06
-         if(wifi_link_net_state()==1){
-             MqttData_Publish_SetState(1);
-    	     osDelay(100);//HAL_Delay(350);
-         }
+      
        }
 
 
      break;
 
      case 0xFF: //copy send cmd acknowlege
-     //power on or power off 
-        if(pdata[3]==0x31){ //smart phone normal :power on
-            if(pdata[4]==1){ //power on
+     
+          answerk_cmd(pdata);
+     break;
 
-                gpro_t.receive_copy_cmd = ack_app_power_on;
-
-            }
-            else if(pdata[4]==2){ //smart phone normal :power off
-               gpro_t.receive_copy_cmd = ack_app_power_off;
-            }
-
-        }
-        else if(pdata[3]==0x21){ //smart phone of App timer power on .
-
-            if(pdata[4]==1){ //power on
-
-                gpro_t.receive_copy_cmd = ack_app_timer_power_on;
-
-            }
-            else if(pdata[4]==2){ //smart phone normal :power off
-               gpro_t.receive_copy_cmd = ack_app_power_off;
-            }
-
-
-        }
-        else if(pdata[3] == 0x05){ //link wifi command copy command..
-
-        if(pdata[4]==1){
-
-            gpro_t.receive_copy_cmd = ack_wifi_on;
-
-        }
-
-
-        }
-
-      break;
+	 default:
+	 break;
         
      
      }
 
    }
-  #endif 
+ 
 }
 
 
+static void answerk_cmd(uint8_t *point)
+{
+
+
+
+}
 
 

@@ -14,7 +14,6 @@ uint8_t first_connect_wifi_flag;
 
 static void link_wifi_net_handler(void);
 
-
 /********************************************************************************
 	*
 	*Functin Name:void link_wifi_to_tencent_handler(uint8_t data)
@@ -29,6 +28,7 @@ void link_wifi_to_tencent_handler(uint8_t data)
         if(g_wifi.gTimer_wifi_led_fast_blink  > 119){
 
            g_wifi.gTimer_wifi_led_fast_blink =0;//
+           g_wifi.wifi_led_fast_blink_flag=0;
            
            if(g_wifi.gwifi_link_net_state_flag==0){
 
@@ -42,6 +42,7 @@ void link_wifi_to_tencent_handler(uint8_t data)
     }
     else{
 	   
+	   wifi_led_fast_blink();
 
        link_wifi_net_handler();
     }
@@ -81,11 +82,12 @@ static void link_wifi_net_handler(void)
 
             case 0: //one step
 
-          
+                wifi_led_fast_blink();
         		at_send_data("AT+RST\r\n", strlen("AT+RST\r\n"));
         		//HAL_Delay(1000);
+        		wifi_led_fast_blink();
         		osDelay(1000);
-
+               
                  g_wifi.link_net_step = 1;
 
             break;
@@ -95,7 +97,9 @@ static void link_wifi_net_handler(void)
                 HAL_UART_Transmit(&huart2, "AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"), 5000);
 
                  randomName[0]=HAL_GetUIDw0();
+			     wifi_led_fast_blink();
                  g_wifi.gTimer_link_net_timer_time = 0;
+				 
 
                 g_wifi.link_net_step = 2;
 
@@ -109,6 +113,7 @@ static void link_wifi_net_handler(void)
             			
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
+						wifi_led_fast_blink();
             	  		osDelay(1000);//HAL_Delay(1000);
                     
                        g_wifi.link_net_step = 3;
@@ -126,6 +131,7 @@ static void link_wifi_net_handler(void)
            // WIFI_IC_ENABLE();
 			
             HAL_UART_Transmit(&huart2, "AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"), 0xffff); //动态注册 
+            wifi_led_fast_blink();
 	  		osDelay(1000);//HAL_Delay(1000);
         
           
@@ -141,7 +147,9 @@ static void link_wifi_net_handler(void)
                    g_wifi.linking_tencent_cloud_doing =1;
                  g_wifi.soft_ap_config_flag =1; //WE.EIDT 
 	            sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",randomName[0]);
+				wifi_led_fast_blink();
                  at_send_data(device_massage, strlen((const char *)device_massage));
+				 wifi_led_fast_blink();
 
 
                    g_wifi.link_net_step = 5;
@@ -159,10 +167,11 @@ static void link_wifi_net_handler(void)
 
              g_wifi.soft_ap_config_success=0;
             HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//开始连接
-            //HAL_Delay(1000);
+            osDelay(1000);
             // HAL_Delay(1000);
             ///HAL_Delay(1000);
-
+            wifi_led_fast_blink();
+			wifi_led_fast_blink();
             g_wifi.link_net_step = 6;
             g_wifi.gTimer_link_net_timer_time = 0;
             }
@@ -171,6 +180,7 @@ static void link_wifi_net_handler(void)
             break;
 
             case 6:
+				wifi_led_fast_blink();
 
             if( g_wifi.gTimer_link_net_timer_time  > 6){
 
@@ -201,19 +211,19 @@ static void link_wifi_net_handler(void)
 
             case 7:
 
-              
+              wifi_led_fast_blink();
               g_wifi.gTimer_get_data_from_tencent_data=0;
 			 
 				 MqttData_Publish_SetOpen(0x01);
-		         HAL_Delay(20);
-		        // osDelay(100);
+		         
+		         osDelay(50);
 		         Publish_Data_ToTencent_Initial_Data();
-				 HAL_Delay(20);
-                  //osDelay(100);
+				
+                  osDelay(50);
 
 				Subscriber_Data_FromCloud_Handler();
-				HAL_Delay(20);
-	             //osDelay(100);
+				
+	             osDelay(50);
 			 g_wifi.wifi_led_fast_blink_flag=0;
 
 			 g_wifi.link_net_step = 0xfe;
