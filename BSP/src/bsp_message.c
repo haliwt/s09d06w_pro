@@ -8,6 +8,8 @@
 
 static void answerk_cmd(uint8_t *point);
 
+uint8_t power_off_test_counter;
+
 /**********************************************************************
     *
     *Function Name:uint8_t bcc_check(const unsigned char *data, int len) 
@@ -26,13 +28,13 @@ uint8_t bcc_check(const unsigned char *data, int len)
 }
 /**********************************************************************
     *
-    *Function Name:void receive_data_fromm_display(uint8_t *pdata,uint8_t len)
+    *Function Name:void receive_data_from_displayboard(uint8_t *pdata,uint8_t len)
     *Function: receive usart touchkey of command 
     *Input Ref:NO
     *Return Ref:NO
     *
 **********************************************************************/
-void receive_data_fromm_display(uint8_t *pdata)
+void receive_data_from_displayboard(uint8_t *pdata)
 {
   
    if(pdata[1] == 0x02){ //the second display board DEVICE_ID 
@@ -54,12 +56,12 @@ void receive_data_fromm_display(uint8_t *pdata)
            
            
         }
-        else if(pdata[3] == 0x0){ //close 
+        else{ //close 
           SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
           buzzer_sound();
 		  g_disp.g_second_disp_flag = 1;
 		  g_pro.gpower_on = power_off;
-           
+          power_off_test_counter++;
 
         }
 

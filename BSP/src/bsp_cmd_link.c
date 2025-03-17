@@ -258,11 +258,11 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 		transOngoingFlag=0; //UART Transmit interrupt flag =0 ,RUN
 	}
 
-	if(huart== &huart2){
-
-       usart2_transOngoingFlag =0;
-
-	}
+//	if(huart== &huart2){
+//
+//       usart2_transOngoingFlag =0;
+//
+//	}
 
 }
 

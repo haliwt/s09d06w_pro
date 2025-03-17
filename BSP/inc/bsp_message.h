@@ -28,7 +28,7 @@
 
 uint8_t bcc_check(const unsigned char *data, int len) ;
 
-void receive_data_fromm_display(uint8_t *pdata);
+void receive_data_from_displayboard(uint8_t *pdata);
 
 
 

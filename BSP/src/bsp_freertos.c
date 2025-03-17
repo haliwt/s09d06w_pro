@@ -124,7 +124,7 @@ static void vTaskDecoderPro(void *pvParameters)
 
 				if(check_code == gl_tMsg.bcc_check_code ){
 
-				 receive_data_fromm_display(gl_tMsg.usData);
+				 receive_data_from_displayboard(gl_tMsg.usData);
 				}
 			}
 
