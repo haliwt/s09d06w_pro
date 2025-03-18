@@ -107,20 +107,19 @@ static void vTaskDecoderPro(void *pvParameters)
     while(1)
     {
 
+	xResult = xTaskNotifyWait(0x00000000,
+								  0xFFFFFFFF,     /* Reset the notification value to 0 on */
+								&ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
+								portMAX_DELAY);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
 
-//	xResult = xTaskNotifyWait(0x00000000,
-//								  0xFFFFFFFF,     /* Reset the notification value to 0 on */
-//								&ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-//								portMAX_DELAY);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
-//
-//		if( xResult == pdPASS )
-//		{
-//			/* 接收到消息，检测那个位被按下 */
-//
-//			if((ulValue & DECODER_BIT_9) != 0){
-              if(gl_tMsg.disp_rx_cmd_done_flag ==1){
+	if( xResult == pdPASS )
+	{
+			/* 接收到消息，检测那个位被按下 */
+
+		if((ulValue & DECODER_BIT_9) != 0){
+			
+       if(gl_tMsg.disp_rx_cmd_done_flag ==1){
 				
-
 				check_code =  bcc_check(gl_tMsg.usData,gl_tMsg.ulid);
 
 				if(check_code == gl_tMsg.bcc_check_code ){
@@ -128,27 +127,28 @@ static void vTaskDecoderPro(void *pvParameters)
 				 receive_data_from_displayboard(gl_tMsg.usData);
 				 
 				}
-				gl_tMsg.disp_rx_cmd_done_flag = 0;
+				
+			gl_tMsg.disp_rx_cmd_done_flag = 0;
 			}
-            osDelay(50);
+   
 		}
 
+     }
+    	}
+}
 
-    }
-
-// }
 /**********************************************************************************************************
 *	Function Name: static void vTaskRunPro(void *pvParameters)
 *	Function:
 *	Input Ref: pvParameters 是在创建该任务时传��的形参
 *	Return Ref:
-*   priority: 2  (数值越小优先级越低，这个跟uCOS相反)
+*   priority: 1  (数值越小优先级越低，这个跟uCOS相反)
 **********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters)
 {
-  while(1)
-    {
-      if(g_key.key_power_flag == KEY_POWER_ID){
+  while(1){
+    
+     if(g_key.key_power_flag == KEY_POWER_ID){
 
 		        power_on_key_counter ++ ;
             
@@ -321,7 +321,7 @@ void AppTaskCreate (void)
                  "vTaskStart",   		/* 任务各1�7    */
                  128,            		/* 任务栈大小，单位word，也就是4字节 */
                  NULL,           		/* 任务参数  */
-                 3,              		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
+                 2,              		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskStart );   /* 任务句柄  */
 }
 
@@ -383,13 +383,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                 gl_tMsg.bcc_check_code=inputBuf[0];
 
 
-//                xTaskNotifyFromISR(xHandleTaskDecoderPro,  /* 目标任务 */
-//                                    DECODER_BIT_9,     /* 设置目标任务事件标志位bit0  */
-//                                    eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */
-//                                    &xHigherPriorityTaskWoken);
-//
-//                /* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
-//                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+                xTaskNotifyFromISR(xHandleTaskDecoderPro,  /* 目标任务 */
+                                    DECODER_BIT_9,     /* 设置目标任务事件标志位bit0  */
+                                    eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */
+                                    &xHigherPriorityTaskWoken);
+
+                /* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 
               }
 
