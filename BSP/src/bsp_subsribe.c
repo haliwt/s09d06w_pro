@@ -9,25 +9,7 @@
 void smartphone_timer_power_handler(void)
 {
 
- switch(g_wifi.app_timer_power_on_flag){
-		case 0:
-          power_on_init_ref();
-       	
-		  MqttData_Publish_SetOpen(1);  
-		  osDelay(50);//HAL_Delay(200);
-		  Update_DHT11_ToDisplayBoard_Value();
-		  osDelay(50);//HAL_Delay(200);
-	        
-		
-		   MqttData_Publish_Update_Data();
-		   osDelay(100);//HAL_Delay(200);
-
-         
-  
-	break;
-
-	case 1: //app timer timing power of 
-	       g_pro.gAI =1;
+         g_pro.gAI =1;
 
           Parse_Json_phone_timer_power_on_ref();
 		  
@@ -81,10 +63,10 @@ void smartphone_timer_power_handler(void)
 		   g_wifi.set_wind_speed_value = 100;
 
 			
-	     break;
-		}
-			
+	  
 }
+			
+
 
 void SetPowerOff_ForDoing(void)
 {

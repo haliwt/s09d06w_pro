@@ -46,11 +46,11 @@ void power_onoff_handler(uint8_t data)
 	   case power_on :
 
 		// 检查LED硬件测试
-		Check_LED_Hardware_Test();
+	//	Check_LED_Hardware_Test();
 
         // 只有在不进行LED测试时才执行正常的power_on处理
-        if(!Is_LED_Testing())
-        {
+       // if(!Is_LED_Testing())
+      //  {
             power_on_run_handler();
             link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
             works_run_two_hours_state();
@@ -71,12 +71,12 @@ void power_onoff_handler(uint8_t data)
 
 	   break;
   
-         }
-	  }
+      }
+	}
 
 
 
-}
+
 
 
 /**********************************************************************
@@ -135,12 +135,28 @@ void power_on_run_handler(void)
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
       
-       if(g_wifi.gwifi_link_net_state_flag == wifi_no_link){
+       if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0){
 	      
 		   power_on_init_ref();
+
        }
-	   else{ //has wifi net initial
-		   smartphone_timer_power_handler();
+	   else if(g_wifi.gwifi_link_net_state_flag == wifi_link_success &&  g_wifi.app_timer_power_on_flag == 0){ //has wifi net initial
+		  
+		   power_on_init_ref();
+		   power_on_init_ref();
+       	
+		  MqttData_Publish_SetOpen(1);  
+		  osDelay(50);//HAL_Delay(200);
+		  Update_DHT11_ToDisplayBoard_Value();
+		  osDelay(50);//HAL_Delay(200);
+	        
+		
+		   MqttData_Publish_Update_Data();
+		   osDelay(100);//HAL_Delay(200);
+	   }
+	   else{
+
+		  smartphone_timer_power_handler();
 
 	   }
 	   key_referen_init();
