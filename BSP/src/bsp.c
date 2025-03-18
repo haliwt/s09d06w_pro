@@ -25,6 +25,7 @@ void bsp_init(void)
 {
  delay_init(64); 
  dht11_init();
+ key_referen_init();
 
 
 }

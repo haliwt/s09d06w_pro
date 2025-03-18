@@ -72,11 +72,12 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      if(pdata[3] == 0x01){
 	 	if(g_pro.gpower_on == power_on){
-		  SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
+		 
           buzzer_sound();
           g_pro.gDry = 1;
 		   LED_DRY_ON();
 		  //manual close flag :
+		  // SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
 		  g_pro.g_manual_shutoff_dry_flag = 0;
 		  if(g_pro.gworks_normal_two_hours==0){
 		      DRY_OPEN();
@@ -92,13 +93,14 @@ void receive_data_from_displayboard(uint8_t *pdata)
        }
        else if(pdata[3] == 0x0){
 	   	 if(g_pro.gpower_on == power_on){
-		  SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
+		   g_pro.g_manual_shutoff_dry_flag = 1;
           buzzer_sound();
           g_pro.gDry =0;
-		  LED_DRY_OFF();
+		 LED_DRY_OFF();
           DRY_CLOSE();
+		  //SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
 		  //manual close flag :
-          g_pro.g_manual_shutoff_dry_flag = 1;
+         
             
          if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x0);
@@ -212,7 +214,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 	 case 0x10: //has two display board.
 
-	    if( if(pdata[3] == 0x01){ 
+	   if(pdata[3] == 0x01){ 
            g_disp.g_second_disp_flag = 1; 
 
 	    }
@@ -221,7 +223,30 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 
 		}
+     break;
 
+	 case 0x11: //the second display board set temperature value 
+
+			
+			if(pdata[4] == 0x01){  //no buzzer sound, 
+             
+             if(g_pro.gpower_on == power_on){ 
+
+                g_pro.g_manual_shutoff_dry_flag =0;
+				       g_wifi.g_wifi_set_temp_flag=1;
+                
+			    g_pro.gTimer_input_set_temp_timer= 0;
+			   
+
+  				g_pro.gset_temperture_value = pdata[5];
+				g_wifi.wifi_set_temperature_value = pdata[5];
+				 if(g_wifi.gwifi_link_net_state_flag==1){
+			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
+		           osDelay(50);//HAL_Delay(350);
+				 }
+             }
+        }
+	     
 
 
 	 break;
@@ -259,27 +284,6 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	   }
       break;
 
-	  case 0x2A : //display board set temperture value .
-
-        if(pdata[4] == 0x01){  //no buzzer sound, 
-             
-             if(g_pro.gpower_on == power_on){ 
-
-			    g_wifi.g_wifi_set_temp_flag=1;
-			    g_pro.gTimer_input_set_temp_timer= 0;
-			    g_pro.g_manual_shutoff_dry_flag=0;
-
-  				g_pro.gset_temperture_value = pdata[5];
-				g_wifi.wifi_set_temperature_value = pdata[5];
-				 if(g_wifi.gwifi_link_net_state_flag==1){
-			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
-		           osDelay(50);//HAL_Delay(350);
-				 }
-             }
-        }
-
-	  break;
-
       case 0x1B: //湿度数据
 
         if(pdata[3] == 0x0F){ //数据
@@ -307,18 +311,17 @@ void receive_data_from_displayboard(uint8_t *pdata)
         }
       break;
 
-     case 0x22: //PTC打开关闭指令,温度对比后的指令
+     case 0x22: //PTC打开关闭指令,buzzer don't sound,温度对比后的指令
 
       if(pdata[3] == 0x01){
         
         if(g_pro.gpower_on == power_on){
         
-          g_pro.gDry = 1;
-		
-		  if(g_pro.gworks_normal_two_hours==0){
+     	if(g_pro.gworks_normal_two_hours==0 && g_pro.g_manual_shutoff_dry_flag ==0){
+		  	 g_pro.gDry = 1;
 		     LED_DRY_ON();
 			 DRY_OPEN();
-		  }
+		  
 
 	 	 
          if(g_wifi.gwifi_link_net_state_flag==1){
@@ -326,10 +329,12 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	  	      osDelay(20);//HAL_Delay(350);
           }
        
-       }
-      }
+       
+				}
+			}
+		  }
       else if(pdata[3] == 0x0){
-         if(g_pro.gpower_on == power_on){
+        if(g_pro.gpower_on == power_on){
          
             g_pro.gDry =0;
 		    LED_DRY_OFF();
@@ -341,10 +346,10 @@ void receive_data_from_displayboard(uint8_t *pdata)
               MqttData_Publish_SetPtc(0x0);
 	  	      osDelay(20);//HAL_Delay(350);
           }
-	   	 }
+	   	 
        
       }
-
+		}
      break;
 
      case 0x27: //smart phone set AI mode
