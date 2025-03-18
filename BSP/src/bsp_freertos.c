@@ -100,7 +100,7 @@ void freeRTOS_Handler(void)
 static void vTaskDecoderPro(void *pvParameters)
 {
     BaseType_t xResult;
-	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(500); /* 设置最大等待时间为30ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置最大等待时间为30ms */
 	uint32_t ulValue;
 
 
@@ -110,16 +110,17 @@ static void vTaskDecoderPro(void *pvParameters)
 	xResult = xTaskNotifyWait(0x00000000,
 								  0xFFFFFFFF,     /* Reset the notification value to 0 on */
 								&ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-								portMAX_DELAY);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
+								xMaxBlockTime);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
 
 	if( xResult == pdPASS )
 	{
 			/* 接收到消息，检测那个位被按下 */
 
 		if((ulValue & DECODER_BIT_9) != 0){
+  
 			
-       if(gl_tMsg.disp_rx_cmd_done_flag ==1){
-				
+      
+				gl_tMsg.disp_rx_cmd_done_flag = 0;
 				check_code =  bcc_check(gl_tMsg.usData,gl_tMsg.ulid);
 
 				if(check_code == gl_tMsg.bcc_check_code ){
@@ -128,13 +129,11 @@ static void vTaskDecoderPro(void *pvParameters)
 				 
 				}
 				
-			gl_tMsg.disp_rx_cmd_done_flag = 0;
-			}
-   
+			
+			
+       }
 		}
-
-     }
-    	}
+   }
 }
 
 /**********************************************************************************************************
@@ -214,10 +213,7 @@ static void vTaskRunPro(void *pvParameters)
 				key_up_fun();
 		}
 			
-		
-
-	
-         power_onoff_handler(g_pro.gpower_on);
+		power_onoff_handler(g_pro.gpower_on);
 	 
        if(g_wifi.wifi_led_fast_blink_flag==0 ){
          wifi_communication_tnecent_handler();//
@@ -345,7 +341,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     if(huart==&huart1) // Motor Board receive data (filter)
 	{
 
-    //   DISABLE_INT();
+     //  DISABLE_INT();
        switch(state)
 		{
 		case 0:  //#0
@@ -382,7 +378,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
                 gl_tMsg.bcc_check_code=inputBuf[0];
 
-
+                #if 1
                 xTaskNotifyFromISR(xHandleTaskDecoderPro,  /* 目标任务 */
                                     DECODER_BIT_9,     /* 设置目标任务事件标志位bit0  */
                                     eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */
@@ -390,6 +386,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
                 /* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
                 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+				#endif 
 
               }
 
@@ -407,7 +404,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 		}
 
-       //   ENABLE_INT();
+        //  ENABLE_INT();
     __HAL_UART_CLEAR_OREFLAG(&huart1);
 	HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 

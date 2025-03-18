@@ -73,12 +73,6 @@ void power_onoff_handler(uint8_t data)
   
       }
 	}
-
-
-
-
-
-
 /**********************************************************************
 	*
 	*Functin Name: void power_on_init_ref(void)
@@ -89,7 +83,7 @@ void power_onoff_handler(uint8_t data)
 **********************************************************************/
 void power_on_init_ref(void)
 {
-	       g_pro.gAI =1;
+	     g_pro.gAI =1;
 		   g_pro.gDry =1;
 		   g_pro.gPlasma =1;
 		   g_pro.gMouse = 1;
@@ -101,9 +95,9 @@ void power_on_init_ref(void)
 		   g_pro.key_gtime_timer_define_flag=normal_time_mode; //
 		   g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
 		
-		   
+		 
 		   // function led is turn on 
-            power_on_led();
+        power_on_led();
 		   //display smg led turn on
 		    Fan_Full_Speed();
 		    DHT11_Display_Data(0); //display temperature value 
@@ -112,7 +106,7 @@ void power_on_init_ref(void)
 			mouse_open();
 		   
            //timer 
-           g_pro.gclose_ptc_flag = 0;
+           g_pro.g_manual_shutoff_dry_flag = 0;
 		   g_pro.gTimer_disp_time_second= 0;
 	       g_pro.gTimer_timer_time_second=0;
 		   g_wifi.set_wind_speed_value = 100;
@@ -129,11 +123,15 @@ void power_on_init_ref(void)
 **********************************************************************/
 void power_on_run_handler(void)
 {
-    switch(gl_run.process_on_step){
+
+   static uint8_t send_data_disp_counter;
+
+	switch(gl_run.process_on_step){
 
 
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
+		 
       
        if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0){
 	      
@@ -152,7 +150,7 @@ void power_on_run_handler(void)
 	        
 		
 		   MqttData_Publish_Update_Data();
-		   osDelay(100);//HAL_Delay(200);
+		   osDelay(50);//HAL_Delay(200);
 	   }
 	   else{
 
@@ -163,16 +161,27 @@ void power_on_run_handler(void)
 	   wifi_decoder_refer_init();
 	   if(g_disp.g_second_disp_flag == 1){
 	   	  SendData_Set_Command(CMD_POWER,open);
-          Update_DHT11_ToDisplayBoard_Value();
+         send_data_disp_counter=200;
 	   }
 	   
        
 	   g_pro.gTimer_two_hours_counter = 0;
+	   g_pro.g_fan_switch_gears_flag++;
 	   gl_run.process_off_step=0;
 	   gl_run.process_on_step =1;
 	 break;
 
 	 case 1:
+
+
+	  if(g_disp.g_second_disp_flag == 1){
+          send_data_disp_counter++;
+	    if(send_data_disp_counter > 150){ //3s
+	        send_data_disp_counter=0;
+         Update_DHT11_ToDisplayBoard_Value();
+
+	   }
+	  }
 
 	 
 
@@ -318,7 +327,7 @@ void power_off_run_handler(void)
          
 
        }
-
+	   g_pro.g_fan_switch_gears_flag++;
       gl_run.process_off_step = 1;
 	  
 	  

@@ -605,10 +605,15 @@ void Json_Parse_Command_Fun(void)
 	  if(g_pro.gpower_on ==power_on){
 	    if(g_pro.ptc_warning ==0){
          MqttData_Publish_SetPtc(0x01);
-	  	 osDelay(100);//HAL_Delay(350);
+	  	 osDelay(50);//HAL_Delay(350);
 		 g_pro.gDry = 1;
-		 DRY_OPEN();
-         g_pro.gclose_ptc_flag = 0;
+
+		 if(g_pro.gworks_normal_two_hours==0){
+		 	LED_DRY_ON();
+		    DRY_OPEN();
+
+		 }
+	     g_pro.g_manual_shutoff_dry_flag = 0;
          if(g_disp.g_second_disp_flag == 1){
 			 SendWifiData_To_Cmd(0x02,0x01);
 			 osDelay(5);//HAL_Delay(5);
@@ -628,11 +633,13 @@ void Json_Parse_Command_Fun(void)
          MqttData_Publish_SetPtc(0);
 		 osDelay(100);//HAL_Delay(350);
 		 g_pro.gDry = 0;
+		 LED_DRY_OFF();
 	     DRY_CLOSE();
-		 g_pro.gclose_ptc_flag = 1;
+		 
+		 g_pro.g_manual_shutoff_dry_flag = 1;
 		  if(g_disp.g_second_disp_flag == 1){
-		 SendWifiData_To_Cmd(0x02,0x0);
-         osDelay(5);//HAL_Delay(5);
+			 SendWifiData_To_Cmd(0x02,0x0);
+	         osDelay(5);//HAL_Delay(5);
 		  }
          }
 		buzzer_temp_on=0;
@@ -758,7 +765,7 @@ void Json_Parse_Command_Fun(void)
 			
 			g_wifi.g_wifi_set_temp_flag=1;
 			g_pro.gTimer_input_set_temp_timer= 0;
-			g_pro.gclose_ptc_flag=0;
+			g_pro.g_manual_shutoff_dry_flag=0;
 			
 			
             MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
@@ -945,7 +952,7 @@ void Parse_Json_phone_timer_power_on_ref(void)
 
 uint8_t  read_wifi_dry_value(void)
 {
-    return g_pro.gclose_ptc_flag;
+    return g_pro.g_manual_shutoff_dry_flag;
 
 }
 

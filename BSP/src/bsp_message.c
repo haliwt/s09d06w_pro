@@ -77,7 +77,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
           g_pro.gDry = 1;
 		   LED_DRY_ON();
 		  //manual close flag :
-		  g_pro.gclose_ptc_flag = 0;
+		  g_pro.g_manual_shutoff_dry_flag = 0;
 		  if(g_pro.gworks_normal_two_hours==0){
 		      DRY_OPEN();
 		  }
@@ -98,7 +98,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  LED_DRY_OFF();
           DRY_CLOSE();
 		  //manual close flag :
-           g_pro.gclose_ptc_flag = 1;
+          g_pro.g_manual_shutoff_dry_flag = 1;
             
          if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x0);
@@ -167,9 +167,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 					g_pro.gMouse = 0;
 					LED_MOUSE_OFF();
 					mouse_close();
-
-          
-		 if(g_wifi.gwifi_link_net_state_flag==1){
+          if(g_wifi.gwifi_link_net_state_flag==1){
 				MqttData_Publish_SetUltrasonic(0);
 			    osDelay(50);//HAL_Delay(350);
 			}
@@ -210,6 +208,23 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 
      break;
+
+
+	 case 0x10: //has two display board.
+
+	    if( if(pdata[3] == 0x01){ 
+           g_disp.g_second_disp_flag = 1; 
+
+	    }
+		else{
+		   g_disp.g_second_disp_flag = 0; 
+
+
+		}
+
+
+
+	 break;
 
      case 0x16 : //buzzer sound command with answer .
 
@@ -252,7 +267,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 			    g_wifi.g_wifi_set_temp_flag=1;
 			    g_pro.gTimer_input_set_temp_timer= 0;
-			    g_pro.gclose_ptc_flag=0;
+			    g_pro.g_manual_shutoff_dry_flag=0;
 
   				g_pro.gset_temperture_value = pdata[5];
 				g_wifi.wifi_set_temperature_value = pdata[5];
@@ -299,16 +314,16 @@ void receive_data_from_displayboard(uint8_t *pdata)
         if(g_pro.gpower_on == power_on){
         
           g_pro.gDry = 1;
-		  //manual close flag :
-		  // g_pro.gclose_ptc_flag = 0;
+		
 		  if(g_pro.gworks_normal_two_hours==0){
-		     //LED_DRY_ON();
+		     LED_DRY_ON();
+			 DRY_OPEN();
 		  }
 
 	 	 
          if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x01);
-	  	      osDelay(50);//HAL_Delay(350);
+	  	      osDelay(20);//HAL_Delay(350);
           }
        
        }
@@ -316,15 +331,15 @@ void receive_data_from_displayboard(uint8_t *pdata)
       else if(pdata[3] == 0x0){
          if(g_pro.gpower_on == power_on){
          
-          g_pro.gDry =0;
-		  //LED_DRY_OFF();
-          //DRY_CLOSE();
-		  //manual close flag : 
-          // g_pro.gclose_ptc_flag = 1;
+            g_pro.gDry =0;
+		    LED_DRY_OFF();
+          	DRY_CLOSE();
+		  
+		
             
          if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x0);
-	  	      osDelay(50);//HAL_Delay(350);
+	  	      osDelay(20);//HAL_Delay(350);
           }
 	   	 }
        

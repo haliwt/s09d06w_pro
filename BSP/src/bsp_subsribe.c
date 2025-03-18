@@ -57,7 +57,7 @@ void smartphone_timer_power_handler(void)
 	
 		   property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
 		   osDelay(200);//HAL_Delay(200);
-           g_pro.gclose_ptc_flag = 0;
+           g_pro.g_manual_shutoff_dry_flag = 0;
 		   g_pro.gTimer_disp_time_second= 0;
 	       g_pro.gTimer_timer_time_second=0;
 		   g_wifi.set_wind_speed_value = 100;
