@@ -162,7 +162,7 @@ void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
         outputBuf[0]=0x5A; //head : main board 0x5A
         outputBuf[1]=0x10; //main board device No: 0x10
         outputBuf[2]=cmd; //command type: fan speed of value 
-        outputBuf[3]=data; // 0x0F : is data ,don't command order.
+        outputBuf[3]=data; // 0x0F : is data ,if don;t is 0x0F ->command order.
         outputBuf[4]= 0x0; // don't data ,onlay is command order,recieve data is 1byte .
        
         outputBuf[5] = 0xFE; //frame is end of byte.

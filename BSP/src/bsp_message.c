@@ -49,19 +49,20 @@ void receive_data_from_displayboard(uint8_t *pdata)
      case 0x01: //表示开机指令
 
         if(pdata[3] == 0x01){ //open
-          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07
+          
           buzzer_sound();
 		  g_disp.g_second_disp_flag = 1;
 		  g_pro.gpower_on = power_on;
-           
+          SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
            
         }
         else{ //close 
-          SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
+         
           buzzer_sound();
 		  g_disp.g_second_disp_flag = 1;
 		  g_pro.gpower_on = power_off;
           power_off_test_counter++;
+		 SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
 
         }
 
