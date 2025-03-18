@@ -209,13 +209,15 @@ void set_temperature_value_handler(void)
         key_set_temperature_flag=2;
 		if(read_wifi_temperature_value()==1){
 			g_wifi.g_wifi_set_temp_flag=0;
-		
+		    SendWifiData_To_Data(0x11,gl_set_temperture_value);
 		}
 		else{
 			g_pro.gset_temperture_value = gl_set_temperture_value;
+			SendWifiData_To_Data(0x11,gl_set_temperture_value);
 		}
 		set_first_close_dry_flag=0;
 		g_pro.g_manual_shutoff_dry_flag =0;
+		
 
         current_temperature = readTemperature();
         if (current_temperature > g_pro.gset_temperture_value){
