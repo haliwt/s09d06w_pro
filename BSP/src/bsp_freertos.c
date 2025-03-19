@@ -100,7 +100,7 @@ void freeRTOS_Handler(void)
 static void vTaskDecoderPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置最大等待时间为30ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(9000); /* 设置最大等待时间为30ms */
 	uint32_t ulValue;
 
 
@@ -155,8 +155,8 @@ static void vTaskRunPro(void *pvParameters)
 				g_key.key_power_flag=0;
 				power_on_key_counter=0;
 			    buzzer_sound();
-                if(g_pro.gpower_on == power_off){
-					g_pro.gpower_on = power_on;
+        if(g_pro.gpower_on == power_off){
+					  g_pro.gpower_on = power_on;
 				
 				}
 				else{
@@ -193,7 +193,7 @@ static void vTaskRunPro(void *pvParameters)
                     g_key.key_mode_flag = KEY_NULL;
 					mode_key_counter=200;
 					buzzer_sound();
-                    g_pro.key_gtime_timer_define_flag = timer_time_mode;
+          g_pro.key_gtime_timer_define_flag = timer_time_mode;
 					g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
 					g_pro.gTimer_switch_set_timer_times = 0;
 
@@ -228,8 +228,7 @@ static void vTaskRunPro(void *pvParameters)
 	  
     }
 	  
-	
- }
+}
 
 
 /**********************************************************************************************************
@@ -347,6 +346,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		case 0:  //#0
 			if(inputBuf[0] == 0xA5){  // 0xA5 -- second display board ID
                gl_tMsg.rx_data_counter=0;
+				         gl_tMsg.ulid=0;
                gl_tMsg.usData[gl_tMsg.rx_data_counter] = inputBuf[0];
 				state=1; //=1
 

@@ -19,7 +19,7 @@ uint8_t rx_wifi_data[7];
 
 
 static uint8_t transferSize;
-static uint8_t outputBuf[MAX_BUFFER_SIZE];
+uint8_t outputBuf[MAX_BUFFER_SIZE];
 
 volatile uint8_t transOngoingFlag;
 volatile uint8_t usart2_transOngoingFlag;

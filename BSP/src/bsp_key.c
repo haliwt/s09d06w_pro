@@ -32,7 +32,7 @@ KEY_PROCESS_TYPEDEF  g_key;
 
 uint8_t gl_set_temperture_value;
 uint8_t temperature_init_value ;
-uint8_t  key_set_temperature_flag;
+//uint8_t  key_set_temperature_flag;
 uint16_t check_time;
 int8_t  gl_timer_minutes_value;
 uint8_t define_timer_mode;
@@ -58,7 +58,7 @@ uint8_t readTemperature(void);
 
 void key_referen_init(void)
 {
-   key_set_temperature_flag=0;
+  g_pro.key_set_temperature_flag=0;
   gl_timer_minutes_value =0;
   define_timer_mode=0;
   key_up_down_pressed_flag=0;
@@ -128,7 +128,7 @@ static void adjust_temperature(int8_t delta)
     }
     g_pro.g_manual_shutoff_dry_flag = 0;
     key_up_down_pressed_flag = 1;
-    key_set_temperature_flag = 1;
+    g_pro.key_set_temperature_flag = 1;
     TM1639_Display_Temperature(gl_set_temperture_value);
     g_pro.gTimer_input_set_temp_times = 0;
     g_pro.gTimer_switch_temp_hum = 0;
@@ -204,9 +204,9 @@ void set_temperature_value_handler(void)
 	
     uint8_t current_temperature;
  
-   if((key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 3)
+   if((g_pro.key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 3)
 	{
-        key_set_temperature_flag=2;
+        g_pro.key_set_temperature_flag=2;
 		if(read_wifi_temperature_value()==1){
 			g_wifi.g_wifi_set_temp_flag=0;
 		    SendWifiData_To_Data(0x11,gl_set_temperture_value);
@@ -239,12 +239,12 @@ void set_temperature_value_handler(void)
     else{
 
 	
-        if(key_set_temperature_flag==2  && read_wifi_temperature_value()==0){
+        if(g_pro.key_set_temperature_flag==2  && read_wifi_temperature_value()==0){
 		    handleTemperatureControl();
            
           
         }
-			else if(key_set_temperature_flag==0){ //don't set temperature value 
+			else if(g_pro.key_set_temperature_flag==0){ //don't set temperature value 
 				handleDefaultTemperatureControl();
 		 
 			}
