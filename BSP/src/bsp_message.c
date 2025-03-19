@@ -321,8 +321,27 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	 case 0x2A: //表示日期： 年，月，日
 	 
 			if(pdata[3] == 0x0F){ //数据
-	              buzzer_sound();
-				 temperature_value = pdata[4] ;
+	         
+			    if(g_pro.gpower_on == power_on){ 
+				buzzer_sound();
+               g_pro.g_manual_shutoff_dry_flag =0;
+                g_pro.key_set_temperature_flag=1;
+				
+				      
+                
+			    g_pro.gTimer_input_set_temp_timer= 0;
+			   
+
+  				g_pro.gset_temperture_value = pdata[4];
+				g_wifi.wifi_set_temperature_value = pdata[4];
+				g_pro.gTimer_switch_temp_hum = 0;
+
+				TM1639_Display_Temperature(pdata[5]);
+				 if(g_wifi.gwifi_link_net_state_flag==1){
+			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
+		           osDelay(50);//HAL_Delay(350);
+				 }
+             }
 				
 	 
 			}
