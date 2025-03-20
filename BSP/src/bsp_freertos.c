@@ -110,7 +110,7 @@ static void vTaskDecoderPro(void *pvParameters)
 	xResult = xTaskNotifyWait(0x00000000,
 								  0xFFFFFFFF,     /* Reset the notification value to 0 on */
 								&ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-								xMaxBlockTime);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
+								portMAX_DELAY);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
 
 	if( xResult == pdPASS )
 	{
@@ -316,7 +316,7 @@ void AppTaskCreate (void)
                  "vTaskStart",   		/* 任务各1�7    */
                  128,            		/* 任务栈大小，单位word，也就是4字节 */
                  NULL,           		/* 任务参数  */
-                 2,              		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
+                 3,              		/* 任务优先纄1�7 数��越小优先级越低，这个跟uCOS相反 */
                  &xHandleTaskStart );   /* 任务句柄  */
 }
 

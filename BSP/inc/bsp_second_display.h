@@ -36,6 +36,7 @@ typedef enum{
 typedef struct{
 
    uint8_t g_second_disp_flag ;
+   uint8_t g_set_temp_value_flag;
 
 
 }secnod_disp_typedef;
