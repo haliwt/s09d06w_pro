@@ -336,7 +336,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 				g_wifi.wifi_set_temperature_value = pdata[4];
 				g_pro.gTimer_switch_temp_hum = 0;
 
-				TM1639_Display_Temperature(pdata[5]);
+				
+				DHT11_Display_Data(0);
 				 if(g_wifi.gwifi_link_net_state_flag==1){
 			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
 		           osDelay(50);//HAL_Delay(350);

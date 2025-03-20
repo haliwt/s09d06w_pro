@@ -204,7 +204,7 @@ void set_temperature_value_handler(void)
 	
     uint8_t current_temperature;
  
-   if((g_pro.key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 3)
+   if((g_pro.key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 4)
 	{
         g_pro.key_set_temperature_flag=2;
 		if(read_wifi_temperature_value()==1){
@@ -244,7 +244,7 @@ void set_temperature_value_handler(void)
            
           
         }
-			else if(g_pro.key_set_temperature_flag==0){ //don't set temperature value 
+		else if(g_pro.key_set_temperature_flag==0){ //don't set temperature value 
 				handleDefaultTemperatureControl();
 		 
 			}

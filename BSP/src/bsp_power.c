@@ -190,11 +190,9 @@ void power_on_run_handler(void)
 	
       if(g_pro.key_set_temperature_flag==1){
 
-         LED_TEMP_SINGLE_ON();
-		LED_HUM_SINGLE_OFF();
 
 		DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
-
+       
 
 
 
