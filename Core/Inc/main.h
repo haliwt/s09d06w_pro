@@ -58,13 +58,8 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 
-#define LED_TEMP_SYMBOL_Pin 					GPIO_PIN_8
-#define LED_TEMP_SYMBOL_GPIO_Port 				GPIOB
 
-
-#define LED_HUM_SYMBOL_Pin 					GPIO_PIN_13
-#define LED_HUM_SYMBOL_GPIO_Port 			GPIOC
-
+//LED GPIO
 #define LED_POWER_Pin 						GPIO_PIN_14
 #define LED_POWER_GPIO_Port 				GPIOC
 
@@ -142,6 +137,15 @@ void Error_Handler(void);
 //DHT11 GPIO
 #define TEMP_SENSOR_Pin 					GPIO_PIN_4
 #define TEMP_SENSOR_GPIO_Port 				GPIOA
+
+//TEMPERATURE ICON AND HUMIDITY ICON
+
+#define LED_TEMP_SYMBOL_Pin 					GPIO_PIN_8
+#define LED_TEMP_SYMBOL_GPIO_Port 				GPIOB
+
+#define LED_HUM_SYMBOL_Pin 					GPIO_PIN_13
+#define LED_HUM_SYMBOL_GPIO_Port 			GPIOC
+
 
 
 /* USER CODE BEGIN Private defines */

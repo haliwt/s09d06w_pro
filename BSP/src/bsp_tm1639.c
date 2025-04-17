@@ -27,7 +27,7 @@ static const uint8_t TM1639_Char_Table[] = {
 #define TM1639_CHAR_C TM1639_Char_Table[2]
 #define TM1639_CHAR_RH TM1639_Char_Table[3]
 
-#define TM1639_DOT 0x80 // 小数点段码
+#define TM1639_DOT 0x08 // 小数点段码,from low position start
 
 /**
  * @brief  TM1639写入一个字节
@@ -238,20 +238,9 @@ void TM1639_Display_Decimal(uint16_t num, uint8_t dot_pos)
  */
 void TM1639_Display_Temperature(int8_t temp)
 {
-	#if 0
-	if(temp < 0)
-    {
-        // 显示负号
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 0x40);
-        // 显示个位数带小数点
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, 
-            TM1639_Number_Table[-temp] | TM1639_DOT);
-        // 显示度数符号
-        TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
-    }
-    else if(temp < 100)
-    {
-   #endif 
+
+        TEMP_ICON_ON();
+		HUMIDITY_ICON_OFF();
         // 显示十位
        if(temp >= 10){
 	   	     
@@ -266,10 +255,10 @@ void TM1639_Display_Temperature(int8_t temp)
        TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[temp % 10] );
         
         // 显示度数符号
-       TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
-
+       //TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
+        //显示小数点“。” 显示数字“0”
+      TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_Number_Table[0] | TM1639_DOT);
 }
-
 /**
  * @brief  显示湿度值
  * @param  humi: 湿度值（0-99%RH）
@@ -278,7 +267,9 @@ void TM1639_Display_Temperature(int8_t temp)
 void TM1639_Display_Humidity(uint8_t humi)
 {
     if(humi > 99) humi = 99;
-    
+
+	HUMIDITY_ICON_ON();
+    TEMP_ICON_OFF() ;
     // 显示十位
     if(humi >= 10){
         TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, 
@@ -291,7 +282,9 @@ void TM1639_Display_Humidity(uint8_t humi)
     TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[humi % 10]);
     
     // 显示RH符号
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_RH);
+    //TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_RH);
+    //显示小数点‘。’ + 数字 “0”
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_Number_Table[0] | TM1639_DOT );
 }
 
 /**
@@ -347,5 +340,23 @@ void TM1639_All_Off(void)
     TM1639_Display_ON_OFF(TM1639_DISPLAY_OFF);
 }
 
+/**
+ * @brief  显示小数点
+ * @param  num: 
+ * @retval None
+ */
+
+void disp_decimal_point(uint8_t idata)
+{
+    if(idata==1){ //DIG3 ->SEG_H
+       
 
 
+	}
+	else{ //disp two deicmal point 
+
+
+	}
+
+
+}

@@ -77,6 +77,7 @@ void TM1639_Write_Digit_Full(uint8_t addr_h, uint8_t addr_l, uint8_t data); // �
 void TM1639_All_Off(void);                  // 关闭所有显示（包括数码管和LED）
 
 void TM1639_Write_Half_Digit(uint8_t addr,uint8_t data);
+void disp_decimal_point(uint8_t idata);
 
 
 #endif /* __BSP_TM1639_H_ */

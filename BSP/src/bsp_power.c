@@ -79,7 +79,7 @@ void power_onoff_handler(uint8_t data)
 **********************************************************************/
 void power_on_init_ref(void)
 {
-	     g_pro.gAI =1;
+	       g_pro.gAI =1;
 		   g_pro.gDry =1;
 		   g_pro.gPlasma =1;
 		   g_pro.gMouse = 1;
@@ -93,7 +93,7 @@ void power_on_init_ref(void)
 		
 		 
 		   // function led is turn on 
-        power_on_led();
+            power_on_led();
 		   //display smg led turn on
 		    Fan_Full_Speed();
 		    DHT11_Display_Data(0); //display temperature value 
@@ -137,7 +137,7 @@ void power_on_run_handler(void)
 	   else if(g_wifi.gwifi_link_net_state_flag == wifi_link_success &&  g_wifi.app_timer_power_on_flag == 0){ //has wifi net initial
 		  
 		   power_on_init_ref();
-		   power_on_init_ref();
+		
        	
 		  MqttData_Publish_SetOpen(1);  
 		  osDelay(50);//HAL_Delay(200);
@@ -308,7 +308,7 @@ void power_off_run_handler(void)
 
    case 0:
    	  gl_run.process_on_step =0;
-   g_disp.g_second_disp_flag=1;
+   	  g_disp.g_second_disp_flag=1;
    	  power_off_led();
       TM1639_Display_ON_OFF(0);
 	  g_key.key_long_power_flag  = 0;

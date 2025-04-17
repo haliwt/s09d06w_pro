@@ -24,6 +24,8 @@ void power_on_led(void)
     LED_HUM_SINGLE_ON();
     LED_MOUSE_ON();
     LED_FUN_ON();
+	//TEMP_ICON_ON() ;
+	//HUMIDITY_ICON_ON();
 }
 /**************************************************************************
  * power_off_led(void)
@@ -42,6 +44,8 @@ void power_off_led(void)
     LED_PLASMA_OFF();
     LED_HUM_SINGLE_OFF();
     LED_MOUSE_OFF();
+	TEMP_ICON_OFF() ;
+	HUMIDITY_ICON_OFF();
 }
 /************************************************************************
  * LED_Power_Breathing(void)
