@@ -30,6 +30,8 @@ typedef enum {
 //DisplayMode disp_temp_hum = DISPLAY_TEMP;  // 默认显示温度
 uint8_t disp_temp_hum;
 
+
+
 /**********************************************************************
 	*
 	*Functin Name: void power_on_init_ref(void)
@@ -365,6 +367,7 @@ void power_off_run_handler(void)
 	 }
 
      mainboard_close_all_fun();
+	
 
      LED_Power_Breathing();
 
