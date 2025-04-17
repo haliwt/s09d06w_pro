@@ -607,6 +607,7 @@ void Json_Parse_Command_Fun(void)
          MqttData_Publish_SetPtc(0x01);
 	  	 osDelay(50);//HAL_Delay(350);
 		 g_pro.gDry = 1;
+		 LED_DRY_ON();
 
 		 if(g_pro.gworks_normal_two_hours==0){
 		 	LED_DRY_ON();
@@ -672,8 +673,8 @@ void Json_Parse_Command_Fun(void)
 		      g_pro.gPlasma =1 ;
               PLASMA_OPEN();
               if(g_disp.g_second_disp_flag == 1){
-			SendWifiData_To_Cmd(0x03,0x01);
-	  	   osDelay(5);//HAL_Delay(5);
+					SendWifiData_To_Cmd(0x03,0x01);
+	  	   			osDelay(5);//HAL_Delay(5);
               }
 	  	}
   

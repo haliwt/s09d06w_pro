@@ -181,7 +181,7 @@ void works_run_two_hours_state(void)
    
 
      #if TEST_UNIT 
-	 if(g_pro.gTimer_two_hours_counter  > 2){ //10
+	 if(g_pro.gTimer_two_hours_counter  > 120){ //2minutes x 60s = 120s
            
              check_time=0;
              gctl_t.gTimer_fan_adc_times =0; //ADC be detected must be run 60s,after be detected ADC
@@ -192,7 +192,7 @@ void works_run_two_hours_state(void)
       }
      #else 
 
-      if(g_pro.gTimer_two_hours_counter  > 10){ //10
+      if(g_pro.gTimer_two_hours_counter  > 600){ //10*60s=600s
          g_pro.gTimer_two_hours_counter =0;  
 		 
          g_pro.gworks_normal_two_hours=0;
@@ -233,7 +233,7 @@ void works_run_two_hours_state(void)
 
 	    mainboard_fun_handler();
         
-      break;
+    break;
    }
 
 }

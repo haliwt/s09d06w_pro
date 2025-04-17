@@ -175,7 +175,8 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
   //  DHT11_Status status;
     
     // 读取DHT11数据
-    status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+    //status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+    dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
 	osDelay(200);
 //    if(status != DHT11_OK)
 //    {

@@ -31,7 +31,9 @@
 #include "bsp_disp.h"
 #include "bsp_message.h"
 #include "bsp_cmd_link.h"
+#include "bsp_led_tape.h"
 #include "interrupt_manager.h"
+
 //wifi function
 #include "bsp_wifi.h"
 #include "bsp_esp8266.h"
@@ -60,6 +62,9 @@
 
 
 #define  USE_FreeRTOS      1
+  
+#define  TEST_UNIT        0
+
 
 #if USE_FreeRTOS == 1
 	//#include "FreeRTOS.h"

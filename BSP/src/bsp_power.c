@@ -45,19 +45,15 @@ void power_onoff_handler(uint8_t data)
 
 	   case power_on :
 
-		// 检查LED硬件测试
-	//	Check_LED_Hardware_Test();
-
-        // 只有在不进行LED测试时才执行正常的power_on处理
-       // if(!Is_LED_Testing())
-      //  {
-            power_on_run_handler();
-            link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
-            works_run_two_hours_state();
-            set_temperature_value_handler();
-			set_timer_timing_value_handler();
+	
+		power_on_run_handler();
+		link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
 		
-			 wifi_led_fast_blink();
+		set_temperature_value_handler();
+		set_timer_timing_value_handler();
+
+		wifi_led_fast_blink();
+		works_run_two_hours_state();
 			
         break;
 
