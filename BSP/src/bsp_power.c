@@ -239,7 +239,7 @@ void power_on_run_handler(void)
 			
 		 }
 	      }
-		}
+	  }
 	  gl_run.process_on_step =3;
 
 	 break;

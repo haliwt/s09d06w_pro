@@ -118,21 +118,17 @@ static void vTaskDecoderPro(void *pvParameters)
 
 		if((ulValue & DECODER_BIT_9) != 0){
   
-			
-      
-				gl_tMsg.disp_rx_cmd_done_flag = 0;
+			    gl_tMsg.disp_rx_cmd_done_flag = 0;
 				check_code =  bcc_check(gl_tMsg.usData,gl_tMsg.ulid);
 
 				if(check_code == gl_tMsg.bcc_check_code ){
 
 				 receive_data_from_displayboard(gl_tMsg.usData);
 				 
-				}
+			}
 				
-			
-			
-       }
-		}
+		 }
+	 }
    }
 }
 
@@ -147,83 +143,84 @@ static void vTaskRunPro(void *pvParameters)
 {
   while(1){
     
-     if(g_key.key_power_flag == KEY_POWER_ID){
+	if(g_key.key_power_flag == KEY_POWER_ID){
 
-		        power_on_key_counter ++ ;
-            
-		    if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 60 && g_key.key_long_power_flag != KEY_LONG_POWER){
-				g_key.key_power_flag=0;
-				power_on_key_counter=0;
-			    buzzer_sound();
-        if(g_pro.gpower_on == power_off){
-					  g_pro.gpower_on = power_on;
-				
-				}
-				else{
+		power_on_key_counter ++ ;
 
-					g_pro.gpower_on = power_off;
-				}
-		    }
-			else if(KEY_POWER_VALUE() ==KEY_DOWN && g_pro.gpower_on == power_on && (power_on_key_counter  >= 60 && power_on_key_counter < 200)){
-		            g_key.key_power_flag=0;
-				    power_on_key_counter=200;
-			        g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
-			        g_wifi.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
-			        g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
-			        g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
-					buzzer_sound();
-					if(g_disp.g_second_disp_flag ==1){
+		if(KEY_POWER_VALUE() ==KEY_UP && power_on_key_counter < 60 && g_key.key_long_power_flag != KEY_LONG_POWER){
+			g_key.key_power_flag=0;
+			power_on_key_counter=0;
+			buzzer_sound();
+			if(g_pro.gpower_on == power_off){
+				g_pro.gpower_on = power_on;
 
-						SendData_Set_Command(CMD_CONNECT_WIFI,0x01);
-					}
-            }
+			}
+			else{
+
+				g_pro.gpower_on = power_off;
+			}
 		}
-		else if(g_key.key_mode_flag == KEY_MODEL_ID ){ //&& MODEL_KEY_VALUE()==KEY_UP){
+		else if(KEY_POWER_VALUE() ==KEY_DOWN && g_pro.gpower_on == power_on && (power_on_key_counter  >= 60 && power_on_key_counter < 200)){
+			g_key.key_power_flag=0;
+			power_on_key_counter=202;
+			g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
+			g_wifi.gTimer_wifi_led_fast_blink = 0; //time start 120s ->look for wifi information 120s,timer.
+			g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
+			g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
+			buzzer_sound();
+			if(g_disp.g_second_disp_flag ==1){
 
-		        mode_key_counter++ ;
-		        if(KEY_MODE_VALUE() == KEY_UP && mode_key_counter < 60){
-					g_key.key_mode_flag = KEY_NULL;
-					mode_key_counter=0;
-				    g_pro.key_gtime_timer_define_flag = normal_time_mode;
-				    buzzer_sound();
-				    //mode_key_fun();
-		        }
-				else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
-
-                    g_key.key_mode_flag = KEY_NULL;
-					mode_key_counter=200;
-					buzzer_sound();
-          g_pro.key_gtime_timer_define_flag = timer_time_mode;
-					g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
-					g_pro.gTimer_switch_set_timer_times = 0;
-
-				
-				}
+				SendData_Set_Command(CMD_CONNECT_WIFI,0x01);
+				osDelay(5);
+			}
 		}
-		else if(g_key.key_down_flag ==KEY_DOWN_ID){// && DEC_KEY_VALUE()==KEY_UP){
-				g_key.key_down_flag ++;
-				buzzer_sound();
-				
-				key_dwon_fun();
-		}
-		else if(g_key.key_up_flag ==KEY_UP_ID){ // && ADD_KEY_VALUE()==KEY_UP){
-				g_key.key_up_flag ++;
-				buzzer_sound();
-				
-				key_up_fun();
-		}
-			
-		power_onoff_handler(g_pro.gpower_on);
-	 
-       if(g_wifi.wifi_led_fast_blink_flag==0 ){
-         wifi_communication_tnecent_handler();//
-         getBeijingTime_cofirmLinkNetState_handler();
-         wifi_auto_detected_link_state();
-        }
+	}
+	else if(g_key.key_mode_flag == KEY_MODEL_ID ){ //&& MODEL_KEY_VALUE()==KEY_UP){
 
-	   
-       ack_cmd_second_disp_hanlder();
-	   vTaskDelay(20);
+		mode_key_counter++ ;
+		if(KEY_MODE_VALUE() == KEY_UP && mode_key_counter < 60){
+		g_key.key_mode_flag = KEY_NULL;
+		mode_key_counter=0;
+		g_pro.key_gtime_timer_define_flag = normal_time_mode;
+		buzzer_sound();
+		//mode_key_fun();
+		}
+		else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
+
+		g_key.key_mode_flag = KEY_NULL;
+		mode_key_counter=202;
+		buzzer_sound();
+		g_pro.key_gtime_timer_define_flag = timer_time_mode;
+		g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
+		g_pro.gTimer_switch_set_timer_times = 0;
+
+
+		}
+	}
+	else if(g_key.key_down_flag ==KEY_DOWN_ID){// && DEC_KEY_VALUE()==KEY_UP){
+		g_key.key_down_flag ++;
+		buzzer_sound();
+
+		key_dwon_fun();
+	}
+	else if(g_key.key_up_flag ==KEY_UP_ID){ // && ADD_KEY_VALUE()==KEY_UP){
+		g_key.key_up_flag ++;
+		buzzer_sound();
+
+		key_up_fun();
+	}
+
+	power_onoff_handler(g_pro.gpower_on);
+
+	if(g_wifi.wifi_led_fast_blink_flag==0 ){
+		wifi_communication_tnecent_handler();//
+		getBeijingTime_cofirmLinkNetState_handler();
+		wifi_auto_detected_link_state();
+	}
+
+
+	ack_cmd_second_disp_hanlder();
+	vTaskDelay(20);
 
 	  
     }

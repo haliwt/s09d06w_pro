@@ -23,7 +23,7 @@
 #define CMD_BUZZER_ACK				0x16
 #define DATA_READ_TEMP            0x1A //read temperature value
 #define CMD_CONNECT_FLAG         0x1F  //if connect wifi 1-connet wiif is ok .0- don't connect wifi net
-#define DATA_SET_TEMP_VALUE       0x2A
+#define DATA_SET_TEMP_VALUE       0x2A  //phone APP or mainboard or display board set up temperature value 
 
 
 uint8_t bcc_check(const unsigned char *data, int len) ;

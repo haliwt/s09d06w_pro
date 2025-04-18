@@ -63,7 +63,7 @@
 
 #define  USE_FreeRTOS      1
   
-#define  TEST_UNIT        0
+#define  TEST_UNIT        1
 
 
 #if USE_FreeRTOS == 1
@@ -107,7 +107,7 @@ typedef struct _process{
    uint8_t gPlasma;
    uint8_t gAI;
    uint8_t gMouse;
-   uint8_t gworks_normal_two_hours;
+   uint8_t works_two_hours_interval_flag;
    uint8_t g_manual_shutoff_dry_flag;
 
    uint8_t g_humidity_value;

@@ -6,7 +6,8 @@
  */
 #include "bsp.h"
 
-static void answerk_cmd(uint8_t *point);
+static void copy_receive_data(uint8_t cmd,uint8_t data);
+
 
 uint8_t power_off_test_counter;
 uint8_t temperature_value;
@@ -81,7 +82,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  //manual close flag :
 		  // SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
 		  g_pro.g_manual_shutoff_dry_flag = 0;
-		  if(g_pro.gworks_normal_two_hours==0){
+		  if(g_pro.works_two_hours_interval_flag==0){
 		      DRY_OPEN();
 		  }
 
@@ -95,14 +96,15 @@ void receive_data_from_displayboard(uint8_t *pdata)
        }
        else if(pdata[3] == 0x0){
 	   	 if(g_pro.gpower_on == power_on){
-		   g_pro.g_manual_shutoff_dry_flag = 1;
+		  g_pro.g_manual_shutoff_dry_flag = 1;
           buzzer_sound();
           g_pro.gDry =0;
-		 LED_DRY_OFF();
+		  LED_DRY_OFF();
           DRY_CLOSE();
+		  if(g_disp.g_second_disp_flag ==1){
 		  //SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
 		  //manual close flag :
-         
+		  }
             
          if(g_wifi.gwifi_link_net_state_flag==1){
               MqttData_Publish_SetPtc(0x0);
@@ -121,7 +123,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
             buzzer_sound();
 			g_pro.gPlasma = 1;
 		    LED_PLASMA_ON();
-		    if(g_pro.gworks_normal_two_hours==0){
+		    if(g_pro.works_two_hours_interval_flag==0){
                 PLASMA_OPEN();
 		   }
 		if(g_wifi.gwifi_link_net_state_flag==1){
@@ -155,7 +157,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
             buzzer_sound();
 			g_pro.gMouse = 1;
 		    LED_MOUSE_ON();
-		    if(g_pro.gworks_normal_two_hours==0){
+		    if(g_pro.works_two_hours_interval_flag==0){
                 mouse_open();
 		   }
 		if(g_wifi.gwifi_link_net_state_flag==1){
@@ -358,12 +360,11 @@ void receive_data_from_displayboard(uint8_t *pdata)
         if(g_pro.gpower_on == power_on){
 
 		g_pro.g_manual_shutoff_dry_flag=0;
-        
-     	if(g_pro.gworks_normal_two_hours==0){
-		  	 g_pro.gDry = 1;
-		     LED_DRY_ON();
-			 DRY_OPEN();
-		  
+        g_pro.gDry = 1;
+		LED_DRY_ON();
+     	if(g_pro.works_two_hours_interval_flag==0){
+		  	DRY_OPEN();
+     	 }
 
 	 	 
          if(g_wifi.gwifi_link_net_state_flag==1){
@@ -412,8 +413,10 @@ void receive_data_from_displayboard(uint8_t *pdata)
      break;
 
      case 0xFF: //copy send cmd acknowlege
-     
-          answerk_cmd(pdata);
+
+	 copy_receive_data(pdata[3],pdata[4]);
+
+	       
      break;
 
 	 default:
@@ -426,10 +429,79 @@ void receive_data_from_displayboard(uint8_t *pdata)
  
 }
 
-
-static void answerk_cmd(uint8_t *point)
+/********************************************************************
+	*
+	*Function Name: static void copy_receive_data(uint8_t cmd,uint8_t data)
+	*Function: mainboard of key be pressed that the second display board receive
+	*          command and repeat mainboard order and  send to mainboard,
+	*		   then mainboard run command .
+	*Input Ref:NO
+	*R
+	*
+*********************************************************************/
+static void copy_receive_data(uint8_t cmd,uint8_t data)
 {
+     switch(cmd){
 
+       case CMD_POWER:
+
+	        if(data == 1){
+                buzzer_sound();
+			    g_pro.gpower_on = power_on;
+
+			}
+			else{
+               buzzer_sound();
+			   g_pro.gpower_on = power_off;
+
+
+			}
+	 
+
+	   break;
+	  
+
+	   case CMD_PTC :
+	   	if(data == 1){
+
+		   buzzer_sound();
+		   g_pro.gDry=1;
+		   LED_DRY_ON();
+		   if(g_pro.works_two_hours_interval_flag ==0){
+
+               DRY_OPEN();
+              }
+
+		  }
+		  else{
+			  g_pro.gDry=0;
+
+              DRY_OPEN();
+              LED_DRY_ON();
+
+		 }
+
+	   break;
+
+	   case CMD_CONNECT_WIFI:
+	   	if(data == 1){
+			buzzer_sound();
+            g_key.key_long_power_flag =  KEY_LONG_POWER; //wifi led blink fast .
+			g_wifi.gTimer_wifi_led_fast_blink = 0; //time start 120s ->look for wifi information 120s,timer.
+			g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
+			g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
+
+			}
+			else{
+
+
+
+			}
+
+	   break;
+
+
+	 }
 
 
 }

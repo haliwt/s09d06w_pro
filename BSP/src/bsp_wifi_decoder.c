@@ -609,7 +609,7 @@ void Json_Parse_Command_Fun(void)
 		 g_pro.gDry = 1;
 		 LED_DRY_ON();
 
-		 if(g_pro.gworks_normal_two_hours==0){
+		 if(g_pro.works_two_hours_interval_flag==0){
 		 	LED_DRY_ON();
 		    DRY_OPEN();
 

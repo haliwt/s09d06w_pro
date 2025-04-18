@@ -157,11 +157,17 @@ void works_run_two_hours_state(void)
 {
    static uint8_t timer_fan_flag;
 
+   #if TEST_UNIT
+	if(g_pro.gTimer_two_hours_counter > 300 && g_pro.works_two_hours_interval_flag==0){ //five minutes 5x60=300s
 
-   if(g_pro.gTimer_two_hours_counter > 7200 && g_pro.gworks_normal_two_hours==0){ //two hours
+
+   #else 
+    if(g_pro.gTimer_two_hours_counter > 7200 ){ //two hours
+
+   #endif 
 	g_pro.gTimer_two_hours_counter= 0;
 
-    g_pro.gworks_normal_two_hours=1;
+    g_pro.works_two_hours_interval_flag=1;
 
 	PLASMA_CLOSE(); //
 	DRY_CLOSE();
@@ -174,20 +180,22 @@ void works_run_two_hours_state(void)
    
    }
 
-   switch(g_pro.gworks_normal_two_hours){
+   switch(g_pro.works_two_hours_interval_flag){
 
     case 1:
 
    
 
      #if TEST_UNIT 
-	 if(g_pro.gTimer_two_hours_counter  > 120){ //2minutes x 60s = 120s
+	 if(g_pro.gTimer_two_hours_counter  > 600){ //2minutes x 60s = 120s
            
-             check_time=0;
-             gctl_t.gTimer_fan_adc_times =0; //ADC be detected must be run 60s,after be detected ADC
-		     stopHours_flag=0;
-             gpro_t.stopTwoHours_flag=0;
-             mainboard_special_fun();
+         g_pro.gTimer_two_hours_counter =0;  
+		 
+         g_pro.works_two_hours_interval_flag=0;
+    
+     
+
+         mainboard_special_fun();
             
       }
      #else 
@@ -195,7 +203,7 @@ void works_run_two_hours_state(void)
       if(g_pro.gTimer_two_hours_counter  > 600){ //10*60s=600s
          g_pro.gTimer_two_hours_counter =0;  
 		 
-         g_pro.gworks_normal_two_hours=0;
+         g_pro.works_two_hours_interval_flag=0;
     
      
 

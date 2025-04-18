@@ -34,8 +34,7 @@
 #define LED_HUM_SINGLE_ON()      do{LED_HUM_SYMBOL_GPIO_Port->BSRR |=(uint32_t)LED_HUM_SYMBOL_Pin;}while(0)//sys_write_gpio_pin_value(LED_HUM_SYMBOL_GPIO_Port, LED_HUM_SYMBOL_Pin, GPIO_PIN_RESET)
 #define LED_HUM_SINGLE_OFF()     do{LED_HUM_SYMBOL_GPIO_Port->BSRR |=LED_HUM_SYMBOL_Pin;}while(0)//sys_write_gpio_pin_value(LED_HUM_SYMBOL_GPIO_Port, LED_HUM_SYMBOL_Pin, GPIO_PIN_SET)
 
-#define LED_DRY_ON()             sys_write_gpio_pin_value(LED_DRY_GPIO_Port, LED_DRY_Pin, GPIO_PIN_RESET)
-#define LED_DRY_OFF()            sys_write_gpio_pin_value(LED_DRY_GPIO_Port, LED_DRY_Pin, GPIO_PIN_SET)
+
 
 #define LED_PLASMA_ON()          sys_write_gpio_pin_value(LED_PLASMA_GPIO_Port, LED_PLASMA_Pin, GPIO_PIN_RESET)
 #define LED_PLASMA_OFF()         sys_write_gpio_pin_value(LED_PLASMA_GPIO_Port, LED_PLASMA_Pin, GPIO_PIN_SET)
