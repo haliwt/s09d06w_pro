@@ -656,10 +656,11 @@ void Json_Parse_Command_Fun(void)
 			osDelay(100);//HAL_Delay(350);
 			g_pro.gPlasma =0 ;
 			PLASMA_CLOSE();
-			  if(g_disp.g_second_disp_flag == 1){
+			LED_PLASMA_OFF();
+			if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x03,0x0);
 	  	    osDelay(5);//HAL_Delay(5);
-			  }
+			 }
 	  	}
       
 		buzzer_temp_on=0;
@@ -671,7 +672,7 @@ void Json_Parse_Command_Fun(void)
             MqttData_Publish_SetPlasma(1);
 			osDelay(100);//HAL_Delay(350);
 		      g_pro.gPlasma =1 ;
-              PLASMA_OPEN();
+              LED_PLASMA_ON();
               if(g_disp.g_second_disp_flag == 1){
 					SendWifiData_To_Cmd(0x03,0x01);
 	  	   			osDelay(5);//HAL_Delay(5);
@@ -688,7 +689,8 @@ void Json_Parse_Command_Fun(void)
             MqttData_Publish_SetUltrasonic(0);
 			osDelay(100);	//HAL_Delay(350);
 			g_pro.gMouse = 0;
-			
+			mouse_close();
+			LED_MOUSE_OFF();
            
 			  if(g_disp.g_second_disp_flag == 1){
 			SendWifiData_To_Cmd(0x04,0x0);
@@ -699,13 +701,14 @@ void Json_Parse_Command_Fun(void)
 	   gl_msg.response_wifi_signal_label=0xff;
 	  	break;
 
-	  case SONIC_ON_ITEM://ultransonic off
+	  case SONIC_ON_ITEM://ultransonic oN
 	    if(g_pro.gpower_on ==power_on){
 		
              MqttData_Publish_SetUltrasonic(1);
 			 osDelay(100);	//HAL_Delay(350);
 
-               g_pro.gMouse = 1;
+             g_pro.gMouse = 1;
+			 LED_MOUSE_ON();
 
         
 		    if(g_disp.g_second_disp_flag == 1){
@@ -722,11 +725,14 @@ void Json_Parse_Command_Fun(void)
 	  if(g_pro.gpower_on ==power_on){
 
       
-            g_pro.gAI=2;
+             g_pro.gAI=2;
+			 LED_AI_OFF();
              MqttData_Publish_SetState(2);
     	     osDelay(100);//HAL_Delay(350);
-             
-    	    SendWifiData_To_Cmd(0x27,0x02);
+            if(g_disp.g_second_disp_flag ==1){
+    	        SendWifiData_To_Cmd(0x27,0x02);
+				osDelay(5);
+            }
 
            
         }
@@ -739,6 +745,7 @@ void Json_Parse_Command_Fun(void)
 	  	 if(g_pro.gpower_on ==power_on){
 		
               g_pro.gAI=1;
+			  LED_AI_ON();
               MqttData_Publish_SetState(1);
     		  osDelay(100);//HAL_Delay(350);
             

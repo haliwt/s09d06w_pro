@@ -476,8 +476,8 @@ static void copy_receive_data(uint8_t cmd,uint8_t data)
 		  else{
 			  g_pro.gDry=0;
 
-              DRY_OPEN();
-              LED_DRY_ON();
+              DRY_CLOSE();
+              LED_DRY_OFF();
 
 		 }
 
@@ -491,12 +491,12 @@ static void copy_receive_data(uint8_t cmd,uint8_t data)
 			g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
 			g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
 
-			}
-			else{
+		}
+		else{
 
 
 
-			}
+		}
 
 	   break;
 

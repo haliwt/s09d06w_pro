@@ -100,33 +100,41 @@ static void mainboard_special_fun(void)
    if(g_pro.gAI == 1){
 
        LED_AI_ON();
+	   LED_AI_ON();
    	
    	}
     else{
        LED_AI_OFF();
+	   LED_AI_OFF();
 
 	}
 
 	if(g_pro.gDry == 1){
 		DRY_OPEN();
+		LED_DRY_ON();
 	}
 	else{
 		DRY_CLOSE();
+		LED_DRY_OFF();
 
 	}
 
 	if(g_pro.gMouse == 1){
 		mouse_open();
+		LED_MOUSE_ON();
 	}
 	else{
 		mouse_close();
+		LED_MOUSE_OFF();
 	}
 
 	if(g_pro.gPlasma == 1){
 		PLASMA_OPEN();
+		LED_PLASMA_ON();
 	}
 	else{
 		PLASMA_CLOSE();
+		LED_PLASMA_OFF();
 	}
 	
    Fan_RunSpeed_Fun();
