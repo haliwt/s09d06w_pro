@@ -92,9 +92,10 @@ typedef enum{
 	normal_time_mode,
 	timer_time_mode,
 	beijing_time_mode,
-	input_temp_time_mode,
 	disp_timer_mode,
 	disp_temp_hum_mode,
+	input_set_timer_mode //WT.EDIT 2025.04.23
+	
 }time_state;
 
 typedef struct _process{

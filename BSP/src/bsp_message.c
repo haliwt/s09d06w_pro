@@ -375,7 +375,6 @@ void receive_data_from_displayboard(uint8_t *pdata)
        
 				}
 			}
-		  }
       else if(pdata[3] == 0x0){
         if(g_pro.gpower_on == power_on){
 

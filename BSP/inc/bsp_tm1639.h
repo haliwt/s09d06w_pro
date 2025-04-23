@@ -44,7 +44,7 @@
 #define TM1639_DISPLAY_OFF           0x00    // 显示关
 
 // TM1639 亮度级别 (0-7)
-#define TM1639_BRIGHTNESS_MAX        0x01//0x07    // 最大亮度
+#define TM1639_BRIGHTNESS_MAX        0x07    // 最大亮度 //WT.EDIT 2025.04.23
 #define TM1639_BRIGHTNESS_MIN        0x00    // 最小亮度
 
 // 特殊字符段码定义

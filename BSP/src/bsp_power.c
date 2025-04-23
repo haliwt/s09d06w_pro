@@ -188,14 +188,10 @@ void power_on_run_handler(void)
 	
       if(g_pro.key_set_temperature_flag==1){
 
-
-		DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+          DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
        
-
-
-
-	  }
-	  else if(g_pro.g_disp_timer_or_temp_flag == timer_time_mode && read_wifi_temperature_value()==0){
+      }
+	  else if(g_pro.g_disp_timer_or_temp_flag != input_set_timer_mode && read_wifi_temperature_value()==0){
 		// 如果计时器超过阈值，切换显示模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
@@ -228,7 +224,7 @@ void power_on_run_handler(void)
 		}
 	} 
 	else {
-		// 如果计时器超过阈值，切换布尔显示状态
+		// 如果计时器超过阈值，切换布尔显示状态,不显示时间
   
 	    if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode && read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){

@@ -146,7 +146,7 @@ static void adjust_timer(int8_t delta)
     g_pro.gdisp_timer_hours_value += delta;
     if (g_pro.gdisp_timer_hours_value > MAX_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MAX_TIMER_HOURS;
     if (g_pro.gdisp_timer_hours_value < MIN_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MIN_TIMER_HOURS;
-    g_pro.g_disp_timer_or_temp_flag = input_temp_time_mode  ;
+    g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode;//WT.EDIT 2025.04.23//input_temp_time_mode  ;
     TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
 }
 
@@ -163,7 +163,7 @@ void key_dwon_fun(void)
         case normal_time_mode:
             adjust_temperature(-1);
             break;
-        case timer_time_mode:
+        case input_set_timer_mode: //WT.EDIT 2025.04.23//timer_time_mode:
             adjust_timer(-1);
             break;
         default:
@@ -181,7 +181,7 @@ void key_dwon_fun(void)
         case normal_time_mode:
             adjust_temperature(1);
             break;
-        case timer_time_mode:
+        case input_set_timer_mode: //WT.EDIT 2025.04.23//:
             adjust_timer(1);
             break;
         default:
@@ -442,8 +442,7 @@ void sendDisplayCommand(uint8_t command,uint8_t data)
 void set_timer_timing_value_handler(void)
 {
 
-   
-	if(key_set_timer_flag==1 && g_pro.gTimer_switch_set_timer_times > 3 ){
+   if(key_set_timer_flag==1 && g_pro.gTimer_switch_set_timer_times > 3 ){
 
 		g_pro.gTimer_switch_set_timer_times=0;
 		

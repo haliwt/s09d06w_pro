@@ -191,9 +191,11 @@ static void vTaskRunPro(void *pvParameters)
 		mode_key_counter=202;
 		buzzer_sound();
 		g_pro.key_gtime_timer_define_flag = timer_time_mode;
-		g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
+		g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode ;//WT.EDIT 2025.04.23//timer_time_mode;
 		g_pro.gTimer_switch_set_timer_times = 0;
-
+        HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
+		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
+		TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
 
 		}
 	}
