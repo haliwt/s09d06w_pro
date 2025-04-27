@@ -115,6 +115,7 @@ typedef struct _process{
 
    uint8_t g_humidity_value;
    uint8_t g_temperature_value;
+  
 
    uint8_t g_fan_switch_gears_flag;
    uint8_t key_set_temperature_flag;

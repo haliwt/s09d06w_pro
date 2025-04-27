@@ -179,23 +179,22 @@ static void vTaskRunPro(void *pvParameters)
 
 		mode_key_counter++ ;
 		if(KEY_MODE_VALUE() == KEY_UP && mode_key_counter < 60){
-		g_key.key_mode_flag = KEY_NULL;
-		mode_key_counter=0;
-		g_pro.key_gtime_timer_define_flag = normal_time_mode;
-		buzzer_sound();
-		//mode_key_fun();
-		}
-		else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
+			g_key.key_mode_flag = KEY_NULL;
+			mode_key_counter=0;
+			g_pro.gTimer_switch_set_timer_times = 0;
+			buzzer_sound();
+	        mode_key_fun();
+			}
+			else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
 
-		g_key.key_mode_flag = KEY_NULL;
-		mode_key_counter=202;
-		buzzer_sound();
-		g_pro.key_gtime_timer_define_flag = input_set_timer_mode;
-		//g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode ;//WT.EDIT 2025.04.23//timer_time_mode;
-		g_pro.gTimer_switch_set_timer_times = 0;
-        HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
-		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
-		TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
+			g_key.key_mode_flag = KEY_NULL;
+			mode_key_counter=202;
+			buzzer_sound();
+			g_pro.key_gtime_timer_define_flag = input_set_timer_mode;
+			g_pro.gTimer_switch_set_timer_times = 0;
+	        HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
+			TEMP_ICON_OFF();//WT.EDIT 2025.04.23
+			TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
 
 		}
 	}

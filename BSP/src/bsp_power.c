@@ -191,7 +191,7 @@ void power_on_run_handler(void)
           DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
        
       }
-	  else if(g_pro.g_disp_timer_or_temp_flag == timer_time_mode && read_wifi_temperature_value()==0){
+	  else if((g_pro.g_disp_timer_or_temp_flag == timer_time_mode && g_key.mode_key_switch_time_mode==timer_time_mode) && read_wifi_temperature_value()==0){
 		// 如果计时器超过阈值，切换显示模式
 		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器

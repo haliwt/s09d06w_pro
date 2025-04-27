@@ -142,7 +142,6 @@ static void adjust_temperature(int8_t delta)
 static void adjust_timer(int8_t delta) 
 {
     g_pro.gTimer_switch_set_timer_times = 0;
-	//g_pro.key_gtime_timer_define_flag = input_set_timer_mode;//WT.EDIT 2025.04.24
     key_set_timer_flag = 1;
     g_pro.gdisp_timer_hours_value += delta;
     if (g_pro.gdisp_timer_hours_value > MAX_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MAX_TIMER_HOURS;
@@ -466,6 +465,7 @@ void set_timer_timing_value_handler(void)
 
 			if(g_pro.gdisp_timer_hours_value>0){
 			g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
+			g_key.mode_key_switch_time_mode  =timer_time_mode; //WT.EDIT 2025.04.27
 			g_pro.key_gtime_timer_define_flag = input_set_null;
 			key_set_timer_flag++;
 			g_pro.gTimer_timer_time_second=0;
@@ -483,6 +483,7 @@ void set_timer_timing_value_handler(void)
 				key_set_timer_flag=0;
 
 				g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
+				g_key.mode_key_switch_time_mode  =normal_time_mode; //WT.EDIT 2025.04.27
 				g_pro.key_gtime_timer_define_flag = input_set_null;
 			}
 		}
@@ -529,4 +530,35 @@ uint8_t read_key_up_down_mode(void)
 {
        return key_up_down_pressed_flag;
 }
+
+
+void mode_key_fun(void)
+{
+
+   if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode){
+   	
+   	  LED_AI_OFF(); 
+      HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
+	  TEMP_ICON_OFF();//WT.EDIT 2025.04.23
+	  if(g_pro.g_disp_timer_or_temp_flag ==timer_time_mode)g_key.mode_key_switch_time_mode = timer_time_mode;
+	  else{
+	      g_key.mode_key_switch_time_mode = normal_time_mode;
+
+	  }
+	  
+	  TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
+   }
+   else{
+        g_key.mode_key_switch_time_mode = normal_time_mode;
+        LED_AI_ON(); 
+		HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
+		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
+
+   }
+
+
+
+
+}
+
 
