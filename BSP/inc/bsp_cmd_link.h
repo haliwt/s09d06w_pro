@@ -10,12 +10,20 @@
 
 #include "main.h"
 
+
+#define RX_DATA_SIZE 10  // 需要接收5个字节
+
+
 extern uint8_t rx_wifi_data[7];
 
 //extern uint8_t inputBuf[4];
 
 extern uint8_t  inputCmd[30];
 extern uint8_t wifiInputBuf[1];
+
+
+
+
 
 
 void sendData_Real_TimeHum(uint8_t hum,uint8_t temp);

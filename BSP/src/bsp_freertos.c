@@ -110,7 +110,7 @@ static void vTaskDecoderPro(void *pvParameters)
 	xResult = xTaskNotifyWait(0x00000000,
 								  0xFFFFFFFF,     /* Reset the notification value to 0 on */
 								&ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-								xMaxBlockTime);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
+								portMAX_DELAY);//portMAX_DELAY);  /* 阻塞时间30ms，释放CUP控制权,给其它任务执行的权限*/
 
 	if( xResult == pdPASS )
 	{
@@ -190,8 +190,8 @@ static void vTaskRunPro(void *pvParameters)
 		g_key.key_mode_flag = KEY_NULL;
 		mode_key_counter=202;
 		buzzer_sound();
-		g_pro.key_gtime_timer_define_flag = timer_time_mode;
-		g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode ;//WT.EDIT 2025.04.23//timer_time_mode;
+		g_pro.key_gtime_timer_define_flag = input_set_timer_mode;
+		//g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode ;//WT.EDIT 2025.04.23//timer_time_mode;
 		g_pro.gTimer_switch_set_timer_times = 0;
         HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
 		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
@@ -199,20 +199,22 @@ static void vTaskRunPro(void *pvParameters)
 
 		}
 	}
-	else if(g_key.key_down_flag ==KEY_DOWN_ID){// && DEC_KEY_VALUE()==KEY_UP){
-		g_key.key_down_flag ++;
+	else if(g_key.key_down_flag ==KEY_DOWN_ID && KEY_DOWN_VALUE() == KEY_UP ){// && DEC_KEY_VALUE()==KEY_UP){
+		g_key.key_down_flag = KEY_NULL;
 		buzzer_sound();
 
 		key_dwon_fun();
 	}
-	else if(g_key.key_up_flag ==KEY_UP_ID){ // && ADD_KEY_VALUE()==KEY_UP){
-		g_key.key_up_flag ++;
+	else if(g_key.key_up_flag ==KEY_UP_ID && KEY_UP_VALUE() == KEY_UP ){ // && ADD_KEY_VALUE()==KEY_UP){
+		g_key.key_up_flag =KEY_NULL;
 		buzzer_sound();
 
 		key_up_fun();
 	}
 
 	power_onoff_handler(g_pro.gpower_on);
+
+	
 
 	if(g_wifi.wifi_led_fast_blink_flag==0 ){
 		wifi_communication_tnecent_handler();//
@@ -222,7 +224,7 @@ static void vTaskRunPro(void *pvParameters)
 
 
 	ack_cmd_second_disp_hanlder();
-	vTaskDelay(20);
+	vTaskDelay(10);
 
 	  
     }
@@ -242,7 +244,7 @@ static void vTaskRunPro(void *pvParameters)
 static void vTaskStart(void *pvParameters)
 {
 	BaseType_t xResult;
-    //const TickType_t xMaxBlockTime = pdMS_TO_TICKS(1000); /* 设置最大等待时间为30ms */
+    //const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置最大等待时间为30ms */
 	uint32_t ulValue;
    
 
@@ -252,7 +254,7 @@ static void vTaskStart(void *pvParameters)
       xResult = xTaskNotifyWait(0x00000000,
 						           0xFFFFFFFF,
 						          &ulValue,        /* 保存ulNotifiedValue到变量ulValue中 */
-								  portMAX_DELAY);  /* 最大允许延迟时间 */
+								  portMAX_DELAY);  /* portMAX_DELAY  最大允许延迟时间 */
         if( xResult == pdPASS ){
 
             /* 接收到消息，检测那个位被按下 */
@@ -272,6 +274,7 @@ static void vTaskStart(void *pvParameters)
              }
             else if((ulValue & DOWN_BIT_2 ) != 0){
             	  if(g_pro.gpower_on == power_on){
+				  	 
             	       g_key.key_down_flag =KEY_DOWN_ID;
             	             
             	  }
@@ -336,7 +339,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
      BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
 
-    if(huart==&huart1) // Motor Board receive data (filter)
+    if(huart->Instance == USART1) // mainBoard receive data from display board send data USART1
 	{
 
      //  DISABLE_INT();
@@ -408,7 +411,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 
    }
-   else if(huart->Instance==USART2)
+   else if(huart->Instance==USART2) //WIFI USART2
 	   {
 	  //  DISABLE_INT();
 		if(g_wifi.linking_tencent_cloud_doing ==1){
@@ -486,7 +489,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
    case KEY_DOWN_Pin:
       // DISABLE_INT();
-       if(KEY_DOWN_VALUE() == KEY_DOWN && KEY_UP_VALUE() == KEY_UP && g_pro.gpower_on == power_on){
+       if(KEY_DOWN_VALUE() == KEY_DOWN && g_pro.gpower_on == power_on){
         
          xTaskNotifyFromISR(xHandleTaskStart,  /* 目标任务 */
                 DOWN_BIT_2,     /* 设置目标任务事件标志位bit0  */
@@ -502,7 +505,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
    case KEY_UP_Pin:
       ///   DISABLE_INT();
-        if(KEY_UP_VALUE() == KEY_DOWN && KEY_DOWN_VALUE() == KEY_UP && g_pro.gpower_on == power_on){
+        if(KEY_UP_VALUE() == KEY_DOWN  && g_pro.gpower_on == power_on){
         xTaskNotifyFromISR(xHandleTaskStart,  /* 目标任务 */
                 UP_BIT_3,     /* 设置目标任务事件标志位bit0  */
                 eSetBits,  /* 将目标任务的事件标志位与BIT_0进行或操作， 将结果赋值给事件标志位 */

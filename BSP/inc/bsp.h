@@ -94,7 +94,9 @@ typedef enum{
 	beijing_time_mode,
 	disp_timer_mode,
 	disp_temp_hum_mode,
-	input_set_timer_mode //WT.EDIT 2025.04.23
+	input_set_timer_mode, //WT.EDIT 2025.04.23
+	input_set_temperature_mode, //WT.EDIT 2025.04.23
+	input_set_null
 	
 }time_state;
 
@@ -120,6 +122,7 @@ typedef struct _process{
 
    uint8_t gTemp_value;
    uint8_t gset_temperture_value;
+
   
   
    

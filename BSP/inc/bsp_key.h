@@ -50,8 +50,12 @@ typedef enum{
    KEY_DOWN_ID = 0x04,
    KEY_UP_ID = 0x08,
 
+   KEY_DWON_RUN_ID= 0x14,
+
    KEY_LONG_POWER = 0x81,
-   KEY_LONG_MODE = 0x82
+   KEY_LONG_MODE = 0x82,
+
+   
 
 }KEYName_Typedef;
 

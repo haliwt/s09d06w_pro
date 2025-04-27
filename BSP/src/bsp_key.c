@@ -32,14 +32,14 @@ KEY_PROCESS_TYPEDEF  g_key;
 
 uint8_t gl_set_temperture_value;
 uint8_t temperature_init_value ;
-//uint8_t  key_set_temperature_flag;
+uint8_t  key_set_temperature_flag;
 uint16_t check_time;
 int8_t  gl_timer_minutes_value;
 uint8_t define_timer_mode;
-uint8_t key_set_timer_flag,key_up_down_pressed_flag;
+uint8_t key_up_down_pressed_flag;
 uint8_t set_first_close_dry_flag;
 
-uint8_t default_first_close_dry;
+uint8_t default_first_close_dry,key_set_timer_flag;
 
 
 static void adjust_temperature(int8_t delta) ;
@@ -142,6 +142,7 @@ static void adjust_temperature(int8_t delta)
 static void adjust_timer(int8_t delta) 
 {
     g_pro.gTimer_switch_set_timer_times = 0;
+	//g_pro.key_gtime_timer_define_flag = input_set_timer_mode;//WT.EDIT 2025.04.24
     key_set_timer_flag = 1;
     g_pro.gdisp_timer_hours_value += delta;
     if (g_pro.gdisp_timer_hours_value > MAX_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MAX_TIMER_HOURS;
@@ -396,7 +397,14 @@ static void handleDefaultTemperatureControl(void)
     }
 }
 
-// 设置干燥状态
+/******************************************************************************
+	*
+	*Function Name:void set_timer_timing_value_handler(void)
+	*Funcion: // 设置干燥状态
+	*Input Ref: state: 0-off,1-on
+	*Return Ref:NO
+	*
+******************************************************************************/
 void setDryState(DryState state) 
 {
     g_pro.gDry = state;
@@ -421,7 +429,15 @@ void publishMqttData(DryState state, uint8_t temperature)
     }
 }
 
-// 发送显示命令
+
+/******************************************************************************
+	*
+	*Function Name:void set_timer_timing_value_handler(void)
+	*Funcion: // 发送显示命令
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
 void sendDisplayCommand(uint8_t command,uint8_t data) 
 {
     if(g_disp.g_second_disp_flag ==1){
@@ -442,31 +458,41 @@ void sendDisplayCommand(uint8_t command,uint8_t data)
 void set_timer_timing_value_handler(void)
 {
 
-   if(key_set_timer_flag==1 && g_pro.gTimer_switch_set_timer_times > 3 ){
+   
+   if(g_pro.key_gtime_timer_define_flag == input_set_timer_mode && g_pro.gTimer_switch_set_timer_times > 3 ){
+   	      g_pro.gTimer_switch_set_timer_times=0;
 
-		g_pro.gTimer_switch_set_timer_times=0;
-		
-	
-	    if(g_pro.gdisp_timer_hours_value>0){
-          g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
-		  key_set_timer_flag++;
-		   g_pro.gTimer_timer_time_second=0;
-		   gl_timer_minutes_value=0;
-		   g_pro.gAI = 0;
-		   LED_AI_OFF();
-		  
-		   
-		   
-    	}
-    	else{
-		    g_pro.gAI = 1;
-			LED_AI_ON();
+          if(key_set_timer_flag==1){
 
-		   key_set_timer_flag=0;
-    	  
-		   g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
+			if(g_pro.gdisp_timer_hours_value>0){
+			g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
+			g_pro.key_gtime_timer_define_flag = input_set_null;
+			key_set_timer_flag++;
+			g_pro.gTimer_timer_time_second=0;
+			gl_timer_minutes_value=0;
+			g_pro.gAI = 0;
+			LED_AI_OFF();
+
+
+
+			}
+			else{
+				g_pro.gAI = 1;
+				LED_AI_ON();
+
+				key_set_timer_flag=0;
+
+				g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
+				g_pro.key_gtime_timer_define_flag = input_set_null;
+			}
 		}
-    }
+		else{ //times is done ,exit this process
+
+		     g_pro.key_gtime_timer_define_flag = input_set_null;
+
+
+		}
+   	}
     else if(key_set_timer_flag==2){
 
        if(g_pro.gTimer_timer_time_second > 59){
@@ -495,6 +521,7 @@ void set_timer_timing_value_handler(void)
 	   }
 
    }
+	
 }
 
 
