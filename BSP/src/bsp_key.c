@@ -535,12 +535,14 @@ uint8_t read_key_up_down_mode(void)
 void mode_key_fun(void)
 {
 
-   if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode){
+   if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode || g_key.mode_key_switch_time_mode == input_set_null){
    	
    	  LED_AI_OFF(); 
       HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
 	  TEMP_ICON_OFF();//WT.EDIT 2025.04.23
-	  if(g_pro.g_disp_timer_or_temp_flag ==timer_time_mode)g_key.mode_key_switch_time_mode = timer_time_mode;
+	  if(g_pro.g_disp_timer_or_temp_flag ==timer_time_mode){
+	  	g_key.mode_key_switch_time_mode = timer_time_mode;
+	  }
 	  else{
 	      g_key.mode_key_switch_time_mode = normal_time_mode;
 
@@ -555,10 +557,6 @@ void mode_key_fun(void)
 		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
 
    }
-
-
-
-
 }
 
 
