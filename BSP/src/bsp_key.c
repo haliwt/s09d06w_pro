@@ -536,7 +536,7 @@ void mode_key_fun(void)
 {
 
    if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode || g_key.mode_key_switch_time_mode == input_set_null){
-   	
+   	  g_pro.gAI=0;
    	  LED_AI_OFF(); 
       HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
 	  TEMP_ICON_OFF();//WT.EDIT 2025.04.23
@@ -552,9 +552,11 @@ void mode_key_fun(void)
    }
    else{
         g_key.mode_key_switch_time_mode = normal_time_mode;
+		g_pro.gAI=1;
         LED_AI_ON(); 
 		HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
 		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
+		DHT11_Display_Data(0); // 显示温度
 
    }
 }

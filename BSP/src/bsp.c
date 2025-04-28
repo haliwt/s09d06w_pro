@@ -49,7 +49,7 @@ void mainboard_fun_handler(void)
 
 
    if(g_pro.gAI == 1){
-
+  
        LED_AI_ON();
    	
    	}
@@ -99,12 +99,12 @@ static void mainboard_special_fun(void)
 
    if(g_pro.gAI == 1){
 
-       LED_AI_ON();
+   
 	   LED_AI_ON();
    	
    	}
     else{
-       LED_AI_OFF();
+     
 	   LED_AI_OFF();
 
 	}

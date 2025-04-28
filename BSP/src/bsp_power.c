@@ -189,7 +189,7 @@ void power_on_run_handler(void)
       if(g_pro.key_set_temperature_flag==1){
 
           DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
-       
+
       }
 	  else if((g_pro.g_disp_timer_or_temp_flag == timer_time_mode && g_key.mode_key_switch_time_mode==timer_time_mode) && read_wifi_temperature_value()==0){
 		// 如果计时器超过阈值，切换显示模式
@@ -227,12 +227,13 @@ void power_on_run_handler(void)
 		// 如果计时器超过阈值，切换布尔显示状态,不显示时间
        if((g_pro.g_disp_timer_or_temp_flag == normal_time_mode || g_key.mode_key_switch_time_mode==normal_time_mode || g_key.mode_key_switch_time_mode == input_set_null ) && \
 	   	                 read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
-            if(g_key.mode_key_switch_time_mode==normal_time_mode && g_pro.gTimer_switch_set_timer_times < 3){
-				   
+            if(g_key.mode_key_switch_time_mode==normal_time_mode && g_pro.gTimer_switch_set_timer_times < 4){
+            	    g_pro.gAI=0;
 			       LED_AI_OFF();
 				   TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
 			}
 			else{
+			   g_pro.gAI=1;
 			   g_key.mode_key_switch_time_mode = input_set_null;
 			   LED_AI_ON();
 
