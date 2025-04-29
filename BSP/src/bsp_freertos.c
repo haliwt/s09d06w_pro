@@ -184,8 +184,8 @@ static void vTaskRunPro(void *pvParameters)
 			g_pro.gTimer_switch_set_timer_times = 0;
 			buzzer_sound();
 	        mode_key_fun();
-			}
-			else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
+		}
+		else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
 
 			g_key.key_mode_flag = KEY_NULL;
 			mode_key_counter=202;

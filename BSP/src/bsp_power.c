@@ -191,9 +191,34 @@ void power_on_run_handler(void)
           DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 
       }
-	  else if((g_pro.g_disp_timer_or_temp_flag == timer_time_mode && g_key.mode_key_switch_time_mode==timer_time_mode) && read_wifi_temperature_value()==0){
+      else if(g_key.mode_key_switch_time_mode == timer_time_mode){
+
+    	 if(g_pro.gTimer_switch_set_timer_times < 4){
+    	           g_pro.gAI=0;
+    	 		   LED_AI_OFF();
+		           HUMIDITY_ICON_OFF();
+		           TEMP_ICON_OFF();//WT.EDIT 2025.04.28
+    	 		   TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
+    	  }
+    	 else{
+    		 if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode){
+    			 g_pro.gAI=1;
+    			 LED_AI_ON();
+    			 TEMP_ICON_ON();//WT.EDIT 2025.04.28
+    			 DHT11_Display_Data(0); // 显示温度
+
+    		 }
+
+    		  g_key.mode_key_switch_time_mode=input_normal_null;
+
+    	 }
+
+
+      }
+      else if((g_pro.g_disp_timer_or_temp_flag == timer_time_mode) && read_wifi_temperature_value()==0){
 		// 如果计时器超过阈值，切换显示模式
-		if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
+
+		  if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 	
 			disp_temp_hum++;
@@ -225,20 +250,11 @@ void power_on_run_handler(void)
 	} 
 	else {
 		// 如果计时器超过阈值，切换布尔显示状态,不显示时间
-       if((g_pro.g_disp_timer_or_temp_flag == normal_time_mode || g_key.mode_key_switch_time_mode==normal_time_mode || g_key.mode_key_switch_time_mode == input_set_null ) && \
-	   	                 read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
-            if(g_key.mode_key_switch_time_mode==normal_time_mode && g_pro.gTimer_switch_set_timer_times < 4){
-            	    g_pro.gAI=0;
-			       LED_AI_OFF();
-				   TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
-			}
-			else{
-			   g_pro.gAI=1;
-			   g_key.mode_key_switch_time_mode = input_set_null;
-			   LED_AI_ON();
+       if((g_pro.g_disp_timer_or_temp_flag == normal_time_mode) && read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
 
-			
-				if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
+			   g_pro.gAI=1;
+			   LED_AI_ON();
+               if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD ){
 				g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 		        if(disp_temp_hum > 1)disp_temp_hum=0;
 				disp_temp_hum = disp_temp_hum ^ 0x01;   // 切换布尔状态
@@ -247,7 +263,7 @@ void power_on_run_handler(void)
 			 }
 		 	}
        	}
-	  }
+
 	  gl_run.process_on_step =3;
 
 	 break;
@@ -340,7 +356,7 @@ void power_off_run_handler(void)
 
 	  
 	   	  SendData_Set_Command(CMD_POWER,close);
-         
+          osDelay(5);
 	
          
 

@@ -96,7 +96,10 @@ typedef enum{
 	disp_temp_hum_mode,
 	input_set_timer_mode, //WT.EDIT 2025.04.23
 	input_set_temperature_mode, //WT.EDIT 2025.04.23
-	input_set_null
+	input_set_null,
+	input_set_timer_mode_null,
+	input_set_normal_time_mode,
+	input_normal_null
 	
 }time_state;
 

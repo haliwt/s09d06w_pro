@@ -82,8 +82,8 @@ void Error_Handler(void);
 
 //GPIO CTL
 
-#define RELAY_Pin                 GPIO_PIN_15
-#define RELAY_GPIO_Port           GPIOC
+#define RELAY_Pin                  GPIO_PIN_0//GPIO_PIN_15
+#define RELAY_GPIO_Port            GPIOB//GPIOC
 
 #define FAN_COM_Pin GPIO_PIN_5
 #define FAN_COM_GPIO_Port GPIOA
@@ -94,28 +94,29 @@ void Error_Handler(void);
 #define FAN_CCW_Pin GPIO_PIN_7
 #define FAN_CCW_GPIO_Port GPIOA
 
-#define PLASMA_Pin GPIO_PIN_15
-#define PLASMA_GPIO_Port GPIOA
+#define PLASMA_Pin 							GPIO_PIN_13//GPIO_PIN_15
+#define PLASMA_GPIO_Port 					GPIOB//GPIOA
 //BUZZER GPIO
 #define BUZZER_PWM_Pin GPIO_PIN_1
 #define BUZZER_PWM_GPIO_Port GPIOB
+
 //TM1639 GPIO
-#define MCU_DIO_Pin 						GPIO_PIN_10
-#define MCU_DIO_GPIO_Port                  GPIOB
+#define MCU_DIO_Pin 					   GPIO_PIN_15//GPIO_PIN_10
+#define MCU_DIO_GPIO_Port                  GPIOA//GPIOB
 
-#define MCU_STB_Pin 						GPIO_PIN_11
-#define MCU_STB_GPIO_Port 					GPIOB
+#define MCU_STB_Pin 						GPIO_PIN_12//GPIO_PIN_11
+#define MCU_STB_GPIO_Port 					GPIOA//GPIOB
 
-#define MCU_CLK_Pin 						GPIO_PIN_12
-#define MCU_CLK_GPIO_Port 					GPIOB
+#define MCU_CLK_Pin 						GPIO_PIN_11//GPIO_PIN_12
+#define MCU_CLK_GPIO_Port 					GPIOA//GPIOB
 
 //PWM CTL
 #define ULTRA_PWM_Pin GPIO_PIN_8
 #define ULTRA_PWM_GPIO_Port GPIOA
 
 //TAPE LED CTL
-#define LED_TAPE_CTL_Pin 				GPIO_PIN_11
-#define LED_TAPE_CTL_GPIO_Port 			GPIOA
+#define LED_TAPE_CTL_Pin 				GPIO_PIN_2//GPIO_PIN_11
+#define LED_TAPE_CTL_GPIO_Port 			GPIOB//GPIOA
 
 //KEY GPIO
 #define KEY_POWER_Pin GPIO_PIN_0

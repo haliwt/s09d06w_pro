@@ -49,6 +49,9 @@ static void handleDefaultTemperatureControl(void);
 static void setDryState(DryState state);
 static void publishMqttData(DryState state, uint8_t temperature);
 
+static void set_timer_mode(void);
+static void set_normal_mode(void);
+
 
 uint8_t readTemperature(void);
 
@@ -465,7 +468,6 @@ void set_timer_timing_value_handler(void)
 
 			if(g_pro.gdisp_timer_hours_value>0){
 			g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
-			g_key.mode_key_switch_time_mode  =timer_time_mode; //WT.EDIT 2025.04.27
 			g_pro.key_gtime_timer_define_flag = input_set_null;
 			key_set_timer_flag++;
 			g_pro.gTimer_timer_time_second=0;
@@ -483,7 +485,6 @@ void set_timer_timing_value_handler(void)
 				key_set_timer_flag=0;
 
 				g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
-				g_key.mode_key_switch_time_mode  =normal_time_mode; //WT.EDIT 2025.04.27
 				g_pro.key_gtime_timer_define_flag = input_set_null;
 			}
 		}
@@ -535,30 +536,31 @@ uint8_t read_key_up_down_mode(void)
 void mode_key_fun(void)
 {
 
-   if(g_pro.g_disp_timer_or_temp_flag == normal_time_mode || g_key.mode_key_switch_time_mode == input_set_null){
-   	  g_pro.gAI=0;
-   	  LED_AI_OFF(); 
-      HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
-	  TEMP_ICON_OFF();//WT.EDIT 2025.04.23
-	  if(g_pro.g_disp_timer_or_temp_flag ==timer_time_mode){
-	  	g_key.mode_key_switch_time_mode = timer_time_mode;
-	  }
-	  else{
-	      g_key.mode_key_switch_time_mode = normal_time_mode;
-
-	  }
-	  
-	  TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
-   }
-   else{
-        g_key.mode_key_switch_time_mode = normal_time_mode;
-		g_pro.gAI=1;
-        LED_AI_ON(); 
-		HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
-		TEMP_ICON_OFF();//WT.EDIT 2025.04.23
-		DHT11_Display_Data(0); // 显示温度
-
-   }
+     g_key.mode_key_switch_time_mode = timer_time_mode;
+     set_timer_mode();
+		
+  
+  
 }
 
+// 提取的辅助函数
+static void set_normal_mode(void)
+{
+    g_pro.gAI = 1;
+    LED_AI_ON();
+    HUMIDITY_ICON_OFF();
+    TEMP_ICON_ON();
+    DHT11_Display_Data(0); // 显示温度
+    
+}
+
+static void set_timer_mode(void)
+{
+    g_pro.gAI = 0;
+    LED_AI_OFF();
+    HUMIDITY_ICON_OFF();
+    TEMP_ICON_OFF();
+   
+    TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+}
 

@@ -10,6 +10,10 @@
 
 #define USART1_IT_FLAG   0
 
+#define FRAME_HEADER 0x5A
+#define FRAME_END 0xFE
+
+
 //uint8_t  inputBuf[4];
 uint8_t  inputCmd[30];
 uint8_t  wifiInputBuf[1];
@@ -26,9 +30,9 @@ static uint8_t transferSize;
 uint8_t outputBuf[MAX_BUFFER_SIZE];
 volatile uint8_t dataReceived = 0;  // 接收完成标志
 
-
-volatile uint8_t transOngoingFlag;
-volatile uint8_t usart2_transOngoingFlag;
+#if 0
+//volatile uint8_t transOngoingFlag;
+//volatile uint8_t usart2_transOngoingFlag;
 
 /********************************************************************************
 	**
@@ -88,7 +92,7 @@ void SendWifiData_To_PanelTime(uint8_t hours,uint8_t minutes,uint8_t seconds)
 	outputBuf[1]=0x10; //mainboard device No: 01
 	outputBuf[2]=0x1C; //command : is data of hours and minutes and seconds.
 	outputBuf[3]=0x0F; // 0x0F : is data ,don't command data.
-	outputBuf[4]= 0x03; //data of length: 0x01 - 3 byte.
+	outputBuf[4]= 0x03; //data of length: 0x01 - 3 byte.  有3个数据
 	outputBuf[5]= hours; //	
 	outputBuf[6]= minutes; //	
 	outputBuf[7]= seconds; //	
@@ -293,6 +297,141 @@ void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data)
 		
 	
 }
+#else 
+// 公共函数：填充帧数据
+void FillFrame(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLen) 
+{
+    buf[0] = FRAME_HEADER;
+    buf[1] = 0x10; // Mainboard device number
+    buf[2] = cmd;
+    buf[3] = (dataLen > 0) ? 0x0F : 0x00; // Data or command
+    buf[4] = dataLen;
+
+    for (uint8_t i = 0; i < dataLen; i++) {
+        buf[5 + i] = data[i];
+    }
+
+    buf[5 + dataLen] = FRAME_END;
+    buf[6 + dataLen] = bcc_check(buf, 6 + dataLen);
+}
+
+void FillFrame_Response(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLen) 
+{
+    buf[0] = FRAME_HEADER;
+    buf[1] = 0x10; // Mainboard device number
+    buf[2] = 0xFF;
+	buf[3] = cmd;
+    buf[4] = (dataLen > 0) ? 0x0F : 0x00; // Data or command
+    buf[5] = dataLen;
+
+    for (uint8_t i = 0; i < dataLen; i++) {
+        buf[6 + i] = data[i];
+    }
+
+    buf[6 + dataLen] = FRAME_END;
+    buf[7 + dataLen] = bcc_check(buf, 7 + dataLen);
+}
+
+
+// 公共函数：发送数据
+void TransmitData(uint8_t *buf, uint8_t size) {
+    transferSize = size;
+
+    #if USART1_IT_FLAG
+    if (transferSize) {
+        while (transOngoingFlag); // 等待传输完成
+        transOngoingFlag = 1;
+        HAL_UART_Transmit_IT(&huart1, buf, transferSize);
+    }
+    #else
+    HAL_UART_Transmit_DMA(&huart1, buf, transferSize);
+    #endif
+}
+
+// 发送实时温湿度数据
+void sendData_Real_TimeHum(uint8_t hum, uint8_t temp) {
+    uint8_t data[2] = {hum, temp};
+    FillFrame(outputBuf, 0x1A, data, 2);
+    TransmitData(outputBuf, 9);
+}
+
+// 发送时间数据
+void SendWifiData_To_PanelTime(uint8_t hours, uint8_t minutes, uint8_t seconds) {
+    uint8_t data[3] = {hours, minutes, seconds};
+    FillFrame(outputBuf, 0x1C, data, 3);
+    TransmitData(outputBuf, 10);
+}
+
+// 发送命令数据
+void SendData_Set_Command(uint8_t cmd, uint8_t data) {
+    uint8_t cmdData[1] = {data};
+    FillFrame(outputBuf, cmd, cmdData, 0);
+    TransmitData(outputBuf, 7);
+}
+
+// 发送风速数据
+void SendWifiData_To_PanelWindSpeed(uint8_t speed) {
+    uint8_t data[1] = {speed};
+    FillFrame(outputBuf, 0x1E, data, 1);
+    TransmitData(outputBuf, 8);
+}
+
+// 发送命令响应
+void SendWifiData_Answer_Cmd(uint8_t cmd, uint8_t cmddata) {
+    //uint8_t cmdData[2] = {cmd, data};
+    FillFrame_Response(outputBuf, cmd, &cmddata, 0);
+    TransmitData(outputBuf,8);
+}
+
+void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
+{
+	 uint8_t cmdData[1] = {data};
+    FillFrame(outputBuf, cmd, cmdData, 0);
+    TransmitData(outputBuf, 7);
+
+}
+
+
+
+void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
+{
+      #if 0
+		outputBuf[0]=0x5A; //head : main board 0x5A
+        outputBuf[1]=0x10; //main board device No: 0x10
+        outputBuf[2]=cmd; //command type: fan speed of value 
+        outputBuf[3]=0x0F; // 0x0F : is data ,don't command order.
+        outputBuf[4]= 0x01; // don't data ,onlay is command order,recieve data is 1byte .
+        outputBuf[5]= data; // don't data 
+        
+        outputBuf[6] = 0xFE;
+        outputBuf[7] = bcc_check(outputBuf,7);
+		
+        #if USART1_IT_FLAG 
+        transferSize=8;
+        if(transferSize)
+        {
+            while(transOngoingFlag); //UART interrupt transmit flag ,disable one more send data.
+            transOngoingFlag=1;
+            HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
+        }
+		#else 
+		
+	      HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+
+
+		#endif 
+	#endif 
+
+		// uint8_t data[1] = {data};
+		 uint8_t cmdata[1] = {data};
+         FillFrame(outputBuf, cmd, cmdata, 1);
+         TransmitData(outputBuf, 8);
+
+}
+
+
+
+#endif 
 
 //void EUSART_SetTxInterruptHandler(void (* interruptHandler)(void))
 //{

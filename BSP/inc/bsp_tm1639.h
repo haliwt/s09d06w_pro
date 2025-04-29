@@ -10,14 +10,14 @@
 #include "main.h"
 
 // TM1639 引脚定义
-#define TM1639_STB_PIN                GPIO_PIN_11
-#define TM1639_DIO_PIN                GPIO_PIN_10
-#define TM1639_CLK_PIN                GPIO_PIN_12
-#define TM1639_GPIO                   GPIOB
+#define TM1639_STB_PIN                GPIO_PIN_12//GPIO_PIN_11
+#define TM1639_DIO_PIN                GPIO_PIN_15//GPIO_PIN_10
+#define TM1639_CLK_PIN                GPIO_PIN_11//GPIO_PIN_12
+#define TM1639_GPIO                   GPIOA//GPIOB
 
 // TM1639 引脚操作宏定义
-#define TM1639_CLK_SetHigh()          HAL_GPIO_WritePin(TM1639_GPIO, TM1639_CLK_PIN, GPIO_PIN_SET)
-#define TM1639_CLK_SetLow()           HAL_GPIO_WritePin(TM1639_GPIO, TM1639_CLK_PIN, GPIO_PIN_RESET)
+#define TM1639_CLK_SetHigh()          do{MCU_CLK_GPIO_Port-> BSRR |=MCU_CLK_Pin ; }while(0)//HAL_GPIO_WritePin(TM1639_GPIO, TM1639_CLK_PIN, GPIO_PIN_SET)
+#define TM1639_CLK_SetLow()           do{MCU_CLK_GPIO_Port-> BSRR |=(uint32_t)MCU_CLK_Pin <<16 ;}while(0)//HAL_GPIO_WritePin(TM1639_GPIO, TM1639_CLK_PIN, GPIO_PIN_RESET)
 #define TM1639_DIO_SetHigh()          HAL_GPIO_WritePin(TM1639_GPIO, TM1639_DIO_PIN, GPIO_PIN_SET)
 #define TM1639_DIO_SetLow()           HAL_GPIO_WritePin(TM1639_GPIO, TM1639_DIO_PIN, GPIO_PIN_RESET)
 #define TM1639_STB_SetHigh()          HAL_GPIO_WritePin(TM1639_GPIO, TM1639_STB_PIN, GPIO_PIN_SET)

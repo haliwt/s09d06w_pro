@@ -51,21 +51,20 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, RELAY_Pin, GPIO_PIN_RESET);
+  //HAL_GPIO_WritePin(GPIOC, , GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOC, LED_HUM_SYMBOL_Pin|LED_POWER_Pin|RELAY_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, TEMP_SENSOR_Pin|FAN_COM_Pin|FAN_CCW_Pin|LED_TAPE_CTL_Pin
-                          |PLASMA_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, TEMP_SENSOR_Pin|FAN_COM_Pin|FAN_CCW_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, MCU_DIO_Pin|MCU_STB_Pin|MCU_CLK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, MCU_DIO_Pin|MCU_STB_Pin|MCU_CLK_Pin|RELAY_Pin|PLASMA_Pin|LED_TAPE_CTL_Pin, GPIO_PIN_RESET);
   
    HAL_GPIO_WritePin(GPIOB, LED_WIFI_Pin|LED_AI_Pin|LED_DRY_Pin|LED_PLASMA_Pin|LED_MOUSE_Pin
                           |LED_TEMP_SYMBOL_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PCPin PCPin PCPin */
-  GPIO_InitStruct.Pin = LED_HUM_SYMBOL_Pin|LED_POWER_Pin|RELAY_Pin;
+  GPIO_InitStruct.Pin = LED_HUM_SYMBOL_Pin|LED_POWER_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -79,7 +78,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(TEMP_SENSOR_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin PAPin PAPin */
-  GPIO_InitStruct.Pin = FAN_COM_Pin|FAN_CCW_Pin|LED_TAPE_CTL_Pin|PLASMA_Pin;
+  GPIO_InitStruct.Pin = FAN_COM_Pin|FAN_CCW_Pin |MCU_DIO_Pin|MCU_STB_Pin|MCU_CLK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -88,9 +87,8 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : PBPin PBPin PBPin PBPin
                            PBPin PBPin PBPin PBPin
                            PBPin */
-  GPIO_InitStruct.Pin = MCU_DIO_Pin|MCU_STB_Pin|MCU_CLK_Pin|LED_WIFI_Pin
-                          |LED_AI_Pin|LED_DRY_Pin|LED_PLASMA_Pin|LED_MOUSE_Pin
-                          |LED_TEMP_SYMBOL_Pin;
+  GPIO_InitStruct.Pin = LED_WIFI_Pin|LED_AI_Pin|LED_DRY_Pin|LED_PLASMA_Pin|LED_MOUSE_Pin|RELAY_Pin
+                          |LED_TEMP_SYMBOL_Pin|PLASMA_Pin|LED_TAPE_CTL_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
