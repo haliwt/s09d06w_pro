@@ -305,36 +305,55 @@ void FillFrame(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLen)
     buf[1] = 0x10; // Mainboard device number
     buf[2] = cmd;
     buf[3] = (dataLen > 0) ? 0x0F : 0x00; // Data or command
-    buf[4] = dataLen;
 
-    for (uint8_t i = 0; i < dataLen; i++) {
-        buf[5 + i] = data[i];
-    }
+	if(buf[4]==0){
+       buf[4] = data[0];
+       buf[5 ] = FRAME_END;
+	   buf[6 ] = bcc_check(buf, 6 );
+	}
+	else{
+	      buf[4] = dataLen;
+	
+		   for (uint8_t i = 0; i < dataLen; i++) {
+			   buf[5 + i] = data[i];
+		   }
+	
+		   buf[5 + dataLen] = FRAME_END;
+		   buf[6 + dataLen] = bcc_check(buf, 6 + dataLen);
 
-    buf[5 + dataLen] = FRAME_END;
-    buf[6 + dataLen] = bcc_check(buf, 6 + dataLen);
+
+	}
 }
 
 void FillFrame_Response(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLen) 
 {
-    buf[0] = FRAME_HEADER;
-    buf[1] = 0x10; // Mainboard device number
-    buf[2] = 0xFF;
-	buf[3] = cmd;
-    buf[4] = (dataLen > 0) ? 0x0F : 0x00; // Data or command
-    buf[5] = dataLen;
+    buf[0] = FRAME_HEADER;          // 帧头
+    buf[1] = 0x10;                  // 主板设备号
+    buf[2] = 0xFF;                  // 应答信号标志
+    buf[3] = cmd;                   // 命令类型
+    buf[4] = (dataLen > 0) ? 0x0F : 0x00; // 数据标志：0x0F 表示有数据，0x00 表示无数据
 
-    for (uint8_t i = 0; i < dataLen; i++) {
-        buf[6 + i] = data[i];
+    if (buf[4] == 0x00) {           // 无数据的情况
+        buf[5] = data[0];           // 具体指令
+        buf[6] = FRAME_END;         // 帧尾
+        buf[7] = bcc_check(buf, 6); // 校验码
+    } else {                        // 有数据的情况
+        buf[5] = dataLen;           // 数据长度
+        if (data != NULL) {         // 检查数据指针是否有效
+            for (uint8_t i = 0; i < dataLen; i++) {
+                buf[6 + i] = data[i]; // 填充数据
+            }
+        }
+        buf[6 + dataLen] = FRAME_END;         // 帧尾
+        buf[7 + dataLen] = bcc_check(buf, 7 + dataLen); // 校验码
     }
-
-    buf[6 + dataLen] = FRAME_END;
-    buf[7 + dataLen] = bcc_check(buf, 7 + dataLen);
 }
 
 
+
 // 公共函数：发送数据
-void TransmitData(uint8_t *buf, uint8_t size) {
+void TransmitData(uint8_t *buf, uint8_t size) 
+{
     transferSize = size;
 
     #if USART1_IT_FLAG
@@ -349,21 +368,24 @@ void TransmitData(uint8_t *buf, uint8_t size) {
 }
 
 // 发送实时温湿度数据
-void sendData_Real_TimeHum(uint8_t hum, uint8_t temp) {
+void sendData_Real_TimeHum(uint8_t hum, uint8_t temp) 
+{
     uint8_t data[2] = {hum, temp};
     FillFrame(outputBuf, 0x1A, data, 2);
     TransmitData(outputBuf, 9);
 }
 
 // 发送时间数据
-void SendWifiData_To_PanelTime(uint8_t hours, uint8_t minutes, uint8_t seconds) {
+void SendWifiData_To_PanelTime(uint8_t hours, uint8_t minutes, uint8_t seconds) 
+{
     uint8_t data[3] = {hours, minutes, seconds};
     FillFrame(outputBuf, 0x1C, data, 3);
     TransmitData(outputBuf, 10);
 }
 
 // 发送命令数据
-void SendData_Set_Command(uint8_t cmd, uint8_t data) {
+void SendData_Set_Command(uint8_t cmd, uint8_t data) 
+{
     uint8_t cmdData[1] = {data};
     FillFrame(outputBuf, cmd, cmdData, 0);
     TransmitData(outputBuf, 7);
@@ -377,12 +399,13 @@ void SendWifiData_To_PanelWindSpeed(uint8_t speed) {
 }
 
 // 发送命令响应
-void SendWifiData_Answer_Cmd(uint8_t cmd, uint8_t cmddata) {
-    //uint8_t cmdData[2] = {cmd, data};
-    FillFrame_Response(outputBuf, cmd, &cmddata, 0);
+void SendWifiData_Answer_Cmd(uint8_t cmd, uint8_t cmddata) 
+{
+    uint8_t cmdData[1] = {cmddata};
+    FillFrame_Response(outputBuf, cmd,cmdData ,0);
     TransmitData(outputBuf,8);
 }
-
+// smart phone send command
 void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
 {
 	 uint8_t cmdData[1] = {data};
@@ -392,7 +415,14 @@ void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
 }
 
 
-
+/***********************************************************************
+	*
+	*Function Name:void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
+	*Function:
+	*Input Ref: 1-cmd   2. data.
+	*Return Ref:NO
+	*
+************************************************************************/
 void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
 {
       #if 0

@@ -55,7 +55,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, LED_HUM_SYMBOL_Pin|LED_POWER_Pin|RELAY_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, TEMP_SENSOR_Pin|FAN_COM_Pin|FAN_CCW_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, TEMP_SENSOR_Pin|FAN_COM_Pin|FAN_CCW_Pin |MCU_DIO_Pin|MCU_STB_Pin|MCU_CLK_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, MCU_DIO_Pin|MCU_STB_Pin|MCU_CLK_Pin|RELAY_Pin|PLASMA_Pin|LED_TAPE_CTL_Pin, GPIO_PIN_RESET);
@@ -83,6 +83,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+//  GPIO_InitStruct.Pin =  TEMP_SENSOR_Pin;
+//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;//GPIO_MODE_OUTPUT_PP;
+//  GPIO_InitStruct.Pull = GPIO_PULLUP;//GPIO_NOPULL;
+//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;//GPIO_SPEED_FREQ_LOW;
+//  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin PBPin PBPin
                            PBPin PBPin PBPin PBPin
