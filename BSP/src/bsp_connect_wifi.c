@@ -94,7 +94,8 @@ void wifi_auto_detected_link_state(void)
           SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
          
    }
-   
+
+  
 
    
    
@@ -159,6 +160,7 @@ static void Auto_SmartPhone_TryToLink_TencentCloud(void)
     else if(g_wifi.gwifi_link_net_state_flag ==0 && power_on_login_tencent_cloud_flag ==4){
        power_on_login_tencent_cloud_flag++;
         SendWifiData_To_Cmd(0x1F,0x00);
+	    osDelay(5);
     }
 }
 

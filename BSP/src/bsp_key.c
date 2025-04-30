@@ -17,7 +17,7 @@
 #define CHECK_TIME_THRESHOLD_3S  150  // 3秒
 #define TEMPERATURE_HIGH_THRESHOLD  39  // 高温阈值
 #define TEMPERATURE_LOW_THRESHOLD   37  // 低温阈值
-#define TEMPERATURE_DIFF_THRESHOLD  2   // 温度差阈值
+#define TEMPERATURE_DIFF_THRESHOLD  1   // 温度差阈值
 
 
 // 干燥状态枚举
@@ -321,7 +321,7 @@ static void handleTemperatureControl(void)
             }
 
         }
-        else if (g_pro.gset_temperture_value > 21 && current_temperature <= (g_pro.gset_temperture_value - TEMPERATURE_DIFF_THRESHOLD)) {
+        else if (current_temperature < (g_pro.gset_temperture_value - TEMPERATURE_DIFF_THRESHOLD)) {
             if(g_pro.g_manual_shutoff_dry_flag ==0){
 				if(g_pro.works_two_hours_interval_flag == 0)setDryState(DRY_STATE_ON);
 				
@@ -361,10 +361,10 @@ static void handleDefaultTemperatureControl(void)
             setDryState(DRY_STATE_OFF);
 		    if(g_disp.g_second_disp_flag ==1){
 		     sendDisplayCommand(0x02,0x0); // send data to the second displayboard .关闭干燥功能
-				 osDelay(5);
+			 osDelay(5);
 			}
 			 if (g_wifi.gwifi_link_net_state_flag == 1) {
-			   MqttData_Publish_SetPtc(DRY_STATE_OFF) ;
+			   	MqttData_Publish_SetPtc(DRY_STATE_OFF) ;
 			    osDelay(50);
 			 }
         } 
