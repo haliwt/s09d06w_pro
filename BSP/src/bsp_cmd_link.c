@@ -306,10 +306,10 @@ void FillFrame(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLen)
     buf[2] = cmd;
     buf[3] = (dataLen > 0) ? 0x0F : 0x00; // Data or command
 
-	if(buf[4]==0){
+	if(buf[3] ==0){
        buf[4] = data[0];
-       buf[5 ] = FRAME_END;
-	   buf[6 ] = bcc_check(buf, 6 );
+       buf[5] = FRAME_END;
+	   buf[6] = bcc_check(buf, 6 );
 	}
 	else{
 	      buf[4] = dataLen;
@@ -336,7 +336,7 @@ void FillFrame_Response(uint8_t *buf, uint8_t cmd, uint8_t *data, uint8_t dataLe
     if (buf[4] == 0x00) {           // 无数据的情况
         buf[5] = data[0];           // 具体指令
         buf[6] = FRAME_END;         // 帧尾
-        buf[7] = bcc_check(buf, 6); // 校验码
+        buf[7] = bcc_check(buf, 7); // 校验码
     } else {                        // 有数据的情况
         buf[5] = dataLen;           // 数据长度
         if (data != NULL) {         // 检查数据指针是否有效
@@ -399,9 +399,9 @@ void SendWifiData_To_PanelWindSpeed(uint8_t speed) {
 }
 
 // 发送命令响应
-void SendWifiData_Answer_Cmd(uint8_t cmd, uint8_t cmddata) 
+void SendWifiData_Answer_Cmd(uint8_t cmd, uint8_t cmdata) 
 {
-    uint8_t cmdData[1] = {cmddata};
+    uint8_t cmdData[1] = {cmdata};
     FillFrame_Response(outputBuf, cmd,cmdData ,0);
     TransmitData(outputBuf,8);
 }

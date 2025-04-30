@@ -124,6 +124,7 @@ static void vTaskDecoderPro(void *pvParameters)
 				if(check_code == gl_tMsg.bcc_check_code ){
 
 				 receive_data_from_displayboard(gl_tMsg.usData);
+				// memset(gl_tMsg.usData, 0, 4); // 初始化为 0
 				 
 			}
 				
@@ -223,8 +224,9 @@ static void vTaskRunPro(void *pvParameters)
 		wifi_auto_detected_link_state();
 	}
 
+	copy_cmd_hanlder();
 
-	ack_cmd_second_disp_hanlder();
+	//ack_cmd_second_disp_hanlder();
 	vTaskDelay(10);
 
 	  

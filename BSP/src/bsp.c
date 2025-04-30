@@ -257,5 +257,23 @@ void works_run_two_hours_state(void)
 
 
 
+void copy_cmd_hanlder(void)
+{
+    if(g_pro.g_copy_power_onoff_flag == power_on){
+		
+	   
+	    SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
+			osDelay(5);
+      g_pro.g_copy_power_onoff_flag =0xff;
 
+	}
+	else if( g_pro.g_copy_power_onoff_flag ==0x02){
+
+	  g_pro.g_copy_power_onoff_flag =0xfe;
+	  SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07 
+        osDelay(5);
+
+	}
+
+}
 

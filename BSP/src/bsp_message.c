@@ -11,6 +11,7 @@ static void copy_receive_data(uint8_t cmd,uint8_t data);
 
 uint8_t power_off_test_counter;
 uint8_t temperature_value;
+uint8_t power_on_counter;
 
 /**********************************************************************
     *
@@ -50,13 +51,18 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x01: //表示开机指令
 
-        if(pdata[3] == 0x01){ //open
-          
-          buzzer_sound();
+        if(pdata[3] == 0x00){ // comand 判断是数据还是命令
+
+		
+          if(pdata[4] == 0x01){ 
 		  g_disp.g_second_disp_flag = 1;
 		  g_pro.gpower_on = power_on;
+		  power_on_counter++;
+          buzzer_sound();
+		 
+		  //g_pro.g_copy_power_onoff_flag = power_on;
           SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-          osDelay(5);
+           osDelay(5);
         }
         else{ //close 
          
@@ -64,10 +70,13 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  g_disp.g_second_disp_flag = 1;
 		  g_pro.gpower_on = power_off;
           power_off_test_counter++;
+		 // g_pro.g_copy_power_onoff_flag = 0x02;
 		 SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
 		 osDelay(5);
 
         }
+
+    	}
 
      break;
 
@@ -80,7 +89,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
           g_pro.gDry = 1;
 		   LED_DRY_ON();
 		  //manual close flag :
-		  // SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
+		   SendWifiData_Answer_Cmd(CMD_PTC,0x01); //WT.EDIT 2025.01.07
 		  g_pro.g_manual_shutoff_dry_flag = 0;
 		  if(g_pro.works_two_hours_interval_flag==0){
 		      DRY_OPEN();
@@ -102,7 +111,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  LED_DRY_OFF();
           DRY_CLOSE();
 		  if(g_disp.g_second_disp_flag ==1){
-		  //SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
+		  SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
 		  //manual close flag :
 		  }
             

@@ -132,6 +132,8 @@ typedef struct _process{
    uint8_t gdisp_hours_value;
    uint8_t gdisp_minutes_value;
 
+   uint8_t g_copy_power_onoff_flag;
+
    int8_t gdisp_timer_hours_value;
    
    
@@ -169,5 +171,6 @@ void mainboard_close_all_fun(void);
 
 void works_run_two_hours_state(void);
 
+void copy_cmd_hanlder(void);
 
 #endif /* BSP_INC_BSP_H_ */
