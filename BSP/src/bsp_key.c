@@ -468,7 +468,7 @@ void set_timer_timing_value_handler(void)
 
 			if(g_pro.gdisp_timer_hours_value>0){
 			g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
-			g_pro.key_gtime_timer_define_flag = input_set_null;
+			g_pro.key_gtime_timer_define_flag = normal_time_mode; //define UP and down key is set temperature value 
 			key_set_timer_flag++;
 			g_pro.gTimer_timer_time_second=0;
 			gl_timer_minutes_value=0;
@@ -485,12 +485,12 @@ void set_timer_timing_value_handler(void)
 				key_set_timer_flag=0;
 
 				g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
-				g_pro.key_gtime_timer_define_flag = input_set_null;
+				g_pro.key_gtime_timer_define_flag = normal_time_mode;
 			}
 		}
 		else{ //times is done ,exit this process
 
-		     g_pro.key_gtime_timer_define_flag = input_set_null;
+		     g_pro.key_gtime_timer_define_flag = normal_time_mode; //WT.EDIT 2025.04.30
 
 
 		}

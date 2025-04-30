@@ -200,12 +200,14 @@ static void vTaskRunPro(void *pvParameters)
 	}
 	else if(g_key.key_down_flag ==KEY_DOWN_ID && KEY_DOWN_VALUE() == KEY_UP ){// && DEC_KEY_VALUE()==KEY_UP){
 		g_key.key_down_flag = KEY_NULL;
+		g_key.mode_key_switch_time_mode= normal_time_mode; //WT.EDIT 2025.04.30
 		buzzer_sound();
 
 		key_dwon_fun();
 	}
 	else if(g_key.key_up_flag ==KEY_UP_ID && KEY_UP_VALUE() == KEY_UP ){ // && ADD_KEY_VALUE()==KEY_UP){
 		g_key.key_up_flag =KEY_NULL;
+		g_key.mode_key_switch_time_mode= normal_time_mode; //WT.EDIT 2025.04.30
 		buzzer_sound();
 
 		key_up_fun();
