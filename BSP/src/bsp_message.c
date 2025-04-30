@@ -82,7 +82,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x02: //PTC打开关闭指令
 
-     if(pdata[3] == 0x01){
+     if(pdata[3] == 0x00){
+	 	if(pdata[4]==0x01){
 	 	if(g_pro.gpower_on == power_on){
 		 
           buzzer_sound();
@@ -103,7 +104,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
        
        }
        }
-       else if(pdata[3] == 0x0){
+       else if(pdata[4] == 0x0){
 	   	 if(g_pro.gpower_on == power_on){
 		  g_pro.g_manual_shutoff_dry_flag = 1;
           buzzer_sound();
@@ -121,12 +122,13 @@ void receive_data_from_displayboard(uint8_t *pdata)
           }
 	   	 }
        }
-    
+     	}
      break;
 
      case 0x03: //PLASMA 打开关闭指令
 
-        if(pdata[3] == 0x01){
+       if(pdata[3] == 0x00){
+	    if(pdata[4]==0x01){
        if(g_pro.gpower_on == power_on){
 	   	  
             buzzer_sound();
@@ -142,7 +144,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
            
         }
         }
-        else if(pdata[3] == 0x0){
+        else if(pdata[4] == 0x0){
         if(g_pro.gpower_on == power_on){ 
             buzzer_sound();
 			g_pro.gPlasma = 0;
@@ -155,13 +157,15 @@ void receive_data_from_displayboard(uint8_t *pdata)
             }
            
         }
-        }   
+        }
+       	}
       break;
 
 
       case 0x04: //ultrasonic  打开关闭指令
 
-        if(pdata[3] == 0x01){  //open 
+       if(pdata[3] == 0x00){
+	 	if(pdata[4]==0x01){
           if(g_pro.gpower_on == power_on){ 
             buzzer_sound();
 			g_pro.gMouse = 1;
@@ -176,7 +180,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
            
           }
        }
-        else if(pdata[3] == 0x0){ //close 
+        else if(pdata[4] == 0x0){ //close 
 		 if(g_pro.gpower_on == power_on){ 
 					buzzer_sound();
 					g_pro.gMouse = 0;
@@ -190,12 +194,13 @@ void receive_data_from_displayboard(uint8_t *pdata)
         }
        }
     
-
+       	}
      break;
 
       case 0x05: // link wifi command
 
-       if(pdata[3] == 0x01){  // link wifi 
+       if(pdata[3] == 0x00){
+	 	if(pdata[4]==0x01){
         if(g_pro.gpower_on == power_on){ 
 		  SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
           buzzer_sound();
@@ -207,6 +212,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
         
          }
         
+       	}
        	}
 
      break;
