@@ -84,5 +84,6 @@ DHT11_Status DHT11_Display_Data(uint8_t mode);
 
 uint8_t read_dht11_temperature_value(void);
 
+uint8_t read_sensor_dht11_data(void);
 
 #endif /* BSP_INC_BSP_DHT11_H_ */

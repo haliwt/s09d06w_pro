@@ -164,6 +164,34 @@ uint8_t dht11_init(void)
     return dht11_check();
 }
 
+
+
+/**
+ * @brief  read_
+ * @param  mode: 0-显示温度，1-显示湿度
+ * @retval DHT11_Status 类型的操作结果
+ */
+uint8_t read_sensor_dht11_data(void)
+{
+   uint8_t status;  
+	 // 读取DHT11数据
+    status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+    //dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+	osDelay(200);
+    if(status != DHT11_OK)
+    {
+        // 读取失败，显示错误代码
+        LED_TEMP_SINGLE_ON();
+        LED_HUM_SINGLE_OFF();
+        SMG_Display_Err();
+        return status;
+    }
+
+	return  DHT11_OK;
+
+}
+
+
 /**
  * @brief  在TM1639上显示DHT11的温湿度数据
  * @param  mode: 0-显示温度，1-显示湿度
@@ -172,12 +200,12 @@ uint8_t dht11_init(void)
 DHT11_Status DHT11_Display_Data(uint8_t mode)
 {
   //  DHT11_Data_TypeDef dht11_data;
-  //  DHT11_Status status;
-    
+    uint8_t  status;
+   
     // 读取DHT11数据
     status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
     //dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-	osDelay(200);
+	osDelay(100);
     if(status != DHT11_OK)
     {
         // 读取失败，显示错误代码
@@ -231,12 +259,12 @@ uint8_t read_dht11_temperature_value(void)
 void Update_DHT11_ToDisplayBoard_Value(void)
 {
     
-    
-	 dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-    
+     static uint8_t error_flag;
+	 error_flag = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+     osDelay(200);
 	
-
-	sendData_Real_TimeHum(dht11_data.humidity,dht11_data.temperature);
+    if(error_flag ==0)
+	    sendData_Real_TimeHum(dht11_data.humidity,dht11_data.temperature);
 	
     
 }
@@ -246,15 +274,20 @@ void Update_DHT11_ToDisplayBoard_Value(void)
 
 void Update_Dht11_Totencent_Value(void)
 {
+    static uint8_t error_flag;
+    error_flag= dht11_read_data(&dht11_data.temperature, &dht11_data.humidity);
 
-    dht11_read_data(&dht11_data.temperature, &dht11_data.humidity);
+    osDelay(100);
 
 	//Dht11_Read_TempHumidity_Handler(&DHT11);
+	if(error_flag == 0){
 	 g_pro.g_temperature_value = dht11_data.temperature;
 	 g_pro.g_humidity_value= dht11_data.humidity;
 
 	MqttData_Publis_ReadTempHum(dht11_data.temperature,dht11_data.humidity);
     osDelay(100);//HAL_Delay(100);
+
+    }
 
 }
 

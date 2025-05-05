@@ -26,6 +26,8 @@
 #define GPIO_4        (1U << 4)  // GPIO_4
 
 
+
+
 typedef enum
 {
    KEY_DOWN ,
@@ -40,6 +42,13 @@ typedef enum{
    MODE_AI,
 
 }AIState_TypeDef;
+
+
+// 干燥状态枚举
+typedef enum {
+    DRY_STATE_OFF = 0,
+    DRY_STATE_ON = 1
+} DryState;
 
 
 typedef enum{

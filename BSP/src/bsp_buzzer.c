@@ -17,5 +17,43 @@ void buzzer_sound(void)
 
 
 
+/*********************************************************************************************************
+*	Function Name: MODH_Poll
+*	Function: ???????. 1ms ?????
+*	Input Ref: ?
+*	Return Ref: 0 ????? 1????????
+*********************************************************************************************************/
+
+void Buzzer_Fan_Error_Sound(void)
+{
+   
+ 
+    buzzer_sound();
+	HAL_Delay(100);
+	  buzzer_sound();
+	HAL_Delay(100);
+	  buzzer_sound();
+	HAL_Delay(100);
+	  buzzer_sound();
+	HAL_Delay(100);
+
+}
+
+void Buzzer_Ptc_Error_Sound(void)
+{
+
+	  buzzer_sound();
+	HAL_Delay(50);
+	  buzzer_sound();
+	HAL_Delay(50);
+	  buzzer_sound();
+	HAL_Delay(50);
+	  buzzer_sound();
+	HAL_Delay(50);
+	  buzzer_sound();
+	HAL_Delay(50);
+
+
+}
 
 

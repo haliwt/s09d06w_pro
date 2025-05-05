@@ -122,7 +122,7 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t send_data_disp_counter;
+   static uint8_t send_data_disp_counter,read_error_flag,switch_adc;
 
 	switch(gl_run.process_on_step){
 
@@ -188,7 +188,8 @@ void power_on_run_handler(void)
 	
       if(g_pro.key_set_temperature_flag==1){
 
-          DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+         read_error_flag= DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+         if(read_error_flag == 0)DHT11_Display_Data(DISPLAY_TEMP);
 
       }
       else if(g_key.mode_key_switch_time_mode == timer_time_mode){
@@ -205,7 +206,8 @@ void power_on_run_handler(void)
     			 g_pro.gAI=1;
     			 LED_AI_ON();
     			 TEMP_ICON_ON();//WT.EDIT 2025.04.28
-    			 DHT11_Display_Data(0); // 显示温度
+    			 read_error_flag=DHT11_Display_Data(0); // 显示温度
+    			 if(read_error_flag==0)DHT11_Display_Data(0); 
 
     		 }
 
@@ -232,12 +234,14 @@ void power_on_run_handler(void)
 					LED_TEMP_SINGLE_ON();
 					LED_HUM_SINGLE_OFF();
 
-					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+					read_error_flag =DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+					if(read_error_flag == 0)DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
 					break;
 				case 2:
                     LED_TEMP_SINGLE_OFF();
 					LED_HUM_SINGLE_ON();
-					DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
+				    read_error_flag =DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
+					if(read_error_flag == 0)DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					break;
 				case 3:
 					LED_AI_OFF();
@@ -258,7 +262,8 @@ void power_on_run_handler(void)
 				g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
 		        if(disp_temp_hum > 1)disp_temp_hum=0;
 				disp_temp_hum = disp_temp_hum ^ 0x01;   // 切换布尔状态
-				DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
+				read_error_flag= DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
+				if(read_error_flag == 0)DHT11_Display_Data(disp_temp_hum); // 显示温度或湿度
 				
 			 }
 		 	}
@@ -282,17 +287,13 @@ void power_on_run_handler(void)
 
 			   if(g_wifi.gwifi_link_net_state_flag ==1){
 		           Update_Dht11_Totencent_Value()  ;
+				   osDelay(200);
 				   
 			   	}
 
             
-				if(g_disp.g_second_disp_flag == 1){
-                      if(g_wifi.gwifi_link_net_state_flag ==1){
-							sendData_Real_TimeHum(g_pro.g_humidity_value, g_pro.g_temperature_value);
-					  }
-					  else{
-	                     Update_DHT11_ToDisplayBoard_Value();
-					  }
+				if(g_disp.g_second_disp_flag == 1){                     
+					 sendData_Real_TimeHum(g_pro.g_humidity_value, g_pro.g_temperature_value);				
 
 				}
 		    }
@@ -303,8 +304,28 @@ void power_on_run_handler(void)
 	 break;
 
 	 case 4: // wifi function
+         if(g_pro.gTimer_display_adc_value > 3){
+		 	g_pro.gTimer_display_adc_value=0;
 
-	    
+		    switch_adc = switch_adc ^ 0x01;
+		    if(switch_adc==1){
+               Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,5);
+			}
+			else{
+				
+
+				if(g_pro.works_two_hours_interval_flag==0){
+	                Get_Fan_Adc_Fun(ADC_CHANNEL_0,5);
+
+		        }
+
+            }
+
+         }
+		 
+		
+
+		 
 		    
 	    gl_run.process_on_step =1;
 

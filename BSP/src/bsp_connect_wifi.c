@@ -70,10 +70,7 @@ void wifi_auto_detected_link_state(void)
 	  
 	 }
 
-
-
-	
-	if(g_wifi.gwifi_link_net_state_flag==1  && dc_power_on ==0){
+      if(g_wifi.gwifi_link_net_state_flag==1  && dc_power_on ==0){
               
             dc_power_on++;
            //wifi_t.linking_tencent_cloud_doing = 0;

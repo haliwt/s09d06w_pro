@@ -32,6 +32,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		   g_pro.gTimer_fan_run_one_minute++;
 		   g_pro.gTimer_input_set_temp_timer++;
 		   g_pro.gTimer_two_hours_counter++;
+		   g_pro.gTimer_disp_temp_humidity_vlaue++;
+		   g_pro.gTimer_display_adc_value++;
 		   
 		  
 

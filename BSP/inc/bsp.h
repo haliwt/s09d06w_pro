@@ -32,6 +32,7 @@
 #include "bsp_message.h"
 #include "bsp_cmd_link.h"
 #include "bsp_led_tape.h"
+#include "bsp_adc.h"
 #include "interrupt_manager.h"
 
 //wifi function
@@ -157,6 +158,8 @@ typedef struct _process{
    uint8_t  gTimer_input_set_temp_times;
    uint8_t   gTimer_fan_run_one_minute;
    uint8_t   gTimer_input_set_temp_timer;
+   uint8_t gTimer_disp_temp_humidity_vlaue;
+   uint8_t gTimer_display_adc_value;
 }process_t;
 
 extern process_t g_pro;
