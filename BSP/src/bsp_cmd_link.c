@@ -452,10 +452,10 @@ void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
 		#endif 
 	#endif 
 
-		// uint8_t data[1] = {data};
-		 uint8_t cmdata[1] = {data};
-         FillFrame(outputBuf, cmd, cmdata, 1);
-         TransmitData(outputBuf, 8);
+	
+	uint8_t cmdata[1] = {data};
+	FillFrame(outputBuf, cmd, cmdata, 1);
+	TransmitData(outputBuf, 8);
 
 }
 

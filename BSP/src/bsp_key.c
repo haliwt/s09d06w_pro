@@ -201,26 +201,26 @@ void key_dwon_fun(void)
 ******************************************************************************/
 void set_temperature_value_handler(void)
 {
-	
-   
- 
-  if((g_pro.key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 4)
+   static uint8_t send_data_flag;
+   if((g_pro.key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 4)
 	{
         g_pro.key_set_temperature_flag=2;
-		if(read_wifi_temperature_value()==1){
-			g_wifi.g_wifi_set_temp_flag=0;
-			if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-		      SendWifiData_To_Data(0x11,gl_set_temperture_value);
-			  osDelay(5);
-			}
-		}
-		else{
-			g_pro.gset_temperture_value = gl_set_temperture_value;
-			if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-			SendWifiData_To_Data(0x11,gl_set_temperture_value);
-			osDelay(5);
-			}
-		}
+		send_data_flag=1;
+		
+//		if(read_wifi_temperature_value()==1){
+//			g_wifi.g_wifi_set_temp_flag=0;
+////			if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
+////		      SendWifiData_To_Data(0x2A,gl_set_temperture_value);
+////			  osDelay(5);
+////			}
+//		}
+//		else{
+//			g_pro.gset_temperture_value = gl_set_temperture_value;
+//			//if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
+//			//SendWifiData_To_Data(0x11,gl_set_temperture_value);
+//			///osDelay(5);
+//			//}
+//		}
 		set_first_close_dry_flag=0;
 		g_pro.g_manual_shutoff_dry_flag =0;
 		
@@ -264,7 +264,23 @@ void set_temperature_value_handler(void)
     }
     else{
 
-	
+        if(send_data_flag ==1){
+			send_data_flag++;
+			if(read_wifi_temperature_value()==1){
+				g_wifi.g_wifi_set_temp_flag=0;
+				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
+			      SendWifiData_To_Data(0x2A,gl_set_temperture_value);
+				  osDelay(5);
+				}
+			}
+			else{
+				g_pro.gset_temperture_value = gl_set_temperture_value;
+				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
+				SendWifiData_To_Data(0x2A,gl_set_temperture_value);
+				osDelay(5);
+				}
+			}
+        }
         if(g_pro.key_set_temperature_flag==2  && read_wifi_temperature_value()==0){
 		    handleTemperatureControl();
            
