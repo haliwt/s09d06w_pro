@@ -284,8 +284,14 @@ uint8_t readTemperature(void)
     return read_dht11_temperature_value();
 }
 
-
-// 处理温度控制逻辑
+/******************************************************************************
+	*
+	*Function Name:static void handleTemperatureControl(void) 
+	*Funcion: // 处理温度控制逻辑
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
 static void handleTemperatureControl(void) 
 {
 	//uint8_t current_temperature;
@@ -321,7 +327,12 @@ static void handleTemperatureControl(void)
 			    if(g_pro.works_two_hours_interval_flag==0){
 
 				    g_pro.gDry = DRY_STATE_ON;
-					setDryState(g_pro.gDry);
+					LED_DRY_ON();
+					if(g_pro.works_two_hours_interval_flag == 0){
+					     //setDryState(g_pro.gDry);
+                         DRY_OPEN();
+					 }
+					
 
 			    }
 				
@@ -341,7 +352,11 @@ static void handleTemperatureControl(void)
             if(g_pro.g_manual_shutoff_dry_flag ==0){
 				if(g_pro.works_two_hours_interval_flag == 0){
 					 g_pro.gDry = DRY_STATE_ON;
-					setDryState(g_pro.gDry);
+					 LED_DRY_ON();
+					 if(g_pro.works_two_hours_interval_flag == 0){
+					     //setDryState(g_pro.gDry);
+                         DRY_OPEN();
+					 }
 
 				}
 				
@@ -395,10 +410,14 @@ static void handleDefaultTemperatureControl(void)
 		      if(default_first_close_dry==0){
 
 			  if(g_pro.g_manual_shutoff_dry_flag ==0){
-					if(g_pro.works_two_hours_interval_flag ==0){
 
 					g_pro.gDry= DRY_STATE_ON;
-					setDryState(g_pro.gDry);
+
+			        LED_DRY_ON();
+					if(g_pro.works_two_hours_interval_flag ==0){
+
+					  g_pro.gDry= DRY_STATE_ON;
+					   setDryState(g_pro.gDry);
 
 
 					if(g_disp.g_second_disp_flag ==1){
@@ -417,9 +436,13 @@ static void handleDefaultTemperatureControl(void)
 			 }
 		     else if (current_temperature <= 0x26) {
 	           if(g_pro.g_manual_shutoff_dry_flag ==0){
+
+				 g_pro.gDry= DRY_STATE_ON;
+
+			     LED_DRY_ON();
 				if(g_pro.works_two_hours_interval_flag ==0){
-					g_pro.gDry= DRY_STATE_ON;
-					setDryState(g_pro.gDry);
+					
+					DRY_OPEN();//setDryState(g_pro.gDry);
 					
 				 if(g_disp.g_second_disp_flag ==1){
 				  sendDisplayCommand(0x02,0x01); // 第二个显示板，打开干燥功能
