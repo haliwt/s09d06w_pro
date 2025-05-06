@@ -34,7 +34,7 @@ uint8_t define_timer_mode;
 uint8_t key_up_down_pressed_flag;
 uint8_t set_first_close_dry_flag;
 
-uint8_t default_first_close_dry,key_set_timer_flag;
+uint8_t default_first_close_dry;
 
 
 static void adjust_temperature(int8_t delta) ;
@@ -61,7 +61,7 @@ void key_referen_init(void)
   gl_timer_minutes_value =0;
   define_timer_mode=0;
   key_up_down_pressed_flag=0;
-  key_set_timer_flag=0;
+  g_pro.key_set_timer_flag=0;
   
 }
 
@@ -144,7 +144,7 @@ static void adjust_temperature(int8_t delta)
 static void adjust_timer(int8_t delta) 
 {
     g_pro.gTimer_switch_set_timer_times = 0;
-    key_set_timer_flag = 1;
+    g_pro.key_set_timer_flag = 1;
     g_pro.gdisp_timer_hours_value += delta;
     if (g_pro.gdisp_timer_hours_value > MAX_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MAX_TIMER_HOURS;
     if (g_pro.gdisp_timer_hours_value < MIN_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MIN_TIMER_HOURS;
@@ -271,14 +271,14 @@ void set_temperature_value_handler(void)
 			if(read_wifi_temperature_value()==1){
 				g_wifi.g_wifi_set_temp_flag=0;
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-			      SendWifiData_To_Data(0x2A,gl_set_temperture_value);
+			      SendWifiData_To_Data(0x2A,g_pro.gset_temperture_value);
 				  osDelay(5);
 				}
 			}
 			else{
-				g_pro.gset_temperture_value = gl_set_temperture_value;
+				g_pro.gset_temperture_value = g_pro.gset_temperture_value;
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-				SendWifiData_To_Data(0x2A,gl_set_temperture_value);
+				SendWifiData_To_Data(0x2A,g_pro.gset_temperture_value);
 				osDelay(5);
 				}
 			}
@@ -541,12 +541,12 @@ void set_timer_timing_value_handler(void)
    if(g_pro.key_gtime_timer_define_flag == input_set_timer_mode && g_pro.gTimer_switch_set_timer_times > 3 ){
    	      g_pro.gTimer_switch_set_timer_times=0;
 
-          if(key_set_timer_flag==1){
+          if(g_pro.key_set_timer_flag==1){
 
 			if(g_pro.gdisp_timer_hours_value>0){
 			g_pro.g_disp_timer_or_temp_flag = timer_time_mode;
 			g_pro.key_gtime_timer_define_flag = normal_time_mode; //define UP and down key is set temperature value 
-			key_set_timer_flag++;
+			g_pro.key_set_timer_flag++;
 			g_pro.gTimer_timer_time_second=0;
 			gl_timer_minutes_value=0;
 			g_pro.gAI = 0;
@@ -559,7 +559,7 @@ void set_timer_timing_value_handler(void)
 				g_pro.gAI = 1;
 				LED_AI_ON();
 
-				key_set_timer_flag=0;
+				g_pro.key_set_timer_flag=0;
 
 				g_pro.g_disp_timer_or_temp_flag = normal_time_mode;
 				g_pro.key_gtime_timer_define_flag = normal_time_mode;
@@ -572,7 +572,7 @@ void set_timer_timing_value_handler(void)
 
 		}
    	}
-    else if(key_set_timer_flag==2){
+    else if(g_pro.key_set_timer_flag==2){
 
        if(g_pro.gTimer_timer_time_second > 59){
 	       g_pro.gTimer_timer_time_second=0;

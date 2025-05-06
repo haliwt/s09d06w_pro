@@ -244,37 +244,6 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		}
      break;
 
-//	 case 0x2A: //the second display board set temperature value 
-//
-//		    if(pdata[3]==0x0F){ //数据
-//			if(pdata[4] == 0x01){  //no buzzer sound, only has one data.
-//             
-//             if(g_pro.gpower_on == power_on){ 
-//				//buzzer_sound();
-//               g_pro.g_manual_shutoff_dry_flag =0;
-//               g_pro.key_set_temperature_flag=2;
-//				
-//				      
-//                
-//			    g_pro.gTimer_input_set_temp_timer= 0;
-//			   
-//
-//  				g_pro.gset_temperture_value = pdata[5];
-//				g_wifi.wifi_set_temperature_value = pdata[5];
-//				g_pro.gTimer_switch_temp_hum = 0;
-//
-//				TM1639_Display_Temperature(pdata[5]);
-//				 if(g_wifi.gwifi_link_net_state_flag==1){
-//			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
-//		           osDelay(50);//HAL_Delay(350);
-//				 }
-//             }
-//        }
-//	     
-//
-//		}
-//	 break;
-
      case 0x16 : //buzzer sound command with answer .
 
       
@@ -423,6 +392,33 @@ void receive_data_from_displayboard(uint8_t *pdata)
        }
 
 
+     break;
+
+	 case 0x4C: //set up timer timing value 
+		if(pdata[3] == 0x0F){ //数据
+
+			if(pdata[4]==0x01){ // has dat only one value ,next receive byte is value
+
+			if(g_pro.gpower_on == power_on){ 
+                buzzer_sound();
+				g_key.mode_key_switch_time_mode = timer_time_mode;
+				g_pro.key_gtime_timer_define_flag = input_set_timer_mode;
+				g_pro.key_set_timer_flag =1;
+				g_pro.gTimer_switch_set_timer_times = 0;
+			  
+			    g_pro.gdisp_timer_hours_value = pdata[5];
+			
+			    g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode;//WT.EDIT 2025.04.23//input_temp_time_mode  ;
+			    TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+				
+
+			}
+
+			}
+
+
+		}
+	 	
      break;
 
      case 0xFF: //copy send cmd acknowlege
