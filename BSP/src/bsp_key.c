@@ -303,7 +303,7 @@ static void handleTemperatureControl(void)
 
         if (current_temperature > g_pro.gset_temperture_value){
             g_pro.gDry = DRY_STATE_OFF;
-		    setDryState(g_pro.gDry);
+		    DRY_CLOSE();//setDryState(g_pro.gDry);
 			if(set_first_close_dry_flag ==0){
 
 				set_first_close_dry_flag =1;

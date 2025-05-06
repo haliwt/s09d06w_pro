@@ -362,7 +362,9 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x22: //PTC打开关闭指令,buzzer don't sound,温度对比后的指令
 
-      if(pdata[3] == 0x01){
+	  if(pdata[3]==0){ //表示是指令
+
+      if(pdata[4] == 0x01){
         
         if(g_pro.gpower_on == power_on){
 
@@ -381,8 +383,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
        
        
 				}
-			}
-      else if(pdata[3] == 0x0){
+	  }
+      else if(pdata[4] == 0x0){
         if(g_pro.gpower_on == power_on){
 
 		   g_pro.g_manual_shutoff_dry_flag=0;
@@ -401,6 +403,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
        
       }
 		}
+	  	}
      break;
 
      case 0x27: //smart phone set AI mode
