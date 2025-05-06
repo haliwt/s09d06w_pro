@@ -25,8 +25,8 @@
 
 KEY_PROCESS_TYPEDEF  g_key;
 
-uint8_t gl_set_temperture_value;
-uint8_t temperature_init_value ;
+//uint8_t gl_set_temperture_value;
+
 uint8_t  key_set_temperature_flag;
 uint16_t check_time;
 int8_t  gl_timer_minutes_value;
@@ -117,19 +117,21 @@ uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx)
  */
 static void adjust_temperature(int8_t delta) 
 {
-    if (temperature_init_value == 0) {
+
+   static uint8_t temperature_init_value ;
+	if (temperature_init_value == 0 && g_pro.key_set_temperature_flag !=2) {
         temperature_init_value++;
-        gl_set_temperture_value = (delta > 0) ? 21 : 39;
+        g_pro.gset_temperture_value = (delta > 0) ? 21 : 39;
     } else {
-        gl_set_temperture_value += delta;
-        if (gl_set_temperture_value > MAX_TEMPERATURE) gl_set_temperture_value = MAX_TEMPERATURE;
-        if (gl_set_temperture_value < MIN_TEMPERATURE) gl_set_temperture_value = MIN_TEMPERATURE;
+        g_pro.gset_temperture_value += delta;
+        if (g_pro.gset_temperture_value > MAX_TEMPERATURE) g_pro.gset_temperture_value = MAX_TEMPERATURE;
+        if (g_pro.gset_temperture_value < MIN_TEMPERATURE) g_pro.gset_temperture_value = MIN_TEMPERATURE;
     }
     g_pro.g_manual_shutoff_dry_flag = 0;
     key_up_down_pressed_flag = 1;
     g_pro.key_set_temperature_flag = 1;
-		g_pro.gset_temperture_value= gl_set_temperture_value; //WT.EDIT 2025.05.05
-    TM1639_Display_Temperature(gl_set_temperture_value);
+		//g_pro.gset_temperture_value= gl_set_temperture_value; //WT.EDIT 2025.05.05
+    TM1639_Display_Temperature(g_pro.gset_temperture_value);
     g_pro.gTimer_input_set_temp_times = 0;
     g_pro.gTimer_switch_temp_hum = 0;
 }
