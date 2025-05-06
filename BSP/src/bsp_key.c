@@ -587,7 +587,7 @@ void set_timer_timing_value_handler(void)
 			  g_pro.gdisp_timer_hours_value--;
 
 			  if(g_pro.gdisp_timer_hours_value < 0){
-
+                   buzzer_sound();
 			       g_pro.gpower_on = power_off;
 			  	
 			  }
