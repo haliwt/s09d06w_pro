@@ -948,7 +948,7 @@ void Parse_Json_phone_timer_power_on_ref(void)
 		}
 		else if(strstr((char *)TCMQTTRCVPUB,"ptc\":1")){
 				
-			g_pro.gDry = 0;  // dry_open_flag=1;//gctl_t.gDry=1;
+			g_pro.gDry = 1;  // dry_open_flag=1;//gctl_t.gDry=1;
                  
 		 }
 		

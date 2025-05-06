@@ -248,10 +248,15 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
 
 uint8_t read_dht11_temperature_value(void)
 {
-	 
-	  dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-	 
-     return dht11_data.temperature;
+	uint8_t error_flag;
+	error_flag =  dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
+	
+
+	if(error_flag ==0){
+	    return dht11_data.temperature;
+
+	}
+	
 }
 
 
