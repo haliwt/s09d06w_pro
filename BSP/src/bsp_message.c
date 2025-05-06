@@ -82,7 +82,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x02: //PTC打开关闭指令
 
-     if(pdata[3] == 0x00){
+     if(pdata[3] == 0x00){ //判断是否是数据，或者指令通知， 00- 命令和指令，下一个字节是指令 ；0x0F- 数据，下一个字节是数据个数
 	 	if(pdata[4]==0x01){
 	 	if(g_pro.gpower_on == power_on){
 		 
@@ -164,7 +164,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
       case 0x04: //ultrasonic  打开关闭指令
 
-       if(pdata[3] == 0x00){
+       if(pdata[3] == 0x00){ // 00-》表示是指令或者通知，不是数据，下一个数据就是命令或者通知
 	 	if(pdata[4]==0x01){
           if(g_pro.gpower_on == power_on){ 
             buzzer_sound();
@@ -219,14 +219,14 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      case 0x06: //buzzer sound command 
 
-        if(pdata[3] == 0x01){  //buzzer sound 
-
-          buzzer_sound();
+        if(pdata[3] == 0x00){  //buzzer sound 
+          if(pdata[4]==0x01){
+           buzzer_sound();
         }
-        else if(pdata[3] == 0x0){ // don't buzzer sound .
+        else if(pdata[4] == 0x0){ // don't buzzer sound .
         
         }
-
+    	}
 
      break;
 
@@ -244,36 +244,36 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		}
      break;
 
-	 case 0x11: //the second display board set temperature value 
-
-			
-			if(pdata[4] == 0x01){  //no buzzer sound, 
-             
-             if(g_pro.gpower_on == power_on){ 
-				//buzzer_sound();
-               g_pro.g_manual_shutoff_dry_flag =0;
-                g_pro.key_set_temperature_flag=1;
-				
-				      
-                
-			    g_pro.gTimer_input_set_temp_timer= 0;
-			   
-
-  				g_pro.gset_temperture_value = pdata[5];
-				g_wifi.wifi_set_temperature_value = pdata[5];
-				g_pro.gTimer_switch_temp_hum = 0;
-
-				TM1639_Display_Temperature(pdata[5]);
-				 if(g_wifi.gwifi_link_net_state_flag==1){
-			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
-		           osDelay(50);//HAL_Delay(350);
-				 }
-             }
-        }
-	     
-
-
-	 break;
+//	 case 0x2A: //the second display board set temperature value 
+//
+//		    if(pdata[3]==0x0F){ //数据
+//			if(pdata[4] == 0x01){  //no buzzer sound, only has one data.
+//             
+//             if(g_pro.gpower_on == power_on){ 
+//				//buzzer_sound();
+//               g_pro.g_manual_shutoff_dry_flag =0;
+//               g_pro.key_set_temperature_flag=2;
+//				
+//				      
+//                
+//			    g_pro.gTimer_input_set_temp_timer= 0;
+//			   
+//
+//  				g_pro.gset_temperture_value = pdata[5];
+//				g_wifi.wifi_set_temperature_value = pdata[5];
+//				g_pro.gTimer_switch_temp_hum = 0;
+//
+//				TM1639_Display_Temperature(pdata[5]);
+//				 if(g_wifi.gwifi_link_net_state_flag==1){
+//			       MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
+//		           osDelay(50);//HAL_Delay(350);
+//				 }
+//             }
+//        }
+//	     
+//
+//		}
+//	 break;
 
      case 0x16 : //buzzer sound command with answer .
 
@@ -336,23 +336,27 @@ void receive_data_from_displayboard(uint8_t *pdata)
       break;
 
 	  
-	 case 0x2A: //
+	 case 0x2A: //display board set up tempeature value send data to mainboard
 	 
 			if(pdata[3] == 0x0F){ //数据
+
+			   if(pdata[4]==0x01){ // has dat only one value ,next receive byte is value
 	         
-			    if(g_pro.gpower_on == power_on){ 
-				buzzer_sound();
+			   if(g_pro.gpower_on == power_on){ 
+				//buzzer_sound();
                g_pro.g_manual_shutoff_dry_flag =0;
-                g_pro.key_set_temperature_flag=1;
+                g_pro.key_set_temperature_flag=2;
 				
 			    g_pro.gTimer_input_set_temp_timer= 0;
 			   
-				g_pro.gset_temperture_value = pdata[4];
-				g_wifi.wifi_set_temperature_value = pdata[4];
+				g_pro.gset_temperture_value = pdata[5];
+				g_wifi.wifi_set_temperature_value = pdata[5];
 				g_pro.gTimer_switch_temp_hum = 0;
                 g_disp.g_set_temp_value_flag = 1;
 				
              }
+
+			 }
 				
 	 
 			}
