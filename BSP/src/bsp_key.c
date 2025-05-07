@@ -150,7 +150,7 @@ static void adjust_timer(int8_t delta)
     if (g_pro.gdisp_timer_hours_value < MIN_TIMER_HOURS) g_pro.gdisp_timer_hours_value = MIN_TIMER_HOURS;
     g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode;//WT.EDIT 2025.04.23//input_temp_time_mode  ;
     TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
-	SendWifiData_To_Data(0x4C,g_pro.gdisp_timer_hours_value);
+	SendWifiData_One_Data(0x4C,g_pro.gdisp_timer_hours_value);
 	osDelay(5);
 }
 
@@ -214,14 +214,14 @@ void set_temperature_value_handler(void)
 //		if(read_wifi_temperature_value()==1){
 //			g_wifi.g_wifi_set_temp_flag=0;
 ////			if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-////		      SendWifiData_To_Data(0x2A,gl_set_temperture_value);
+////		      SendWifiData_One_Data(0x2A,gl_set_temperture_value);
 ////			  osDelay(5);
 ////			}
 //		}
 //		else{
 //			g_pro.gset_temperture_value = gl_set_temperture_value;
 //			//if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-//			//SendWifiData_To_Data(0x11,gl_set_temperture_value);
+//			//SendWifiData_One_Data(0x11,gl_set_temperture_value);
 //			///osDelay(5);
 //			//}
 //		}
@@ -273,14 +273,14 @@ void set_temperature_value_handler(void)
 			if(read_wifi_temperature_value()==1){
 				g_wifi.g_wifi_set_temp_flag=0;
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-			      SendWifiData_To_Data(0x2A,g_pro.gset_temperture_value);
+			      SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
 				  osDelay(5);
 				}
 			}
 			else{
 				g_pro.gset_temperture_value = g_pro.gset_temperture_value;
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-				SendWifiData_To_Data(0x2A,g_pro.gset_temperture_value);
+				SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
 				osDelay(5);
 				}
 			}

@@ -232,7 +232,7 @@ void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
     *Return Ref:NO
     *
 *******************************************************************************/
-void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
+void SendWifiData_One_Data(uint8_t cmd,uint8_t data)
 {
         outputBuf[0]=0x5A; //head : main board 0x5A
         outputBuf[1]=0x10; //main board device No: 0x10
@@ -417,13 +417,13 @@ void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
 
 /***********************************************************************
 	*
-	*Function Name:void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
+	*Function Name:void SendWifiData_One_Data(uint8_t cmd,uint8_t data)
 	*Function:
 	*Input Ref: 1-cmd   2. data.
 	*Return Ref:NO
 	*
 ************************************************************************/
-void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
+void SendWifiData_One_Data(uint8_t cmd,uint8_t data)
 {
       #if 0
 		outputBuf[0]=0x5A; //head : main board 0x5A
@@ -459,6 +459,22 @@ void SendWifiData_To_Data(uint8_t cmd,uint8_t data)
 
 }
 
+/***********************************************************************
+	*
+	*Function Name:void SendWifiData_One_Data(uint8_t cmd,uint8_t data)
+	*Function:
+	*Input Ref: 1-cmd   2. data.
+	*Return Ref:NO
+	*
+************************************************************************/
+void SendWifidata_Two_Data(uint8_t cmd,uint8_t datacmd)
+{
+   
+    uint8_t cmdata[1] = {datacmd};
+	FillFrame(outputBuf, cmd, cmdata, 2);
+	TransmitData(outputBuf, 9);
+
+}
 
 
 

@@ -230,13 +230,13 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
 
 				g_wifi.wifi_get_beijing_step = 2;
            		g_wifi.linking_tencent_cloud_doing  =0; //receive from tencent command state .
-                SendWifiData_To_Data(0x1F,0x01); //connect net flag 1: connect .0: don't connect.
+                SendWifiData_One_Data(0x1F,0x01); //connect net flag 1: connect .0: don't connect.
                 
 
          }
          else{
               
-               SendWifiData_To_Data(0x1F,0x0); //0x1F: 0x1=wifi link net is succes ,0x0 = wifi link net is fail
+               SendWifiData_One_Data(0x1F,0x0); //0x1F: 0x1=wifi link net is succes ,0x0 = wifi link net is fail
                g_wifi.wifi_get_beijing_step = 10;
                g_wifi.linking_tencent_cloud_doing  =1; //receive from tencent command state .
              
@@ -490,7 +490,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
             Subscriber_Data_FromCloud_Handler();
             osDelay(200);//HAL_Delay(200);
 
-            SendWifiData_To_Data(0x1F,0x01); //0x1F: wifi link net is succes 
+            SendWifiData_One_Data(0x1F,0x01); //0x1F: wifi link net is succes 
 
              g_wifi.wifi_get_beijing_step = 0;
 		

@@ -191,7 +191,7 @@ static void link_wifi_net_handler(void)
 				first_connect_wifi_flag =1 ;
 				g_wifi.get_rx_beijing_time_enable=0;
                 
-               SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+               SendWifiData_One_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
 			   g_wifi.link_net_step = 7;
               
 				
@@ -200,7 +200,7 @@ static void link_wifi_net_handler(void)
                 
                   g_wifi.wifi_led_fast_blink_flag=0;
                   g_wifi.link_net_step = 8;
-                  SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
+                  SendWifiData_One_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
                 
            
                 }

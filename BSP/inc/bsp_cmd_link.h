@@ -40,7 +40,10 @@ void SendWifiData_To_PanelTime(uint8_t hours,uint8_t minutes,uint8_t seconds);
 void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data);
 
 
-void SendWifiData_To_Data(uint8_t cmd,uint8_t data);
+void SendWifiData_One_Data(uint8_t cmd,uint8_t data);
+
+void SendWifidata_Two_Data(uint8_t cmd,uint8_t datacmd);
+
 void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data);
 
 void SendData_Set_Command(uint8_t cmd,uint8_t data);
