@@ -205,13 +205,13 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     // 读取DHT11数据
     status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
     //dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-	osDelay(100);
+	osDelay(200);
     if(status != DHT11_OK)
     {
         // 读取失败，显示错误代码
-        LED_TEMP_SINGLE_ON();
-        LED_HUM_SINGLE_OFF();
-        SMG_Display_Err();
+        //LED_TEMP_SINGLE_ON();
+       // LED_HUM_SINGLE_OFF();
+        //SMG_Display_Err();
         return status;
     }
     

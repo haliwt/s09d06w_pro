@@ -159,7 +159,11 @@ void power_on_run_handler(void)
 	   wifi_decoder_refer_init();
 	   if(g_disp.g_second_disp_flag == 1){
 	   	  SendData_Set_Command(CMD_POWER,open);
+		  osDelay(5);
          send_data_disp_counter=200;
+		  Update_DHT11_ToDisplayBoard_Value();
+		  osDelay(5);
+	   
 	   }
 	   
        
@@ -167,6 +171,7 @@ void power_on_run_handler(void)
 	   g_pro.g_fan_switch_gears_flag++;
 	   gl_run.process_off_step=0;
 	   gl_run.process_on_step =1;
+	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 	 break;
 
 	 case 1:
@@ -384,7 +389,7 @@ void power_off_run_handler(void)
        }
 	   g_pro.g_fan_switch_gears_flag++;
       gl_run.process_off_step = 1;
-	  
+	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 	  
 
    break;

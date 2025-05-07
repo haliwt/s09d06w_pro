@@ -28,6 +28,7 @@ void bsp_init(void)
 	 key_referen_init();
 	 g_pro.gset_temperture_value=40; //WT.EDIT 2025.05.05
 	 g_pro.gDry = 1;
+	 
 
 }
 

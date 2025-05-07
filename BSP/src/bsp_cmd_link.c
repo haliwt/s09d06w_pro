@@ -519,7 +519,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 		transOngoingFlag=0; //UART Transmit interrupt flag =0 ,RUN
 		#else
 
-		txComplete = 1;
+		txComplete = 1;//uartTxComplete = 1; // 标记发送完成
 
 		#endif 
 	}
