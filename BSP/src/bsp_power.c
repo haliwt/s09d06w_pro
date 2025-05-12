@@ -50,7 +50,8 @@ void power_onoff_handler(uint8_t data)
 	
 		power_on_run_handler();
 		link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
-		wifi_receive_parse_data_handler();
+		
+		wifi_parse_handler();//wifi_receive_parse_data_handler();
 		set_temperature_value_handler();
 		set_timer_timing_value_handler();
 

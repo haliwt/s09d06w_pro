@@ -389,6 +389,7 @@ void clear_rx_copy_data(void)
 void wifi_receive_parse_data_handler(void)
 {
     if(g_wifi.wifi_data_parse_flag==1){
+	  
 
        Wifi_Rx_InputInfo_Handler();
 
