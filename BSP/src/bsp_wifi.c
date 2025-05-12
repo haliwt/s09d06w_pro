@@ -185,7 +185,8 @@ static void link_wifi_net_handler(void)
             break;
 
             case 6:
-				wifi_led_fast_blink();
+				if(g_wifi.gwifi_link_net_state_flag==0)wifi_led_fast_blink();
+				
 
             if( g_wifi.gTimer_link_net_timer_time  > 6){
 
@@ -230,29 +231,37 @@ static void send_connect_wifi_init(void)
 {
   switch(g_pro.first_connect_wifi_flag){
 
-		   case 2:
+          case 2:
+
+           Subscriber_Data_FromCloud_Handler();
+				
+	             osDelay(20);
+		     g_pro.first_connect_wifi_flag = 3;
+		  break;
+
+		   case 3:
  
                  g_wifi.gTimer_get_data_from_tencent_data=0;
 			 
 				 MqttData_Publish_SetOpen(0x01);
 		         
-		         osDelay(200);
-				 g_pro.first_connect_wifi_flag = 3;
+		         osDelay(20);
+				 g_pro.first_connect_wifi_flag = 4;
 		    break;
 
-			case 3:
+			case 4:
 		         Publish_Data_ToTencent_Initial_Data();
 				
-                  osDelay(200);
-			g_pro.first_connect_wifi_flag = 4;
+                  osDelay(20);
+			g_pro.first_connect_wifi_flag = 5;
 
 			break;
 
-			case 4:
+			case 5:
 
 				Subscriber_Data_FromCloud_Handler();
 				
-	             osDelay(200);
+	             osDelay(20);
 
 				 g_pro.first_connect_wifi_flag = 0xff;
 			break;

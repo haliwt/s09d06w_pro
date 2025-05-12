@@ -111,10 +111,14 @@ void LED_FUN_ON(void)
  ************************************************************************/
 void wifi_led_fast_blink(void)
 {
-   if(g_wifi.wifi_led_fast_blink_flag==1){
+   if(g_wifi.wifi_led_fast_blink_flag==1 && g_wifi.gwifi_link_net_state_flag==0){
 	  LED_WIFI_TOGGLE();
 	  osDelay(50);
    	}
+    else if(g_wifi.gwifi_link_net_state_flag==1){
+
+       LED_WIFI_ON();
+	}
 }
 
 
