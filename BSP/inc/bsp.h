@@ -33,7 +33,6 @@
 #include "bsp_cmd_link.h"
 #include "bsp_led_tape.h"
 #include "bsp_adc.h"
-#include "bsp_wifi_parse.h"
 #include "interrupt_manager.h"
 
 //wifi function
@@ -125,7 +124,6 @@ typedef struct _process{
 
    uint8_t g_fan_switch_gears_flag;
    uint8_t key_set_temperature_flag;
-   uint8_t wifi_link_tencent_doing_flag;
    
 
    uint8_t gTemp_value;
@@ -166,7 +164,6 @@ typedef struct _process{
    uint8_t   gTimer_input_set_temp_timer;
    uint8_t gTimer_disp_temp_humidity_vlaue;
    uint8_t gTimer_display_adc_value;
-   uint8_t gTimer_wifi_led_slowly_blink;
 }process_t;
 
 extern process_t g_pro;

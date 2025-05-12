@@ -115,46 +115,22 @@ void wifi_led_fast_blink(void)
 	  LED_WIFI_TOGGLE();
 	  osDelay(50);
    	}
-    else{
-
-        if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_net_state_flag ==0){
-
-             wifi_led_slowly_blink();
-       	}
-		else if(g_wifi.gwifi_link_net_state_flag==1 && g_pro.gTimer_wifi_led_slowly_blink> 2){
-
-			g_pro.gTimer_wifi_led_slowly_blink=0;
-			   LED_WIFI_ON();
-		}
-	    
-	}
 }
 
 
 void wifi_led_slowly_blink(void)
 {
+    static uint8_t breathing_time = 0;
    
-   static uint8_t wifi_led_blink;
     
- 
-    if( g_pro.gTimer_wifi_led_slowly_blink> 1)  // 1.5s // blink 周期1秒 =50 =3s
+    breathing_time++;
+    if(breathing_time > 25)  // 1.5s // blink 周期1秒 =50 =3s
     {
-      
-		g_pro.gTimer_wifi_led_slowly_blink=0;
-
-	    wifi_led_blink = wifi_led_blink ^ 0x01;
-		if(wifi_led_blink ==1){
-              LED_WIFI_ON();
-
-		}
-		else{
-             LED_WIFI_OFF();
-		}
+        breathing_time = 0;
        
-        //LED_WIFI_TOGGLE();
+        LED_WIFI_TOGGLE();
         
     }
-	
 }
 
 

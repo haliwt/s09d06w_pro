@@ -67,9 +67,9 @@ static void handle_mqtt_success(void) {
 void wifi_parse_handler(void)
 {
 
-   if(g_wifi.wifi_data_parse_flag==1){
+//   if(g_wifi.wifi_data_parse_flag==1){
 
-	 g_wifi.wifi_data_parse_flag=0;
+//	 g_wifi.wifi_data_parse_flag=0;
 
      g_wifi.wifi_rx_data_counter = 0;
     g_wifi.once_rx_data_done = 1;
@@ -120,6 +120,6 @@ void wifi_parse_handler(void)
     // 重置接收状态
   
 	}
-}
+//}
 
 

@@ -51,13 +51,11 @@ void power_onoff_handler(uint8_t data)
 		power_on_run_handler();
 		link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
 		
-		wifi_parse_handler();//wifi_receive_parse_data_handler();
 		set_temperature_value_handler();
 		set_timer_timing_value_handler();
 
 		wifi_led_fast_blink();
 		works_run_two_hours_state();
-		
 			
         break;
 
@@ -181,7 +179,7 @@ void power_on_run_handler(void)
 
 	  if(g_disp.g_second_disp_flag == 1){
           send_data_disp_counter++;
-	    if(send_data_disp_counter > 150 && (g_pro.wifi_link_tencent_doing_flag == 0)){ //3s
+	    if(send_data_disp_counter > 150){ //3s
 	        send_data_disp_counter=0;
          Update_DHT11_ToDisplayBoard_Value();
 
@@ -281,8 +279,15 @@ void power_on_run_handler(void)
 	 break;
 
 	 case 3: //WIFI link process
-	  
-		  if(g_wifi.gTimer_update_dht11_data > 3){
+	 
+       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_net_state_flag ==0){
+
+             wifi_led_slowly_blink();
+       	}
+	    else if(g_wifi.gwifi_link_net_state_flag ==1 || g_disp.g_second_disp_flag == 1){
+		
+		    LED_WIFI_ON() ; 
+			if(g_wifi.gTimer_update_dht11_data > 7 && (g_wifi.gwifi_link_net_state_flag ==1 || g_wifi.gwifi_link_net_state_flag ==1)){
 			   g_wifi.gTimer_update_dht11_data=0;
 
 			   if(g_wifi.gwifi_link_net_state_flag ==1){
@@ -290,19 +295,21 @@ void power_on_run_handler(void)
 				   osDelay(200);
 				   
 			   	}
+
+            
 				if(g_disp.g_second_disp_flag == 1){                     
 					 sendData_Real_TimeHum(g_pro.g_humidity_value, g_pro.g_temperature_value);				
 
 				}
 		    }
-		
+		}
 
 	   gl_run.process_on_step =4;
 
 	 break;
 
 	 case 4: // wifi function
-         if(g_pro.gTimer_display_adc_value > 4 && (g_pro.wifi_link_tencent_doing_flag == 0) ){
+         if(g_pro.gTimer_display_adc_value > 3){
 		 	g_pro.gTimer_display_adc_value=0;
 
 		    switch_adc = switch_adc ^ 0x01;
