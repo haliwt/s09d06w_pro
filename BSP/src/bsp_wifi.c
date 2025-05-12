@@ -29,7 +29,7 @@ static void send_connect_wifi_init(void);
 void link_wifi_to_tencent_handler(uint8_t data)
 {
     if(data == 1){//if(gpro_t.wifi_led_fast_blink_flag==1){
-        if(g_wifi.gTimer_wifi_led_fast_blink  > 119){
+        if(g_wifi.gTimer_wifi_led_fast_blink  > 119 && g_wifi.gwifi_link_net_state_flag==0){
 
            g_wifi.gTimer_wifi_led_fast_blink =0;//
            g_wifi.wifi_led_fast_blink_flag=0;
@@ -54,11 +54,11 @@ void link_wifi_to_tencent_handler(uint8_t data)
     }
         
 
-   if(g_wifi.gwifi_link_net_state_flag ==1 && g_pro.first_connect_wifi_flag ==1){
-         g_pro.first_connect_wifi_flag++;
-          SendWifiData_One_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.//Update_Dht11_Totencent_Value();
-          osDelay(5);//HAL_Delay(200) //WT.EDIT 2024.08.10
-     }
+//   if(g_wifi.gwifi_link_net_state_flag ==1 && g_pro.first_connect_wifi_flag ==1){
+//         g_pro.first_connect_wifi_flag++;
+//          SendWifiData_One_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.//Update_Dht11_Totencent_Value();
+//          osDelay(5);//HAL_Delay(200) //WT.EDIT 2024.08.10
+//     }
 
 	send_connect_wifi_init();
        
@@ -194,6 +194,7 @@ static void link_wifi_net_handler(void)
 			
 			  g_pro.first_connect_wifi_flag =1 ;
 			  g_wifi.get_rx_beijing_time_enable=0;
+			  g_wifi.wifi_led_fast_blink_flag=0; //WT.EDIT 2025.05.12
                 
                SendWifiData_One_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
                osDelay(5);
@@ -231,33 +232,33 @@ static void send_connect_wifi_init(void)
 {
   switch(g_pro.first_connect_wifi_flag){
 
-          case 2:
+          case 1:
 
            Subscriber_Data_FromCloud_Handler();
 				
 	             osDelay(20);
-		     g_pro.first_connect_wifi_flag = 3;
+		     g_pro.first_connect_wifi_flag = 2;
 		  break;
 
-		   case 3:
+		   case 2:
  
-                 g_wifi.gTimer_get_data_from_tencent_data=0;
+            g_wifi.gTimer_get_data_from_tencent_data=0;
 			 
 				 MqttData_Publish_SetOpen(0x01);
 		         
 		         osDelay(20);
-				 g_pro.first_connect_wifi_flag = 4;
+				 g_pro.first_connect_wifi_flag = 3;
 		    break;
 
-			case 4:
+			case 3:
 		         Publish_Data_ToTencent_Initial_Data();
 				
                   osDelay(20);
-			g_pro.first_connect_wifi_flag = 5;
+			g_pro.first_connect_wifi_flag = 4;
 
 			break;
 
-			case 5:
+			case 4:
 
 				Subscriber_Data_FromCloud_Handler();
 				

@@ -122,7 +122,7 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t send_data_disp_counter,read_error_flag,switch_adc;
+   static uint8_t send_data_disp_counter,read_error_flag,switch_adc,switch_dht11;
 
 	switch(gl_run.process_on_step){
 
@@ -280,19 +280,24 @@ void power_on_run_handler(void)
 
 	 case 3: //WIFI link process
 	 
-       if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_net_state_flag ==0){
-
-             wifi_led_slowly_blink();
-       	}
-	    else if(g_wifi.gwifi_link_net_state_flag ==1 || g_disp.g_second_disp_flag == 1){
-		
-		    LED_WIFI_ON() ; 
-			if(g_wifi.gTimer_update_dht11_data > 7 && (g_wifi.gwifi_link_net_state_flag ==1 || g_wifi.gwifi_link_net_state_flag ==1)){
+   
+		if(g_wifi.gTimer_update_dht11_data > 7 && (g_wifi.gwifi_link_net_state_flag ==1 || g_wifi.gwifi_link_net_state_flag ==1)){
 			   g_wifi.gTimer_update_dht11_data=0;
 
 			   if(g_wifi.gwifi_link_net_state_flag ==1){
-		           Update_Dht11_Totencent_Value()  ;
-				   osDelay(200);
+
+			       switch_dht11 = switch_dht11 ^0x01;
+				   if(switch_dht11==1){
+		         	   Subscriber_Data_FromCloud_Handler();
+				
+	                  osDelay(100);
+				   	}
+				    else{
+					Update_Dht11_Totencent_Value()	;
+					osDelay(20);
+
+
+					}
 				   
 			   	}
 
@@ -302,7 +307,7 @@ void power_on_run_handler(void)
 
 				}
 		    }
-		}
+		
 
 	   gl_run.process_on_step =4;
 
