@@ -209,7 +209,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	      g_wifi.gTimer_wifi_led_fast_blink = 0; //look for wifi information 120s,timer.
 	      g_wifi.gwifi_link_net_state_flag=0 ; //clear wifi link net flag .repeat be detected wifi state.
 		  g_wifi.wifi_led_fast_blink_flag=1;   // led blink flag .
-        
+          g_wifi.link_net_step = 0; //WT.EIDT 2025.05.1;
+          g_pro.first_connect_wifi_flag=0;
          }
         
        	}

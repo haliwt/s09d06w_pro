@@ -199,23 +199,16 @@ uint8_t read_sensor_dht11_data(void)
  */
 DHT11_Status DHT11_Display_Data(uint8_t mode)
 {
-  //  DHT11_Data_TypeDef dht11_data;
+
+    static uint8_t  copy_temp_value, copy_humidity_value;
     uint8_t  status;
    
     // 读取DHT11数据
     status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
     //dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
 	//osDelay(100);
-    if(status != DHT11_OK)
-    {
-        // 读取失败，显示错误代码
-        //LED_TEMP_SINGLE_ON();
-       // LED_HUM_SINGLE_OFF();
-        //SMG_Display_Err();
-        return status;
-    }
-    
-    // 根据模式显示温度或湿度
+
+	if(status !=0){
     if(mode == 0)
     {
         // 显示温度
@@ -230,8 +223,44 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
 			   TM1639_Display_Temperature(g_pro.gset_temperture_value);
 
 			}
-			else
+			else{
+                TM1639_Display_Temperature(copy_temp_value);
+               
+			}
+        
+    }
+    else
+    {
+        // 显示湿度
+    	LED_TEMP_SINGLE_OFF();
+    	LED_HUM_SINGLE_ON();
+        TM1639_Display_Humidity(copy_humidity_value);
+		
+    }
+    
+
+	}
+	else if(status==0){
+   
+    // 根据模式显示温度或湿度
+    if(mode == 0)
+    {
+        // 显示温度
+//        if(dht11_data.is_negative){
+//            TM1639_Display_Temperature(-dht11_data.temperature);
+//        }
+//        else{
+        	LED_TEMP_SINGLE_ON();
+        	LED_HUM_SINGLE_OFF();
+            if(g_pro.key_set_temperature_flag==1){
+				
+			   TM1639_Display_Temperature(g_pro.gset_temperture_value);
+                
+			}
+			else{
                 TM1639_Display_Temperature(dht11_data.temperature);
+				 copy_temp_value = dht11_data.temperature;
+				}
         
     }
     else
@@ -240,7 +269,9 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     	LED_TEMP_SINGLE_OFF();
     	LED_HUM_SINGLE_ON();
         TM1639_Display_Humidity(dht11_data.humidity);
+		copy_humidity_value = dht11_data.humidity;
     }
+	}
     
     return DHT11_OK;
 }
