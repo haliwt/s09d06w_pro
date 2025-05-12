@@ -97,6 +97,7 @@ void Json_Parse_Command_Fun(void);
 
 void clear_rx_copy_data(void);
 
+void wifi_receive_parse_data_handler(void);
 
 
 uint8_t  read_wifi_dry_value(void);

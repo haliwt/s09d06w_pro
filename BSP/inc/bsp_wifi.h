@@ -39,6 +39,8 @@ typedef struct _wifi_state_ref{
 
    uint8_t g_wifi_set_temp_flag;
 
+   uint8_t wifi_data_parse_flag;
+
 
   
   uint8_t set_wind_speed_value;
@@ -60,7 +62,7 @@ typedef struct _wifi_state_ref{
 
   uint8_t auto_link_cloud_flag;
 
-  uint8_t soft_ap_config_flag;
+
 
 
    uint8_t linking_tencent_cloud_doing;

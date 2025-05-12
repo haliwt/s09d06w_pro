@@ -217,7 +217,7 @@ static void vTaskRunPro(void *pvParameters)
 	}
 
 	power_onoff_handler(g_pro.gpower_on);
-
+    
 	
 
 	if(g_wifi.wifi_led_fast_blink_flag==0 ){
@@ -419,17 +419,23 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
    else if(huart->Instance==USART2) //WIFI USART2
 	   {
 	  //  DISABLE_INT();
-		if(g_wifi.linking_tencent_cloud_doing ==1){
+		if(g_wifi.linking_tencent_cloud_doing ==1 && g_wifi.wifi_data_parse_flag==0){
 	
 			   g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter] =wifi_rx_inputBuf[0];
 			   g_wifi.wifi_rx_data_counter++;
-	
-			   if(*wifi_rx_inputBuf==0x0A) // 0x0A = "\n"
-			   {
-				   
-				   Wifi_Rx_InputInfo_Handler();
-				   g_wifi.wifi_rx_data_counter=0;
+
+               if(g_wifi.wifi_rx_data_counter >1){
+			   if(g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter-2]==0x0D \
+			   	&& g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter-1]==0x0A){
+			   	  
+                    //Wifi_Rx_InputInfo_Handler();
+					g_wifi.wifi_data_parse_flag = 1;
+					g_wifi.wifi_rx_data_counter=0;
+			            
+
 			   }
+              
+              }   
 	
 		} 
 		else{
