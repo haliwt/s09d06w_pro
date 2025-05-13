@@ -171,6 +171,7 @@ void power_on_run_handler(void)
 	   g_pro.g_fan_switch_gears_flag++;
 	   gl_run.process_off_step=0;
 	   gl_run.process_on_step =1;
+	   g_wifi.wifi_led_fast_blink_flag=0;
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 	 break;
 
@@ -290,7 +291,7 @@ void power_on_run_handler(void)
 				   if(switch_dht11==1){
 		         	   Subscriber_Data_FromCloud_Handler();
 				
-	                  osDelay(100);
+	                  osDelay(30);
 				   	}
 				    else{
 					Update_Dht11_Totencent_Value()	;
@@ -303,7 +304,8 @@ void power_on_run_handler(void)
 
             
 				if(g_disp.g_second_disp_flag == 1){                     
-					 sendData_Real_TimeHum(g_pro.g_humidity_value, g_pro.g_temperature_value);				
+					 sendData_Real_TimeHum(g_pro.g_humidity_value, g_pro.g_temperature_value);
+					 osDelay(5);
 
 				}
 		    }

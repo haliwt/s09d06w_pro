@@ -278,7 +278,7 @@ void set_temperature_value_handler(void)
 				}
 			}
 			else{
-				g_pro.gset_temperture_value = g_pro.gset_temperture_value;
+			
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
 				SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
 				osDelay(5);
@@ -324,6 +324,7 @@ static void handleTemperatureControl(void)
         if (current_temperature > g_pro.gset_temperture_value){
             g_pro.gDry = DRY_STATE_OFF;
 		    DRY_CLOSE();//setDryState(g_pro.gDry);
+		    LED_DRY_OFF();
 			if(set_first_close_dry_flag ==0){
 
 				set_first_close_dry_flag =1;
@@ -343,20 +344,19 @@ static void handleTemperatureControl(void)
         }
 		else if (set_first_close_dry_flag == 0 && current_temperature < g_pro.gset_temperture_value ){
 
-		    if(g_pro.g_manual_shutoff_dry_flag ==0){
+                
+
+			if(g_pro.g_manual_shutoff_dry_flag ==0){
+				 g_pro.gDry = DRY_STATE_ON;
+				 LED_DRY_ON();
 			    if(g_pro.works_two_hours_interval_flag==0){
 
-				    g_pro.gDry = DRY_STATE_ON;
-					LED_DRY_ON();
-					if(g_pro.works_two_hours_interval_flag == 0){
-					     //setDryState(g_pro.gDry);
-                         DRY_OPEN();
-					 }
-					
+				   DRY_OPEN();
+				}
 
-			    }
+			}
 				
-				if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
+			if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
 					sendDisplayCommand(0x02,0x01); // 打开干燥功能
 					osDelay(5);
 				}
@@ -366,20 +366,16 @@ static void handleTemperatureControl(void)
 				 }
            
             }
-
-        }
-        else if (current_temperature < (g_pro.gset_temperture_value - TEMPERATURE_DIFF_THRESHOLD)) {
-            if(g_pro.g_manual_shutoff_dry_flag ==0){
-				if(g_pro.works_two_hours_interval_flag == 0){
-					 g_pro.gDry = DRY_STATE_ON;
-					 LED_DRY_ON();
-					 if(g_pro.works_two_hours_interval_flag == 0){
-					     //setDryState(g_pro.gDry);
-                         DRY_OPEN();
-					 }
-
-				}
+            else if (current_temperature < (g_pro.gset_temperture_value - TEMPERATURE_DIFF_THRESHOLD)) {
 				
+            	if(g_pro.g_manual_shutoff_dry_flag ==0){
+					g_pro.gDry = DRY_STATE_ON;
+					LED_DRY_ON();
+	               if(g_pro.works_two_hours_interval_flag == 0){
+						
+						DRY_OPEN();
+					}
+            	}
 				if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
 				   sendDisplayCommand(0x02,0x01); // 打开干燥功能
 				   osDelay(5);
@@ -390,11 +386,10 @@ static void handleTemperatureControl(void)
 				 }
            
             }
+			
         }
-    }
-	g_disp.g_set_temp_value_flag =0;
+	 g_disp.g_set_temp_value_flag =0;
 }
-
 /******************************************************************************
 	*
 	*Function Name:static void handleDefaultTemperatureControl(void)
@@ -412,10 +407,12 @@ static void handleDefaultTemperatureControl(void)
          g_pro.gTimer_disp_temp_humidity_vlaue = 0;
         current_temperature = readTemperature();
 
-        if (current_temperature > 0x27) {
+        if(current_temperature > 39) {
 			if(default_first_close_dry==0)default_first_close_dry=1;
 			g_pro.gDry =  DRY_STATE_OFF;
-            setDryState(g_pro.gDry);
+            //setDryState(g_pro.gDry);
+            LED_DRY_OFF();
+			DRY_CLOSE();
 		    if(g_disp.g_second_disp_flag ==1){
 		     sendDisplayCommand(0x02,0x0); // send data to the second displayboard .关闭干燥功能
 			 osDelay(5);
@@ -425,7 +422,7 @@ static void handleDefaultTemperatureControl(void)
 			    osDelay(50);
 			 }
         } 
-		else if(current_temperature <=0x26) {
+		else if(current_temperature <=39) {
 
 		      if(default_first_close_dry==0){
 
@@ -438,7 +435,8 @@ static void handleDefaultTemperatureControl(void)
 
 					  g_pro.gDry= DRY_STATE_ON;
 					   setDryState(g_pro.gDry);
-
+					}
+			  	}
 
 					if(g_disp.g_second_disp_flag ==1){
 					sendDisplayCommand(0x02,0x01); // 打开干燥功能
@@ -449,21 +447,21 @@ static void handleDefaultTemperatureControl(void)
 					osDelay(50);
 					}
 
-					}
-
-
-			  	}
-			 }
-		     else if (current_temperature <= 0x26) {
+			  }
+              else if (current_temperature <= 37) {
 	           if(g_pro.g_manual_shutoff_dry_flag ==0){
 
-				 g_pro.gDry= DRY_STATE_ON;
+			    if(g_pro.g_manual_shutoff_dry_flag ==0){ //manual turn off PTC function.
 
-			     LED_DRY_ON();
-				if(g_pro.works_two_hours_interval_flag ==0){
+					 g_pro.gDry= DRY_STATE_ON;
+
+				     LED_DRY_ON();
 					
-					DRY_OPEN();//setDryState(g_pro.gDry);
-					
+					if(g_pro.works_two_hours_interval_flag ==0){
+						
+						DRY_OPEN();//setDryState(g_pro.gDry);
+					  }
+			     }
 				 if(g_disp.g_second_disp_flag ==1){
 				  sendDisplayCommand(0x02,0x01); // 第二个显示板，打开干燥功能
 				  osDelay(5);
@@ -477,8 +475,8 @@ static void handleDefaultTemperatureControl(void)
 	           }
         }
     }
-	}
 }
+
 /******************************************************************************
 	*
 	*Function Name:void set_timer_timing_value_handler(void)

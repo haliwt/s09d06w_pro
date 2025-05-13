@@ -185,7 +185,7 @@ static void link_wifi_net_handler(void)
             break;
 
             case 6:
-				if(g_wifi.gwifi_link_net_state_flag==0)wifi_led_fast_blink();
+			if(g_wifi.gwifi_link_net_state_flag==0)wifi_led_fast_blink();
 				
 
             if( g_wifi.gTimer_link_net_timer_time  > 6){
@@ -233,7 +233,7 @@ static void send_connect_wifi_init(void)
   switch(g_pro.first_connect_wifi_flag){
 
           case 1:
-
+           g_wifi.wifi_led_fast_blink_flag=0; //WT.EDIT 2025.05.12
            Subscriber_Data_FromCloud_Handler();
 				
 	             osDelay(20);
