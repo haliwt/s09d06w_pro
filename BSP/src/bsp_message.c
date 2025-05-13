@@ -203,6 +203,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 	 	if(pdata[4]==0x01){
         if(g_pro.gpower_on == power_on){ 
 		  SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
+		  osDelay(5);
           buzzer_sound();
 		  
         
@@ -252,6 +253,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
           if(g_pro.gpower_on == power_on){  
           SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.01.07
+          osDelay(5);
           buzzer_sound();
 
           }
