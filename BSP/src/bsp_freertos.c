@@ -424,14 +424,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			   g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter] =wifi_rx_inputBuf[0];
 			   g_wifi.wifi_rx_data_counter++;
 	
-			   if(*wifi_rx_inputBuf==0x0A) // 0x0A = "\n"
-			   {
+               if(g_wifi.wifi_rx_data_counter >1){
+			   if(g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter-2]==0x0D \
+			   	&& g_wifi.wifi_rx_data_array[g_wifi.wifi_rx_data_counter-1]==0x0A){
+			   
 				   
 				   Wifi_Rx_InputInfo_Handler();
 				   g_wifi.wifi_rx_data_counter=0;
 			   }
+               }
 	
-		} 
+		       
+		}
 		else{
 	
 			   if(g_wifi.get_rx_beijing_time_enable==1){

@@ -59,7 +59,7 @@ void wifi_communication_tnecent_handler(void)
 void wifi_auto_detected_link_state(void)
 {
     static uint8_t dc_power_on;
-	if(power_on_login_tencent_cloud_flag < 5 && g_wifi.gwifi_link_net_state_flag==0){
+	if(g_wifi.gwifi_link_net_state_flag==0 && g_pro.gpower_on == power_off){
 		
       g_wifi.linking_tencent_cloud_doing = 1;
      

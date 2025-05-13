@@ -300,8 +300,7 @@ void Wifi_Rx_InputInfo_Handler(void)
     g_wifi.soft_ap_config_success=1;
 
   }
-
-  if(strstr((const char*)g_wifi.wifi_rx_data_array,"+TCMQTTCONN:OK")){
+  else if(strstr((const char*)g_wifi.wifi_rx_data_array,"+TCMQTTCONN:OK")){
     //net_t.wifi_link_net_success=1;
     g_wifi.gwifi_link_net_state_flag=1;
     g_wifi.linking_tencent_cloud_doing=0;
@@ -336,6 +335,7 @@ void Wifi_Rx_InputInfo_Handler(void)
     //wifi_t.linking_tencent_cloud_doing=1; //release this flag. usart
     g_wifi.linking_tencent_cloud_doing=0;
     g_wifi.get_rx_beijing_time_enable=0;
+	g_wifi.soft_ap_config_flag=0xff;
   }
   else if(strstr((const char*)g_wifi.wifi_rx_data_array,"+TCMQTTCONN:OK")){
     //net_t.wifi_link_net_success=1;
@@ -807,8 +807,8 @@ void Json_Parse_Command_Fun(void)
 			MqttData_Publis_SetFan(g_wifi.set_wind_speed_value);
 			osDelay(100);//HAL_Delay(350);
 			if(g_disp.g_second_disp_flag == 1){
-    		SendWifiData_To_PanelWindSpeed(g_wifi.set_wind_speed_value);
-			osDelay(5);//HAL_Delay(10);
+	    		SendWifiData_To_PanelWindSpeed(g_wifi.set_wind_speed_value);
+				osDelay(5);//HAL_Delay(10);
 			}
           
 		    }

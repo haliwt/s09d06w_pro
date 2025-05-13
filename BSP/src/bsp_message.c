@@ -125,6 +125,51 @@ void receive_data_from_displayboard(uint8_t *pdata)
      	}
      break;
 
+
+	  case 0x22: //notice cmd ,PTC打开关闭指令,buzzer don't sound,温度对比后的指令
+
+	  if(pdata[3]==0){ //表示是指令
+
+      if(pdata[4] == 0x01){
+        
+        if(g_pro.gpower_on == power_on){
+
+        g_pro.gDry = 1;
+		LED_DRY_ON();
+     	if(g_pro.works_two_hours_interval_flag==0){
+		  	DRY_OPEN();
+     	 }
+
+	 	 
+         if(g_wifi.gwifi_link_net_state_flag==1){
+              MqttData_Publish_SetPtc(0x01);
+	  	      osDelay(50);//HAL_Delay(350);
+          }
+       
+       
+				}
+	  }
+      else if(pdata[4] == 0x0){
+        if(g_pro.gpower_on == power_on){
+
+         
+            g_pro.gDry =0;
+		    LED_DRY_OFF();
+          	DRY_CLOSE();
+		  
+		
+            
+         if(g_wifi.gwifi_link_net_state_flag==1){
+              MqttData_Publish_SetPtc(0x0);
+	  	      osDelay(50);//HAL_Delay(350);
+          }
+	   	 
+       
+      }
+		}
+	  	}
+     break;
+
      case 0x03: //PLASMA 打开关闭指令
 
        if(pdata[3] == 0x00){
@@ -336,51 +381,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 	  
 
-     case 0x22: //PTC打开关闭指令,buzzer don't sound,温度对比后的指令
-
-	  if(pdata[3]==0){ //表示是指令
-
-      if(pdata[4] == 0x01){
-        
-        if(g_pro.gpower_on == power_on){
-
-		g_pro.g_manual_shutoff_dry_flag=0;
-        g_pro.gDry = 1;
-		LED_DRY_ON();
-     	if(g_pro.works_two_hours_interval_flag==0){
-		  	DRY_OPEN();
-     	 }
-
-	 	 
-         if(g_wifi.gwifi_link_net_state_flag==1){
-              MqttData_Publish_SetPtc(0x01);
-	  	      osDelay(20);//HAL_Delay(350);
-          }
-       
-       
-				}
-	  }
-      else if(pdata[4] == 0x0){
-        if(g_pro.gpower_on == power_on){
-
-		   g_pro.g_manual_shutoff_dry_flag=0;
-         
-            g_pro.gDry =0;
-		    LED_DRY_OFF();
-          	DRY_CLOSE();
-		  
-		
-            
-         if(g_wifi.gwifi_link_net_state_flag==1){
-              MqttData_Publish_SetPtc(0x0);
-	  	      osDelay(20);//HAL_Delay(350);
-          }
-	   	 
-       
-      }
-		}
-	  	}
-     break;
+    
 
      case 0x27: //smart phone set AI mode
 
