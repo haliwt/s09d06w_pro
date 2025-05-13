@@ -128,13 +128,10 @@ void wifi_led_fast_blink(void)
 
 void wifi_led_slowly_blink(void)
 {
-    static uint8_t breathing_time = 0;
-   
-    
-    breathing_time++;
-    if(breathing_time > 25)  // 1.5s // blink 周期1秒 =50 =3s
+ 
+    if(g_pro.gTimer_wifi_slowly_blink > 1)  // 1.5s // blink 周期1秒 =50 =3s
     {
-        breathing_time = 0;
+        g_pro.gTimer_wifi_slowly_blink = 0;
        
         LED_WIFI_TOGGLE();
         

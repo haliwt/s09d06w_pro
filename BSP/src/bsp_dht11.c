@@ -209,34 +209,34 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
 	//osDelay(100);
 
 	if(status !=0){
-    if(mode == 0)
-    {
-        // 显示温度
-//        if(dht11_data.is_negative){
-//            TM1639_Display_Temperature(-dht11_data.temperature);
-//        }
-//        else{
-        	LED_TEMP_SINGLE_ON();
-        	LED_HUM_SINGLE_OFF();
-            if(g_pro.key_set_temperature_flag==1){
-				
-			   TM1639_Display_Temperature(g_pro.gset_temperture_value);
+	    if(mode == 0)
+	    {
+	        // 显示温度
+	//        if(dht11_data.is_negative){
+	//            TM1639_Display_Temperature(-dht11_data.temperature);
+	//        }
+	//        else{
+	        	LED_TEMP_SINGLE_ON();
+	        	LED_HUM_SINGLE_OFF();
+	            if(g_pro.key_set_temperature_flag==1){
+					
+				   TM1639_Display_Temperature(g_pro.gset_temperture_value);
 
-			}
-			else{
-                TM1639_Display_Temperature(copy_temp_value);
-               
-			}
-        
-    }
-    else
-    {
-        // 显示湿度
-    	LED_TEMP_SINGLE_OFF();
-    	LED_HUM_SINGLE_ON();
-        TM1639_Display_Humidity(copy_humidity_value);
-		
-    }
+				}
+				else{
+	                TM1639_Display_Temperature(copy_temp_value);
+	               
+				}
+	        
+	    }
+	    else
+	    {
+	        // 显示湿度
+	    	LED_TEMP_SINGLE_OFF();
+	    	LED_HUM_SINGLE_ON();
+	        TM1639_Display_Humidity(copy_humidity_value);
+			
+	    }
     
 
 	}
@@ -276,6 +276,11 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
     return DHT11_OK;
 }
 
+/**
+ * @brief  在TM1639上显示DHT11的温湿度数据
+ * @param  mode: 0-显示温度，1-显示湿度
+ * @retval DHT11_Status 类型的操作结果
+ */
 
 uint8_t read_dht11_temperature_value(void)
 {
@@ -291,13 +296,17 @@ uint8_t read_dht11_temperature_value(void)
 }
 
 
-
+/**
+ * @brief  void Update_DHT11_ToDisplayBoard_Value(void)
+ * @param  mode: 0-显示温度，1-显示湿度
+ * @retval DHT11_Status 类型的操作结果
+ */
 void Update_DHT11_ToDisplayBoard_Value(void)
 {
     
      static uint8_t error_flag;
 	 error_flag = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-     osDelay(200);
+     osDelay(20);
 	
     if(error_flag ==0)
 	    sendData_Real_TimeHum(dht11_data.humidity,dht11_data.temperature);
@@ -305,15 +314,15 @@ void Update_DHT11_ToDisplayBoard_Value(void)
     
 }
 
-
-
-
+/**
+ * @brief  void Update_Dht11_Totencent_Value(void)
+ * @param  mode: 0-显示温度，1-显示湿度
+ * @retval DHT11_Status 类型的操作结果
+ */
 void Update_Dht11_Totencent_Value(void)
 {
     static uint8_t error_flag;
     error_flag= dht11_read_data(&dht11_data.temperature, &dht11_data.humidity);
-
-    osDelay(100);
 
 	//Dht11_Read_TempHumidity_Handler(&DHT11);
 	if(error_flag == 0){

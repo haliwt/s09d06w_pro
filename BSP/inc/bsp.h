@@ -64,7 +64,7 @@
 
 #define  USE_FreeRTOS      1
   
-#define  TEST_UNIT        1
+#define  TEST_UNIT        0
 
 
 #if USE_FreeRTOS == 1
@@ -133,6 +133,7 @@ typedef struct _process{
    uint8_t g_disp_timer_or_temp_flag;
    uint8_t gdisp_hours_value;
    uint8_t gdisp_minutes_value;
+   uint8_t  disp_timer_minutes_value;
 
    uint8_t g_copy_power_onoff_flag;
 
@@ -164,6 +165,7 @@ typedef struct _process{
    uint8_t   gTimer_input_set_temp_timer;
    uint8_t gTimer_disp_temp_humidity_vlaue;
    uint8_t gTimer_display_adc_value;
+   uint8_t  gTimer_wifi_slowly_blink ;
 }process_t;
 
 extern process_t g_pro;

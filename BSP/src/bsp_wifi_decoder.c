@@ -26,15 +26,6 @@ typedef struct{
 
 local_ref_t gl_msg;
 
-static uint8_t gl_wifi_set_temp;
-
-
-void wifi_decoder_refer_init(void)
-{
-   gl_wifi_set_temp=0;
-}
-
- 
 //处理腾讯云下发的数据
 /*******************************************************************************
    **
@@ -767,7 +758,7 @@ void Json_Parse_Command_Fun(void)
             g_wifi.wifi_set_temperature_value = temp_decade*10 +  temp_unit;
             if( g_wifi.wifi_set_temperature_value > 40)  g_wifi.wifi_set_temperature_value=40;
             if( g_wifi.wifi_set_temperature_value <20 )  g_wifi.wifi_set_temperature_value=20;
-            gl_wifi_set_temp = 1;
+         
 			
             g_pro.gset_temperture_value = g_wifi.wifi_set_temperature_value;
 			

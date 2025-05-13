@@ -156,7 +156,7 @@ void power_on_run_handler(void)
 
 	   }
 	   key_referen_init();
-	   wifi_decoder_refer_init();
+	   
 	   if(g_disp.g_second_disp_flag == 1){
 	   	  SendData_Set_Command(CMD_POWER,open);
 		  osDelay(5);

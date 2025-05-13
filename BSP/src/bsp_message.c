@@ -398,7 +398,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
      break;
 
-	 case 0x4C: //set up timer timing value 
+	case 0x4C: //set up timer timing value 
 		if(pdata[3] == 0x0F){ //数据
 
 			if(pdata[4]==0x01){ // has dat only one value ,next receive byte is value
@@ -414,6 +414,27 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			
 			    g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode;//WT.EDIT 2025.04.23//input_temp_time_mode  ;
 			    TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+				
+
+			}
+
+			}
+
+
+		}
+	 	
+     break;
+
+	 case 0x5C: // display has been set up timer timing value 
+		if(pdata[3] == 0x0F){ //数据
+
+			if(pdata[4]==0x03){ // has dat only one value ,next receive byte is value
+
+			if(g_pro.gpower_on == power_on){ 
+              
+			g_pro.gdisp_timer_hours_value = pdata[5];
+			g_pro.disp_timer_minutes_value=pdata[6];
+			g_pro.gTimer_timer_time_second=pdata[7];
 				
 
 			}

@@ -548,7 +548,7 @@ void set_timer_timing_value_handler(void)
 			g_pro.key_gtime_timer_define_flag = normal_time_mode; //define UP and down key is set temperature value 
 			g_pro.key_set_timer_flag++;
 			g_pro.gTimer_timer_time_second=0;
-			gl_timer_minutes_value=0;
+			g_pro.disp_timer_minutes_value=0;//gl_timer_minutes_value=0;
 			g_pro.gAI = 0;
 			LED_AI_OFF();
 
@@ -577,13 +577,13 @@ void set_timer_timing_value_handler(void)
        if(g_pro.gTimer_timer_time_second > 59){
 	       g_pro.gTimer_timer_time_second=0;
 		   #if TEST_UNIT
-		   	 gl_timer_minutes_value = gl_timer_minutes_value - 40;
+		   	 g_pro.disp_timer_minutes_value =g_pro.disp_timer_minutes_value - 40;
 		   #else
 		     gl_timer_minutes_value--;
 		   #endif 
 
-		   if(gl_timer_minutes_value< 0){
-			  gl_timer_minutes_value =59;
+		   if(g_pro.disp_timer_minutes_value< 0){
+			  g_pro.disp_timer_minutes_value =59;
 			  g_pro.gdisp_timer_hours_value--;
 
 			  if(g_pro.gdisp_timer_hours_value < 0){
