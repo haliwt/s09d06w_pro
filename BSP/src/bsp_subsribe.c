@@ -18,7 +18,7 @@ void smartphone_timer_power_handler(void)
                 if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 				SendWifiData_To_Cmd(0x03,0x01);
-              
+                osDelay(20);
                 }
 			
 			}
@@ -28,6 +28,7 @@ void smartphone_timer_power_handler(void)
 				if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 				SendWifiData_To_Cmd(0x03,0x0);
+				osDelay(20);
 					}
 			}
 
@@ -37,6 +38,7 @@ void smartphone_timer_power_handler(void)
                       if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 					SendWifiData_To_Cmd(0x04,0x01);
+					  osDelay(20);
                       	}
 					 
 			}
@@ -45,6 +47,7 @@ void smartphone_timer_power_handler(void)
 					   if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 					SendWifiData_To_Cmd(0x04,0x0);
+					   osDelay(20);
 					   	}
 			}
 
@@ -54,6 +57,7 @@ void smartphone_timer_power_handler(void)
 				   if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 				SendWifiData_To_Cmd(0x02,0x01);
+				   osDelay(20);
 				   	}
 				
 			}
@@ -62,6 +66,7 @@ void smartphone_timer_power_handler(void)
                      if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 					SendWifiData_To_Cmd(0x02,0x0);
+					 osDelay(20);
                      	}
 
 			}
