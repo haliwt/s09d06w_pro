@@ -60,7 +60,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  power_on_counter++;
           buzzer_sound();
 		 
-		  //g_pro.g_copy_power_onoff_flag = power_on;
+		 
           SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
            osDelay(5);
         }
@@ -70,7 +70,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		  g_disp.g_second_disp_flag = 1;
 		  g_pro.gpower_on = power_off;
           power_off_test_counter++;
-		 // g_pro.g_copy_power_onoff_flag = 0x02;
+		
 		 SendWifiData_Answer_Cmd(CMD_POWER,0x0); //WT.EDIT 2025.01.07
 		 osDelay(5);
 

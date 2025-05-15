@@ -49,6 +49,7 @@ void power_onoff_handler(uint8_t data)
 
 	
 		power_on_run_handler();
+        if(gl_run.process_on_step !=0){ //logically rigorous
 		link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
 		
 		set_temperature_value_handler();
@@ -56,6 +57,8 @@ void power_onoff_handler(uint8_t data)
 
 		wifi_led_fast_blink();
 		works_run_two_hours_state();
+
+        }
 			
         break;
 
@@ -122,14 +125,22 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t send_data_disp_counter,read_error_flag,switch_adc,switch_dht11;
+   static uint8_t read_error_flag,switch_adc,switch_dht11;
 
 	switch(gl_run.process_on_step){
 
 
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
-		 
+
+	   if(g_disp.g_second_disp_flag == 1){
+	   	  SendData_Set_Command(CMD_POWER,open);
+		  osDelay(5);
+     
+		  Update_DHT11_ToDisplayBoard_Value();
+		  osDelay(5);
+	   
+	   }
       
        if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0){
 	      
@@ -157,32 +168,28 @@ void power_on_run_handler(void)
 	   }
 	   key_referen_init();
 	   
-	   if(g_disp.g_second_disp_flag == 1){
-	   	  SendData_Set_Command(CMD_POWER,open);
-		  osDelay(5);
-         send_data_disp_counter=200;
-		  Update_DHT11_ToDisplayBoard_Value();
-		  osDelay(5);
-	   
-	   }
-	   
+	 
+	   g_pro.gTimer_send_dht11_disp=5;
        
 	   g_pro.gTimer_two_hours_counter = 0;
 	   g_pro.g_fan_switch_gears_flag++;
 	   gl_run.process_off_step=0;
-	   gl_run.process_on_step =1;
+	   
 	   g_wifi.wifi_led_fast_blink_flag=0;
+	   g_pro.key_set_temperature_flag=0;
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
+
+	   gl_run.process_on_step =1;
 	 break;
 
 	 case 1:
 
 
 	  if(g_disp.g_second_disp_flag == 1){
-          send_data_disp_counter++;
-	    if(send_data_disp_counter > 150){ //3s
-	        send_data_disp_counter=0;
-         Update_DHT11_ToDisplayBoard_Value();
+         
+	    if(g_pro.gTimer_send_dht11_disp > 2){ //3s
+	       g_pro.gTimer_send_dht11_disp=0;
+           Update_DHT11_ToDisplayBoard_Value();
 
 	   }
 	  }
@@ -396,6 +403,7 @@ void power_off_run_handler(void)
        }
 	   g_pro.g_fan_switch_gears_flag++;
       gl_run.process_off_step = 1;
+	   g_pro.key_set_temperature_flag=0;
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 	  
 

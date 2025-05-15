@@ -100,7 +100,7 @@ void freeRTOS_Handler(void)
 static void vTaskDecoderPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(9000); /* 设置最大等待时间为30ms */
+	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(9000); /* 设置最大等待时间为30ms */
 	uint32_t ulValue;
 
 
@@ -226,7 +226,7 @@ static void vTaskRunPro(void *pvParameters)
 		wifi_auto_detected_link_state();
 	}
 
-	copy_cmd_hanlder();
+	//copy_cmd_hanlder();
 
 	//ack_cmd_second_disp_hanlder();
 	vTaskDelay(10);

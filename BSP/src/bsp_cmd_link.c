@@ -519,7 +519,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 		transOngoingFlag=0; //UART Transmit interrupt flag =0 ,RUN
 		#else
 
-		txComplete = 1;//uartTxComplete = 1; // 标记发送完成
+		g_pro.DMA_txComplete = 1;//uartTxComplete = 1; // 标记发送完成
 
 		#endif 
 	}
@@ -536,7 +536,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
   * @brief  UART错误回调函数，处理USART1通信错误
   * @param  huart: UART句柄指针
   */
-
+#if 0
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) 
 {
     
@@ -601,5 +601,5 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
 	}
 }
-
+#endif 
 

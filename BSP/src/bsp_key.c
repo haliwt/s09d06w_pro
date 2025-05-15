@@ -28,13 +28,13 @@ KEY_PROCESS_TYPEDEF  g_key;
 //uint8_t gl_set_temperture_value;
 
 uint8_t  key_set_temperature_flag;
-uint16_t check_time;
+
 int8_t  gl_timer_minutes_value;
 uint8_t define_timer_mode;
 uint8_t key_up_down_pressed_flag;
-uint8_t set_first_close_dry_flag;
 
-uint8_t default_first_close_dry;
+
+
 
 
 static void adjust_temperature(int8_t delta) ;
@@ -225,7 +225,7 @@ void set_temperature_value_handler(void)
 //			///osDelay(5);
 //			//}
 //		}
-		set_first_close_dry_flag=0;
+		
 		g_pro.g_manual_shutoff_dry_flag =0;
 		
 
@@ -270,7 +270,7 @@ void set_temperature_value_handler(void)
 
         if(send_data_flag ==1){
 			send_data_flag++;
-			if(read_wifi_temperature_value()==1){
+			if(read_wifi_temperature_value()==1){ //smart phone set up temperature value .
 				g_wifi.g_wifi_set_temp_flag=0;
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
 			      SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
@@ -315,22 +315,17 @@ uint8_t readTemperature(void)
 static void handleTemperatureControl(void) 
 {
 	//uint8_t current_temperature;
-	static uint8_t check_time = 0;
-    check_time++;
-    if (check_time >= CHECK_TIME_THRESHOLD_4S) { // 4秒
-        check_time = 0;
+	//static uint8_t check_time = 0;
+   
+    if( g_pro.gTimer_set_temp_counter >= CHECK_TIME_THRESHOLD_4S) { // 4秒
+          g_pro.gTimer_set_temp_counter =0;
         current_temperature = readTemperature();
 
-        if (current_temperature > g_pro.gset_temperture_value){
+        if ( g_pro.gset_temperture_value < current_temperature ){
             g_pro.gDry = DRY_STATE_OFF;
 		    DRY_CLOSE();//setDryState(g_pro.gDry);
 		    LED_DRY_OFF();
-			if(set_first_close_dry_flag ==0){
-
-				set_first_close_dry_flag =1;
-                 
-
-			}
+	
 		    if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
 				sendDisplayCommand(0x02,g_pro.gDry);
 				osDelay(5);
@@ -342,31 +337,7 @@ static void handleTemperatureControl(void)
 		   	}
 			
         }
-		else if (set_first_close_dry_flag == 0 && current_temperature < g_pro.gset_temperture_value ){
-
-                
-
-			if(g_pro.g_manual_shutoff_dry_flag ==0){
-				 g_pro.gDry = DRY_STATE_ON;
-				 LED_DRY_ON();
-			    if(g_pro.works_two_hours_interval_flag==0){
-
-				   DRY_OPEN();
-				}
-
-			}
-				
-			if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
-					sendDisplayCommand(0x02,0x01); // 打开干燥功能
-					osDelay(5);
-				}
-				if (g_wifi.gwifi_link_net_state_flag == 1) {
-					MqttData_Publish_SetPtc(0x01);
-					osDelay(50);
-				 }
-           
-            }
-            else if (current_temperature < (g_pro.gset_temperture_value - TEMPERATURE_DIFF_THRESHOLD)) {
+        else if ((g_pro.gset_temperture_value - TEMPERATURE_DIFF_THRESHOLD) > current_temperature ) {
 				
             	if(g_pro.g_manual_shutoff_dry_flag ==0){
 					g_pro.gDry = DRY_STATE_ON;
@@ -376,7 +347,7 @@ static void handleTemperatureControl(void)
 						DRY_OPEN();
 					}
             	}
-				if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
+				if (g_disp.g_second_disp_flag == 1){
 				   sendDisplayCommand(0x02,0x01); // 打开干燥功能
 				   osDelay(5);
 				}
@@ -400,15 +371,16 @@ static void handleTemperatureControl(void)
 ******************************************************************************/
 static void handleDefaultTemperatureControl(void) 
 {
-    static uint8_t check_time = 0;
-	//uint8_t current_temperature;
-    //check_time++;
-    if ( g_pro.gTimer_disp_temp_humidity_vlaue > 2) { // 3秒
+    
+
+	static uint8_t default_first_close_dry;
+  
+    if ( g_pro.gTimer_disp_temp_humidity_vlaue > 3) { // 3秒
          g_pro.gTimer_disp_temp_humidity_vlaue = 0;
         current_temperature = readTemperature();
 
         if(current_temperature > 39) {
-			if(default_first_close_dry==0)default_first_close_dry=1;
+			default_first_close_dry=1;
 			g_pro.gDry =  DRY_STATE_OFF;
             //setDryState(g_pro.gDry);
             LED_DRY_OFF();
@@ -422,9 +394,9 @@ static void handleDefaultTemperatureControl(void)
 			    osDelay(50);
 			 }
         } 
-		else if(current_temperature <=39) {
+		else{
 
-		      if(default_first_close_dry==0){
+		      if(default_first_close_dry==0 && current_temperature <=39){
 
 			  if(g_pro.g_manual_shutoff_dry_flag ==0){
 
@@ -434,7 +406,7 @@ static void handleDefaultTemperatureControl(void)
 					if(g_pro.works_two_hours_interval_flag ==0){
 
 					  g_pro.gDry= DRY_STATE_ON;
-					   setDryState(g_pro.gDry);
+					   DRY_OPEN();//setDryState(g_pro.gDry);
 					}
 			  	}
 
@@ -448,7 +420,7 @@ static void handleDefaultTemperatureControl(void)
 					}
 
 			  }
-              else if (current_temperature <= 37) {
+              else if (current_temperature < 38 && default_first_close_dry==1) {
 	           if(g_pro.g_manual_shutoff_dry_flag ==0){
 
 			    if(g_pro.g_manual_shutoff_dry_flag ==0){ //manual turn off PTC function.
@@ -467,8 +439,9 @@ static void handleDefaultTemperatureControl(void)
 				  osDelay(5);
 				 }
 				  if (g_wifi.gwifi_link_net_state_flag == 1) {
-				  MqttData_Publish_SetPtc(DRY_STATE_ON);//publishMqttData(DRY_STATE_ON, current_temperature) ;
-	              osDelay(50);
+				   
+				     MqttData_Publish_SetPtc(DRY_STATE_ON);//publishMqttData(DRY_STATE_ON, current_temperature) ;
+	                 osDelay(50);
 				  }
 	            }
 

@@ -26,6 +26,7 @@ typedef struct{
 
 local_ref_t gl_msg;
 
+uint8_t test_flag;
 //处理腾讯云下发的数据
 /*******************************************************************************
    **
@@ -560,14 +561,10 @@ void Json_Parse_Command_Fun(void)
 		g_pro.ptc_warning =0;
 		
          g_pro.gpower_on = power_on;
-        //powerOffTunrOff_flag=1;
-       // powerOffFanRun_flag = 1;
-		//gctl_t.ptc_remove_warning_send_data =0;
-		//gpro_t.gpower_on = power_on;//gctl_t.rx_command_tag= POWER_ON;
-		//gpro_t.send_ack_cmd = ack_app_power_on;
-        //gpro_t.gTimer_again_send_power_on_off=0;
-	    SendWifiData_To_Cmd(0x31,0x01); //smart phone is power on
-		osDelay(5);//HAL_Delay(5);
+  
+	     SendWifiData_To_Cmd(0x31,0x01); //smart phone is power on
+         osDelay(5);
+
        
 		buzzer_temp_on=0;
 		gl_msg.response_wifi_signal_label = 0xff;
@@ -826,18 +823,22 @@ void Json_Parse_Command_Fun(void)
 		   if(strstr((char *)TCMQTTRCVPUB,"open\":1")){
 		   
 			  g_wifi.app_timer_power_on_flag = 1;
+              
+			   
+			   SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
+			   osDelay(10);//HAL_Delay(10);
 
-               g_pro.gpower_on = power_on;
-		
-			   MqttData_Publish_SetOpen(1);  
-			   osDelay(100);//HAL_Delay(350);
-			   if(g_disp.g_second_disp_flag == 1){
-	               SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
-				   osDelay(10);//HAL_Delay(10);
-			   }
+		       g_pro.gpower_on = power_on; //WT.EDIT 
+               do{
+			     if(g_pro.DMA_txComplete ==1){
+				 	g_pro.DMA_txComplete =0;
+                 MqttData_Publish_SetOpen(1);  
+			     osDelay(200);//HAL_Delay(350);
+			     test_flag++;
+			     }
+               	}while(g_pro.DMA_txComplete);
                
-            
-			   buzzer_temp_on=0;
+				buzzer_temp_on=0;
    
 
 		         

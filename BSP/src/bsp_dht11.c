@@ -284,11 +284,14 @@ DHT11_Status DHT11_Display_Data(uint8_t mode)
 
 uint8_t read_dht11_temperature_value(void)
 {
+    static uint8_t copy_dht11_value;
 	uint8_t error_flag;
 	error_flag =  dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-	
-
-	if(error_flag ==0){
+	if(error_flag !=0){
+		return copy_dht11_value;
+	}
+	else if(error_flag ==0){
+		 copy_dht11_value=dht11_data.temperature;
 	    return dht11_data.temperature;
 
 	}
@@ -306,10 +309,11 @@ void Update_DHT11_ToDisplayBoard_Value(void)
     
      static uint8_t error_flag;
 	 error_flag = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-     osDelay(20);
 	
-    if(error_flag ==0)
+    if(error_flag ==0){
 	    sendData_Real_TimeHum(dht11_data.humidity,dht11_data.temperature);
+	    osDelay(5);
+    }
 	
     
 }

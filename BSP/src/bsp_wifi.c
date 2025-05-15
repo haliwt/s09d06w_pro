@@ -102,6 +102,7 @@ static void link_wifi_net_handler(void)
                 HAL_UART_Transmit(&huart2, "AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"), 5000);
 
                  randomName[0]=HAL_GetUIDw0();
+			     osDelay(1000);//HAL_Delay(1000);
 			     wifi_led_fast_blink();
                  g_wifi.gTimer_link_net_timer_time = 0;
 				 
@@ -130,7 +131,7 @@ static void link_wifi_net_handler(void)
 
             case 3:
                 
-            if(g_wifi.gTimer_link_net_timer_time  > 7){
+            if(g_wifi.gTimer_link_net_timer_time  > 5){
                     g_wifi.gTimer_link_net_timer_time = 0;
                    g_wifi.link_net_step = 4;
            // WIFI_IC_ENABLE();
@@ -154,6 +155,7 @@ static void link_wifi_net_handler(void)
 	            sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",randomName[0]);
 				
                  at_send_data(device_massage, strlen((const char *)device_massage));
+				 osDelay(1000);//HAL_Delay(1000);
 				 wifi_led_fast_blink();
 
 
@@ -185,7 +187,7 @@ static void link_wifi_net_handler(void)
             break;
 
             case 6:
-			if(g_wifi.gwifi_link_net_state_flag==0)wifi_led_fast_blink();
+			//if(g_wifi.gwifi_link_net_state_flag==0)wifi_led_fast_blink();
 				
 
             if( g_wifi.gTimer_link_net_timer_time  > 6){
