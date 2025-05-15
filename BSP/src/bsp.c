@@ -46,26 +46,6 @@ void mainboard_fun_handler(void)
 
    mainboard_time ++ ;
 
-   if(g_wifi.app_timer_power_on_flag ==1){
-
-         //  g_wifi.app_timer_power_on_flag++; 
-		  mainboard_time=0;
-
-		  smartphone_timer_power_handler();
-		 
-
-   }
-   else if(g_wifi.app_timer_power_on_flag==2){
-			g_wifi.app_timer_power_on_flag++; 
-
-		    MqttData_Publish_Update_Data();//property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
-	        osDelay(100);//HAL_Delay(100);
-
-
-
-   }
-   else{
-
    if(mainboard_time > 100){// 2s  //300 ~= 6s, 50 ~=1s
       mainboard_time=0;
 
@@ -112,7 +92,7 @@ void mainboard_fun_handler(void)
 	
    	}
 	
-   	}
+   
 }
 
 static void mainboard_special_fun(void)
@@ -299,3 +279,26 @@ void copy_cmd_hanlder(void)
 
 }
 
+
+
+void  smart_phone_timer_power_on_handler(void)
+{
+  if(g_wifi.app_timer_power_on_flag ==1){
+
+       
+	    smartphone_timer_power_handler();
+		 
+
+   }
+   else if(g_wifi.app_timer_power_on_flag==2){
+			g_wifi.app_timer_power_on_flag++; 
+
+		    MqttData_Publish_Update_Data();//property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
+	        osDelay(100);//HAL_Delay(100);
+
+
+
+   }
+  
+
+}

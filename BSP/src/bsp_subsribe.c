@@ -44,6 +44,7 @@ void smartphone_timer_power_handler(void)
 			}
 			else {
 					g_pro.gMouse=0;//gctl_t.gUlransonic=0;
+					g_pro.g_manual_shutoff_dry_flag = 1;
 					   if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 					SendWifiData_To_Cmd(0x04,0x0);

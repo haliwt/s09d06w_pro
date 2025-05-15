@@ -49,6 +49,7 @@ void power_onoff_handler(uint8_t data)
 
 	
 		power_on_run_handler();
+        smartphone_timer_power_handler();
        if(gl_run.process_on_step !=0){ //logically rigorous
 
 	 

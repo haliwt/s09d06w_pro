@@ -185,4 +185,7 @@ void works_run_two_hours_state(void);
 
 void copy_cmd_hanlder(void);
 
+void  smart_phone_timer_power_on_handler(void);
+
+
 #endif /* BSP_INC_BSP_H_ */
