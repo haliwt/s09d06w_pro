@@ -220,8 +220,8 @@ void power_on_run_handler(void)
 	
       if(g_pro.key_set_temperature_flag==1){
 
-         read_error_flag= DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
-         if(read_error_flag == 0)DHT11_Display_Data(DISPLAY_TEMP);
+          DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+        
 
       }
       else if(g_key.mode_key_switch_time_mode == timer_time_mode){

@@ -360,16 +360,19 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			   if(pdata[4]==0x01){ // has dat only one value ,next receive byte is value
 	         
 			   if(g_pro.gpower_on == power_on){ 
-				//buzzer_sound();
-               g_pro.g_manual_shutoff_dry_flag =0;
-                g_pro.key_set_temperature_flag=2;
+				buzzer_sound();
+                g_pro.g_manual_shutoff_dry_flag =0;
+                g_pro.key_set_temperature_flag=1;
 				
 			    g_pro.gTimer_input_set_temp_timer= 0;
-			   
-				g_pro.gset_temperture_value = pdata[5];
-				g_wifi.wifi_set_temperature_value = pdata[5];
+			    if(pdata[5] < 41 && pdata[5]> 19){
+					g_pro.gset_temperture_value = pdata[5];
+					
+					g_wifi.wifi_set_temperature_value = pdata[5];
+			    }
 				g_pro.gTimer_switch_temp_hum = 0;
                 g_disp.g_set_temp_value_flag = 1;
+				TM1639_Display_Temperature(g_pro.gset_temperture_value);
 				
              }
 

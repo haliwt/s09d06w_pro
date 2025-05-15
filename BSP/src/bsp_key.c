@@ -240,9 +240,10 @@ void set_temperature_value_handler(void)
 			osDelay(100);
 			}
             if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0) {
-				
-	                sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
-	                osDelay(5);
+				    if(g_pro.DMA_txComplete ==1){
+						g_pro.DMA_txComplete=0;
+	                   sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
+				    }
 				
             }
         } 
@@ -259,37 +260,41 @@ void set_temperature_value_handler(void)
 			osDelay(100);
 			}
             if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0) {
-                sendDisplayCommand(0x02,0x01); // 打开干燥功能
-                osDelay(5);
+				if(g_pro.DMA_txComplete ==1){
+						g_pro.DMA_txComplete=0;
+                        sendDisplayCommand(0x02,0x01); // 打开干燥功能
+				}
             }
         }
 		key_up_down_pressed_flag=0;
 		//g_disp.g_set_temp_value_flag =0;
     }
     else{
-
+#if 0
         if(send_data_flag ==1){
 			send_data_flag++;
 			if(read_wifi_temperature_value()==1){ //smart phone set up temperature value .
 				g_wifi.g_wifi_set_temp_flag=0;
-				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-			      SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
-				  osDelay(5);
-				}
+//				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
+//			      SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
+//				  osDelay(5);
+//				}
 			}
 			else{
 			
 				if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){//the second displaybaord
-				SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
-				osDelay(5);
-				}
+//				SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
+//				osDelay(5);
+//				}
 			}
         }
+	#endif 
         if(g_pro.key_set_temperature_flag==2  && read_wifi_temperature_value()==0){
-		    handleTemperatureControl();
-           
-          
-        }
+		
+		       handleTemperatureControl();
+
+			
+         }
 		else if(g_pro.key_set_temperature_flag==0){ //don't set temperature value 
 				handleDefaultTemperatureControl();
 		 
