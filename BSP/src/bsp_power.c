@@ -49,7 +49,10 @@ void power_onoff_handler(uint8_t data)
 
 	
 		power_on_run_handler();
-        if(gl_run.process_on_step !=0){ //logically rigorous
+       if(gl_run.process_on_step !=0){ //logically rigorous
+
+	 
+        
 		link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
 		
 		set_temperature_value_handler();
@@ -57,6 +60,7 @@ void power_onoff_handler(uint8_t data)
 
 		wifi_led_fast_blink();
 		works_run_two_hours_state();
+	
 
         }
 			
@@ -133,16 +137,32 @@ void power_on_run_handler(void)
      case 0:  //initial reference 
        gl_run.process_off_step =0 ; //clear power off process step .
 
-	   if(g_disp.g_second_disp_flag == 1){
-	   	  SendData_Set_Command(CMD_POWER,open);
-		  osDelay(5);
-     
-		  Update_DHT11_ToDisplayBoard_Value();
-		  osDelay(5);
-	   
-	   }
-      
-       if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0){
+	   if(g_wifi.app_timer_power_on_flag ==1){
+	     	
+	   	  g_wifi.gwifi_link_net_state_flag=wifi_link_success;
+            if(g_pro.DMA_txComplete ==1){
+			 g_pro.DMA_txComplete =0;
+             MqttData_Publish_SetOpen(1);  
+		     osDelay(50);//HAL_Delay(350);
+		     
+		   
+           	}
+		    
+	   	}
+        else{
+		   if(g_pro.DMA_txComplete ==1){
+		   	   g_pro.DMA_txComplete=0;
+		   	  SendData_Set_Command(CMD_POWER,open);
+		   	}
+        }
+		
+	     
+        
+		 Update_DHT11_ToDisplayBoard_Value();
+			 
+		   
+		   
+      if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0){
 	      
 		   power_on_init_ref();
 
@@ -163,7 +183,7 @@ void power_on_run_handler(void)
 	   }
 	   else{
 
-		  smartphone_timer_power_handler();
+		    power_on_smart_app_led();
 
 	   }
 	   key_referen_init();
@@ -177,6 +197,10 @@ void power_on_run_handler(void)
 	   
 	   g_wifi.wifi_led_fast_blink_flag=0;
 	   g_pro.key_set_temperature_flag=0;
+	    g_pro.g_manual_shutoff_dry_flag = 0;
+		 g_pro.gTimer_disp_time_second= 0;
+	    g_pro.gTimer_timer_time_second=0;
+		g_wifi.set_wind_speed_value = 100;
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 
 	   gl_run.process_on_step =1;
@@ -404,6 +428,7 @@ void power_off_run_handler(void)
 	   g_pro.g_fan_switch_gears_flag++;
       gl_run.process_off_step = 1;
 	   g_pro.key_set_temperature_flag=0;
+	   g_wifi.app_timer_power_on_flag =0;
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 	  
 
@@ -439,7 +464,7 @@ void power_off_run_handler(void)
 	 if(g_wifi.gwifi_link_net_state_flag == 1 && wifi_first_connect==0){
 	 	    wifi_first_connect++;
             MqttData_Publish_SetOpen(0);  
-			osDelay(50);
+			osDelay(100);
 	        MqttData_Publish_PowerOff_Ref() ;//
 	        osDelay(100);
            

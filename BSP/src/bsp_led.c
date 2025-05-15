@@ -27,6 +27,19 @@ void power_on_led(void)
 	//TEMP_ICON_ON() ;
 	//HUMIDITY_ICON_ON();
 }
+
+void power_on_smart_app_led(void)
+{
+    LED_POWER_ON();
+    LED_TAPE_CTL_ON();
+    LED_AI_ON();
+    LED_WIFI_ON();
+    LED_TEMP_SINGLE_ON();
+	LED_FUN_ON();
+	DHT11_Display_Data(0); //display temperature value 
+   
+}
+
 /**************************************************************************
  * power_off_led(void)
  * 功能:关闭所有LED

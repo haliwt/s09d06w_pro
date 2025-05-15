@@ -311,8 +311,9 @@ void Update_DHT11_ToDisplayBoard_Value(void)
 	 error_flag = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
 	
     if(error_flag ==0){
+		
 	    sendData_Real_TimeHum(dht11_data.humidity,dht11_data.temperature);
-	    osDelay(5);
+		osDelay(5);
     }
 	
     

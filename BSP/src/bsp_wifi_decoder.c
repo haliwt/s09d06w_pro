@@ -824,19 +824,25 @@ void Json_Parse_Command_Fun(void)
 		   
 			  g_wifi.app_timer_power_on_flag = 1;
               
-			   
+			   if(g_pro.DMA_txComplete ==1){
+			   	g_pro.DMA_txComplete=0;
 			   SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
-			   osDelay(10);//HAL_Delay(10);
+
+			   }
+			  
 
 		       g_pro.gpower_on = power_on; //WT.EDIT 
-               do{
-			     if(g_pro.DMA_txComplete ==1){
-				 	g_pro.DMA_txComplete =0;
-                 MqttData_Publish_SetOpen(1);  
-			     osDelay(200);//HAL_Delay(350);
-			     test_flag++;
-			     }
-               	}while(g_pro.DMA_txComplete);
+			   
+				g_wifi.link_net_step = 0; //WT.EDIT 2025.05.12
+			
+             
+//			    if(g_pro.DMA_txComplete ==1){
+//				 	g_pro.DMA_txComplete =0;
+//                 MqttData_Publish_SetOpen(1);  
+//			     osDelay(20);//HAL_Delay(350);
+//			     test_flag++;
+//			   
+//               	}
                
 				buzzer_temp_on=0;
    

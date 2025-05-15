@@ -46,6 +46,26 @@ void mainboard_fun_handler(void)
 
    mainboard_time ++ ;
 
+   if(g_wifi.app_timer_power_on_flag ==1){
+
+         //  g_wifi.app_timer_power_on_flag++; 
+		  mainboard_time=0;
+
+		  smartphone_timer_power_handler();
+		 
+
+   }
+   if(g_wifi.app_timer_power_on_flag==2){
+			g_wifi.app_timer_power_on_flag++; 
+
+		    property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
+	        HAL_Delay(100);
+
+
+
+   }
+   else{
+
    if(mainboard_time > 100){// 2s  //300 ~= 6s, 50 ~=1s
       mainboard_time=0;
 
@@ -92,7 +112,7 @@ void mainboard_fun_handler(void)
 	
    	}
 	
-
+   	}
 }
 
 static void mainboard_special_fun(void)
