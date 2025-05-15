@@ -8,7 +8,8 @@
 
 void smartphone_timer_power_handler(void)
 {
-
+		
+   
          g_pro.gAI =1;
 
           Parse_Json_phone_timer_power_on_ref();
@@ -18,7 +19,7 @@ void smartphone_timer_power_handler(void)
                 if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 				SendWifiData_To_Cmd(0x03,0x01);
-                osDelay(20);
+                //osDelay(20);
                 }
 			
 			}
@@ -28,7 +29,7 @@ void smartphone_timer_power_handler(void)
 				if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 				SendWifiData_To_Cmd(0x03,0x0);
-				osDelay(20);
+				//osDelay(20);
 					}
 			}
 
@@ -38,7 +39,7 @@ void smartphone_timer_power_handler(void)
                       if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 					SendWifiData_To_Cmd(0x04,0x01);
-					  osDelay(20);
+					 // osDelay(20);
                       	}
 					 
 			}
@@ -58,7 +59,7 @@ void smartphone_timer_power_handler(void)
 				   if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 				SendWifiData_To_Cmd(0x02,0x01);
-				   osDelay(20);
+				  // osDelay(20);
 				   	}
 				
 			}
@@ -67,19 +68,13 @@ void smartphone_timer_power_handler(void)
                      if(g_pro.DMA_txComplete ==1){
 				g_pro.DMA_txComplete=0;	
 					SendWifiData_To_Cmd(0x02,0x0);
-					 osDelay(20);
+					// osDelay(20);
                      	}
 
 			}
 
-		    
-	
-		//   property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
-		///   osDelay(200);//HAL_Delay(200);
-        
-       g_wifi.app_timer_power_on_flag++; 
-			
-	  
+       
+
 }
 			
 

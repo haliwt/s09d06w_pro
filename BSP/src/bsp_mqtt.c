@@ -67,7 +67,7 @@ static serviceInfo    sg_info;
 void Mqtt_Value_Init(void)
 {
     g_wifi.set_wind_speed_value=100;
-    //g_pro.gTemp_value=40 ;
+    g_pro.gTemp_value=40 ;
    	sg_info.open=1;
     if(g_pro.gAI==1)sg_info.state=1;
 	else sg_info.state =2;
@@ -99,12 +99,17 @@ static void Mqtt_Value_update_data(void)
 
     sg_info.find = g_wifi.set_wind_speed_value;//gctl_t.set_wind_speed_value;
     
-    if(g_pro.gTemp_value <20)sg_info.set_temperature = 20;
-	else if(g_pro.gTemp_value > 40 )sg_info.set_temperature = 40;
-	else{
-	  sg_info.set_temperature = g_pro.gTemp_value;
+//    if(g_pro.gTemp_value <20)sg_info.set_temperature = 20;
+//	else if(g_pro.gTemp_value > 40 )sg_info.set_temperature = 40;
+//	else{
+      if(g_pro.gset_temperture_value==40)
+	  	sg_info.set_temperature = 40;
+	  else{
+	     sg_info.set_temperature = g_pro.gset_temperture_value;
 
-	}
+	  }
+
+	//}
 
 }
 /********************************************************************************

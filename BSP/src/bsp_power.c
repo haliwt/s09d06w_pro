@@ -49,10 +49,10 @@ void power_onoff_handler(uint8_t data)
 
 	
 		power_on_run_handler();
-        smartphone_timer_power_handler();
+       
        if(gl_run.process_on_step !=0){ //logically rigorous
 
-	 
+	    smart_phone_timer_power_on_handler();
         
 		link_wifi_to_tencent_handler(g_wifi.wifi_led_fast_blink_flag); //detected ADC of value 
 		
@@ -170,11 +170,11 @@ void power_on_run_handler(void)
 		  MqttData_Publish_SetOpen(1);  
 		  osDelay(50);//HAL_Delay(200);
 		  Update_DHT11_ToDisplayBoard_Value();
-		  osDelay(50);//HAL_Delay(200);
+		  osDelay(5);//HAL_Delay(200);
 	        
-		
+		   g_pro.gset_temperture_value = 40;
 		   MqttData_Publish_Update_Data();
-		   osDelay(50);//HAL_Delay(200);
+		   osDelay(100);//HAL_Delay(200);
 	   }
 	   else{
 

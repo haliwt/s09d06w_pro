@@ -284,7 +284,7 @@ void copy_cmd_hanlder(void)
 void  smart_phone_timer_power_on_handler(void)
 {
   if(g_wifi.app_timer_power_on_flag ==1){
-
+       g_wifi.app_timer_power_on_flag++; 
        
 	    smartphone_timer_power_handler();
 		 
