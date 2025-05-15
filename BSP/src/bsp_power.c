@@ -455,9 +455,10 @@ void power_off_run_handler(void)
 	
 
      LED_Power_Breathing();
+	 wifi_first_connect++;
 
-	 if(g_wifi.gwifi_link_net_state_flag == 1 && wifi_first_connect==0){
-	 	    wifi_first_connect++;
+	 if(g_wifi.gwifi_link_net_state_flag == 1 && wifi_first_connect > 200){
+	 	    wifi_first_connect=0;
             MqttData_Publish_SetOpen(0);  
 			osDelay(100);
 	        MqttData_Publish_PowerOff_Ref() ;//
