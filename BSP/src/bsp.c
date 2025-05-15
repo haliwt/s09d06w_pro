@@ -55,11 +55,11 @@ void mainboard_fun_handler(void)
 		 
 
    }
-   if(g_wifi.app_timer_power_on_flag==2){
+   else if(g_wifi.app_timer_power_on_flag==2){
 			g_wifi.app_timer_power_on_flag++; 
 
-		    property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
-	        HAL_Delay(100);
+		    MqttData_Publish_Update_Data();//property_report_phone_timer_on_data();// MqttData_Publish_Update_Data();
+	        osDelay(100);//HAL_Delay(100);
 
 
 

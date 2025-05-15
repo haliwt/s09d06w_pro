@@ -138,17 +138,11 @@ void power_on_run_handler(void)
        gl_run.process_off_step =0 ; //clear power off process step .
 
 	   if(g_wifi.app_timer_power_on_flag ==1){
-	     	
+	      
 	   	  g_wifi.gwifi_link_net_state_flag=wifi_link_success;
-            if(g_pro.DMA_txComplete ==1){
-			 g_pro.DMA_txComplete =0;
-             MqttData_Publish_SetOpen(1);  
-		     osDelay(50);//HAL_Delay(350);
-		     
-		   
-           	}
-		    
-	   	}
+          MqttData_Publish_SetOpen(1);  
+		   osDelay(50);//HAL_Delay(350);
+		}
         else{
 		   if(g_pro.DMA_txComplete ==1){
 		   	   g_pro.DMA_txComplete=0;
