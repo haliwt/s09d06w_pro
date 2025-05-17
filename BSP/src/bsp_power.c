@@ -130,7 +130,7 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t read_error_flag,switch_adc,switch_dht11;
+   static uint8_t read_error_flag,switch_adc,switch_dht11,send_wifi_power_on_state;
 
 	switch(gl_run.process_on_step){
 
@@ -149,6 +149,10 @@ void power_on_run_handler(void)
 		   	   g_pro.DMA_txComplete=0;
 		   	  SendData_Set_Command(CMD_POWER,open);
 		   	}
+		    if(g_wifi.gwifi_link_net_state_flag == wifi_link_success){ 
+		       MqttData_Publish_SetOpen(1);  
+		       osDelay(100);//HAL_Delay(200);
+		    }
         }
 		
 	     
@@ -166,15 +170,14 @@ void power_on_run_handler(void)
 		  
 		   power_on_init_ref();
 		
-       	
-		  MqttData_Publish_SetOpen(1);  
-		  osDelay(50);//HAL_Delay(200);
-		  Update_DHT11_ToDisplayBoard_Value();
-		  osDelay(5);//HAL_Delay(200);
-	        
-		   g_pro.gset_temperture_value = 40;
-		   MqttData_Publish_Update_Data();
-		   osDelay(100);//HAL_Delay(200);
+		   if(g_pro.DMA_txComplete ==1){
+		   	   g_pro.DMA_txComplete=0;
+		  	   Update_DHT11_ToDisplayBoard_Value();
+		   	}
+	        send_wifi_power_on_state = 1;
+		  // g_pro.gset_temperture_value = 40;
+		  // MqttData_Publish_Update_Data();
+		   //osDelay(200);//HAL_Delay(200);
 	   }
 	   else{
 
@@ -216,6 +219,16 @@ void power_on_run_handler(void)
 
 	   }
 	  }
+
+	  if(send_wifi_power_on_state==1){
+	      send_wifi_power_on_state++;
+	      g_pro.gset_temperture_value = 40;
+		   MqttData_Publish_Update_Data();
+		   osDelay(200);//HAL_Delay(200);
+
+
+	  }
+	  
 	   gl_run.process_on_step =2;
 
 
