@@ -206,9 +206,10 @@ void key_dwon_fun(void)
 void set_temperature_value_handler(void)
 {
    static uint8_t send_data_flag;
-   if((g_pro.key_set_temperature_flag==1 || read_wifi_temperature_value()==1) && g_pro.gTimer_input_set_temp_timer >= 4)
+   if((g_pro.key_set_temperature_flag==1 || g_wifi.g_wifi_set_temp_flag==1) && g_pro.gTimer_input_set_temp_timer >= 4)
 	{
         g_pro.key_set_temperature_flag=2;
+        g_wifi.g_wifi_set_temp_flag=0;
 		send_data_flag=1;
 		
 //		if(read_wifi_temperature_value()==1){
