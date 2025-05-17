@@ -239,11 +239,12 @@ void set_temperature_value_handler(void)
             publishMqttData(DRY_STATE_OFF, g_pro.gset_temperture_value);
 			osDelay(100);
 			}
-            if (g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0) {
-				    if(g_pro.DMA_txComplete ==1){
-						g_pro.DMA_txComplete=0;
-	                   sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
-				    }
+            if (g_disp.g_second_disp_flag == 1) {
+				    
+						
+	              sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
+	              osDelay(5);
+				    
 				
             }
         } 
@@ -331,7 +332,7 @@ static void handleTemperatureControl(void)
 		    DRY_CLOSE();//setDryState(g_pro.gDry);
 		    LED_DRY_OFF();
 	
-		    if(g_disp.g_second_disp_flag == 1 && g_disp.g_set_temp_value_flag ==0){
+		    if(g_disp.g_second_disp_flag == 1){
 				sendDisplayCommand(0x02,g_pro.gDry);
 				osDelay(5);
 		    }

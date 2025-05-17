@@ -63,10 +63,14 @@ void mainboard_fun_handler(void)
 	if(g_pro.gDry == 1 && read_wifi_dry_value()==0){
 		DRY_OPEN();
 		LED_DRY_ON();
+	    sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
+	    osDelay(5);
 	}
 	else{
 		LED_DRY_OFF();
 		DRY_CLOSE();
+	    sendDisplayCommand(0x02,g_pro.gDry); // 关闭干燥功能
+	    osDelay(5);
 
 	}
 

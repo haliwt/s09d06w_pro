@@ -469,11 +469,9 @@ void receive_data_from_displayboard(uint8_t *pdata)
 /********************************************************************
 	*
 	*Function Name: static void copy_receive_data(uint8_t cmd,uint8_t data)
-	*Function: mainboard of key be pressed that the second display board receive
-	*          command and repeat mainboard order and  send to mainboard,
-	*		   then mainboard run command .
-	*Input Ref:NO
-	*R
+	*Function: receive display board command .     		   
+	*Input Ref:cmd-display board command . data- 1:open or 0:close
+	*Return Ref:NO
 	*
 *********************************************************************/
 static void copy_receive_data(uint8_t cmd,uint8_t data)
@@ -490,8 +488,6 @@ static void copy_receive_data(uint8_t cmd,uint8_t data)
 			else{
                buzzer_sound();
 			   g_pro.gpower_on = power_off;
-
-
 			}
 	 
 
