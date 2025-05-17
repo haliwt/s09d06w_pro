@@ -192,11 +192,15 @@ void power_on_run_handler(void)
 	   
 	   g_wifi.wifi_led_fast_blink_flag=0;
 	   g_pro.key_set_temperature_flag=0;
+	   g_pro.temperature_init_value=0;
+	   
 	    g_pro.g_manual_shutoff_dry_flag = 0;
 		 g_pro.gTimer_disp_time_second= 0;
 	    g_pro.gTimer_timer_time_second=0;
 		g_wifi.set_wind_speed_value = 100;
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
+	   
+	
 
 	   gl_run.process_on_step =1;
 	 break;

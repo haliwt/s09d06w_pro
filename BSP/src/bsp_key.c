@@ -118,9 +118,9 @@ uint8_t sys_read_gpio_pin_value(GPIO_TypeDef *p_gpiox, uint16_t pinx)
 static void adjust_temperature(int8_t delta) 
 {
 
-   static uint8_t temperature_init_value ;
-	if (temperature_init_value == 0 && g_pro.key_set_temperature_flag !=2) {
-        temperature_init_value++;
+   //static uint8_t temperature_init_value ;
+	if (g_pro.temperature_init_value == 0 && g_pro.key_set_temperature_flag !=2) {
+        g_pro.temperature_init_value++;
         g_pro.gset_temperture_value = (delta > 0) ? 21 : 39;
     } else {
         g_pro.gset_temperture_value += delta;

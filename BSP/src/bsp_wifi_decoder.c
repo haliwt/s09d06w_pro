@@ -832,19 +832,8 @@ void Json_Parse_Command_Fun(void)
 			  
 
 		       g_pro.gpower_on = power_on; //WT.EDIT 
-			   
-				g_wifi.link_net_step = 0; //WT.EDIT 2025.05.12
-			
-             
-//			    if(g_pro.DMA_txComplete ==1){
-//				 	g_pro.DMA_txComplete =0;
-//                 MqttData_Publish_SetOpen(1);  
-//			     osDelay(20);//HAL_Delay(350);
-//			     test_flag++;
-//			   
-//               	}
-               
-				buzzer_temp_on=0;
+			   g_wifi.link_net_step = 0; //WT.EDIT 2025.05.12
+			    buzzer_temp_on=0;
    
 
 		         
