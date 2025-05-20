@@ -154,7 +154,7 @@ static void Judge_Fan_State(uint16_t adc_value)
 {
 
   static uint8_t detect_error_times;
-   if(adc_value <300){ //500
+   if(adc_value <550){ //500
          detect_error_times++;
 	          
 		if(detect_error_times >0){
@@ -162,13 +162,15 @@ static void Judge_Fan_State(uint16_t adc_value)
 		   g_pro.fan_warning = 1;
 
 		  Publish_Data_Warning(fan_warning,g_pro.fan_warning);
-	      HAL_Delay(200);
+	      osDelay(200);//HAL_Delay(200);
 
 		   MqttData_Publis_SetFan(0);
-	       HAL_Delay(100);
+	       osDelay(100);//HAL_Delay(100);
 
 		  Buzzer_Fan_Error_Sound();
 
+		  SendWifiData_To_Cmd(0x09,0x01);//Fan fault warning .
+		  osDelay(5);
 
 		}
 		detect_error_times++;
