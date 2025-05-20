@@ -183,7 +183,7 @@ uint8_t read_sensor_dht11_data(void)
         // 读取失败，显示错误代码
         LED_TEMP_SINGLE_ON();
         LED_HUM_SINGLE_OFF();
-        SMG_Display_Err();
+        SMG_Display_Err(0);
         return status;
     }
 

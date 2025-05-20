@@ -73,8 +73,15 @@ void SMG_Display_Hour(void)
 }
 
 
-
-void SMG_Display_Err(void)
+/******************************************************************************
+	*
+	*Function Name:void SMG_Display_Err(uint8_t idata)
+	*Funcion: 
+	*Input Ref: idata: 1 -ptc warning  2 - fan warning
+	*Return Ref:
+	*
+******************************************************************************/
+void SMG_Display_Err(uint8_t idata)
 {
 
 	 TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, TM1639_Char_Err_Table[0]);
@@ -83,8 +90,19 @@ void SMG_Display_Err(void)
  
     TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, TM1639_Char_Err_Table[1]);
         
-    // 写入个位（最右边）'H'
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_Char_Err_Table[1]);
+    if(idata==1){ //ptc warning 
+	// 写入个位（最右边）'H'
+     TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,Number_Table[1]);
+
+    }
+	else if(idata == 2){
+		
+	  TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,Number_Table[2]);
+    }
+	else{
+	   TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, TM1639_Char_Err_Table[1]);
+
+	}
 
 
 }

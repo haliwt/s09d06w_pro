@@ -185,35 +185,44 @@ static void vTaskRunPro(void *pvParameters)
 			g_key.key_mode_flag = KEY_NULL;
 			mode_key_counter=0;
 			g_pro.gTimer_switch_set_timer_times = 0;
+			if(g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
 			buzzer_sound();
 	        mode_key_fun();
+		    }
 		}
 		else if(KEY_MODE_VALUE() == KEY_DOWN && mode_key_counter >= 60 && mode_key_counter < 200){
 
 			g_key.key_mode_flag = KEY_NULL;
 			mode_key_counter=202;
-			buzzer_sound();
-			g_pro.key_gtime_timer_define_flag = input_set_timer_mode;
-			g_pro.gTimer_switch_set_timer_times = 0;
-	        HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
-			TEMP_ICON_OFF();//WT.EDIT 2025.04.23
-			TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
+		    if(g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+				buzzer_sound();
+				g_pro.key_gtime_timer_define_flag = input_set_timer_mode;
+				g_pro.gTimer_switch_set_timer_times = 0;
+		        HUMIDITY_ICON_OFF(); //WT.EDIT 2025.04.23
+				TEMP_ICON_OFF();//WT.EDIT 2025.04.23
+				TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);//WT.EDIT 2025.04.23
+		    }
 
 		}
 	}
 	else if(g_key.key_down_flag ==KEY_DOWN_ID && KEY_DOWN_VALUE() == KEY_UP ){// && DEC_KEY_VALUE()==KEY_UP){
 		g_key.key_down_flag = KEY_NULL;
 		g_key.mode_key_switch_time_mode= normal_time_mode; //WT.EDIT 2025.04.30
-		buzzer_sound();
+		if(g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+		   buzzer_sound();
 
-		key_dwon_fun();
+		    key_dwon_fun();
+		}
 	}
 	else if(g_key.key_up_flag ==KEY_UP_ID && KEY_UP_VALUE() == KEY_UP ){ // && ADD_KEY_VALUE()==KEY_UP){
 		g_key.key_up_flag =KEY_NULL;
 		g_key.mode_key_switch_time_mode= normal_time_mode; //WT.EDIT 2025.04.30
-		buzzer_sound();
+		
+		if(g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+		   buzzer_sound();
+           key_up_fun();
 
-		key_up_fun();
+		}
 	}
 
 	power_onoff_handler(g_pro.gpower_on);

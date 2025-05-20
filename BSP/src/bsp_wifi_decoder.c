@@ -766,7 +766,9 @@ void Json_Parse_Command_Fun(void)
 			
             MqttData_Publis_SetTemp(g_wifi.wifi_set_temperature_value);
 		    osDelay(100);//HAL_Delay(350);
-			TM1639_Display_Temperature(g_wifi.wifi_set_temperature_value); //WT.EDIT 2025.03.11
+		    if(g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+			    TM1639_Display_Temperature(g_wifi.wifi_set_temperature_value); //WT.EDIT 2025.03.11
+		    }
 			if(g_disp.g_second_disp_flag == 1){
 				SendWifiData_One_Data(0x2A, g_wifi.wifi_set_temperature_value); //smart phone set temperature value .
 				osDelay(5);//HAL_Delay(10);

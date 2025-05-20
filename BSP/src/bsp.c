@@ -262,7 +262,14 @@ void works_run_two_hours_state(void)
 
 
 
-
+/**********************************************************************
+    *
+    *Functin Name: void works_run_two_hours_state(void)
+    *Function :  
+    *Input Ref: NO
+    *Return Ref: NO
+    *
+************************************************************************/
 void copy_cmd_hanlder(void)
 {
     if(g_pro.g_copy_power_onoff_flag == power_on){
@@ -284,7 +291,14 @@ void copy_cmd_hanlder(void)
 }
 
 
-
+/**********************************************************************
+    *
+    *Functin Name: void works_run_two_hours_state(void)
+    *Function :  
+    *Input Ref: NO
+    *Return Ref: NO
+    *
+************************************************************************/
 void  smart_phone_timer_power_on_handler(void)
 {
   if(g_wifi.app_timer_power_on_flag ==1){
@@ -306,3 +320,43 @@ void  smart_phone_timer_power_on_handler(void)
   
 
 }
+
+
+/**********************************************************************
+    *
+    *Functin Name: void fault_handler(void)
+    *Function :  
+    *Input Ref: NO
+    *Return Ref: NO
+    *
+************************************************************************/
+void fault_handler(void)
+{
+
+    if(g_pro.fan_warning == 1){
+       HUMIDITY_ICON_OFF();
+	   TEMP_ICON_OFF();//WT.EDIT 2025.04.28
+	   DRY_CLOSE();
+	   LED_DRY_OFF();
+       SMG_Display_Err(2);
+	   osDelay(1000);
+
+
+	}
+
+	if(g_pro.ptc_warning ==1){
+         HUMIDITY_ICON_OFF();
+		 TEMP_ICON_OFF();//WT.EDIT 2025.04.28
+		 DRY_CLOSE();
+	     LED_DRY_OFF();
+         
+	     SMG_Display_Err(1);
+	     osDelay(1000);
+		 
+
+
+	}
+
+
+}
+

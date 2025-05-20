@@ -24,6 +24,6 @@
 // 函数声明
 void SMG_Display_Hour(void);  // 显示0-24小时时间
 
-void SMG_Display_Err(void);
+void SMG_Display_Err(uint8_t idata);
 
 #endif /* BSP_INC_BSP_SMG_H_ */

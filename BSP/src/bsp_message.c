@@ -372,7 +372,10 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			    }
 				g_pro.gTimer_switch_temp_hum = 0;
                 g_disp.g_set_temp_value_flag = 1;
+				if(g_pro.fan_warning ==0 && g_pro.ptc_warning==0){
 				TM1639_Display_Temperature(g_pro.gset_temperture_value);
+
+				}
 				
              }
 
@@ -416,7 +419,9 @@ void receive_data_from_displayboard(uint8_t *pdata)
 			    g_pro.gdisp_timer_hours_value = pdata[5];
 			
 			    g_pro.g_disp_timer_or_temp_flag = input_set_timer_mode;//WT.EDIT 2025.04.23//input_temp_time_mode  ;
-			    TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+                if(g_pro.fan_warning ==0 && g_pro.ptc_warning==0){
+				TM1639_Display_3_Digit(g_pro.gdisp_timer_hours_value);
+                	}
 				
 
 			}
