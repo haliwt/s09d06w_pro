@@ -132,7 +132,7 @@ void wifi_led_fast_blink(void)
 
        LED_WIFI_ON();
 	}
-	else if(g_key.key_long_power_flag !=  KEY_LONG_POWER && g_wifi.gwifi_link_net_state_flag ==0){
+	else if(g_wifi.gwifi_link_net_state_flag ==0){
 
              wifi_led_slowly_blink();
      }
