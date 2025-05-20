@@ -227,8 +227,7 @@ static void vTaskRunPro(void *pvParameters)
 	}
 
 	//copy_cmd_hanlder();
-
-	//ack_cmd_second_disp_hanlder();
+    //ack_cmd_second_disp_hanlder();
 	vTaskDelay(10);
 
 	  

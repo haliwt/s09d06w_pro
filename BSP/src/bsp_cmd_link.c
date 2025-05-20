@@ -363,7 +363,7 @@ void TransmitData(uint8_t *buf, uint8_t size)
         HAL_UART_Transmit_IT(&huart1, buf, transferSize);
     }
     #else
-    HAL_UART_Transmit_DMA(&huart1, buf, transferSize);
+    	HAL_UART_Transmit_DMA(&huart1, buf, transferSize);
     #endif
 }
 

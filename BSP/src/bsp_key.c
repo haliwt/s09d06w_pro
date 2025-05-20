@@ -134,6 +134,8 @@ static void adjust_temperature(int8_t delta)
     TM1639_Display_Temperature(g_pro.gset_temperture_value);
     g_pro.gTimer_input_set_temp_times = 0;
     g_pro.gTimer_switch_temp_hum = 0;
+	SendWifiData_One_Data(0x2A,g_pro.gset_temperture_value);
+	osDelay(5);
 }
 
 /**

@@ -29,7 +29,7 @@ typedef enum {
 
 //DisplayMode disp_temp_hum = DISPLAY_TEMP;  // 默认显示温度
 uint8_t disp_temp_hum;
-
+uint8_t send_wifi_power_on_state;
 
 
 /**********************************************************************
@@ -130,7 +130,7 @@ void power_on_init_ref(void)
 void power_on_run_handler(void)
 {
 
-   static uint8_t read_error_flag,switch_adc,switch_dht11,send_wifi_power_on_state;
+   static uint8_t read_error_flag,switch_adc,switch_dht11;
 
 	switch(gl_run.process_on_step){
 
@@ -161,7 +161,7 @@ void power_on_run_handler(void)
 			 
 		   
 		   
-      if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0){
+      if(g_wifi.gwifi_link_net_state_flag == wifi_no_link){//逻辑不严谨//if(g_wifi.gwifi_link_net_state_flag == wifi_no_link || g_wifi.app_timer_power_on_flag == 0)
 	      
 		   power_on_init_ref();
 
@@ -220,11 +220,11 @@ void power_on_run_handler(void)
 	   }
 	  }
 
-	  if(send_wifi_power_on_state==1){
+	  if(send_wifi_power_on_state ==1){
 	      send_wifi_power_on_state++;
 	      g_pro.gset_temperture_value = 40;
 		   MqttData_Publish_Update_Data();
-		   osDelay(200);//HAL_Delay(200);
+		   osDelay(300);//HAL_Delay(200);
 
 
 	  }
@@ -377,12 +377,7 @@ void power_on_run_handler(void)
             }
 
          }
-		 
-		
-
-		 
-		    
-	    gl_run.process_on_step =1;
+	  gl_run.process_on_step =1;
 
 	 break;
 

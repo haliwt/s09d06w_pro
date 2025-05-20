@@ -160,7 +160,7 @@ static void Mqtt_power_off_Value(void)
     sg_info.ptc=0; 
     sg_info.anion=0;  //灭菌
 	sg_info.sonic =0;  //驱虫
-    sg_info.find=0;
+    sg_info.find=1;
 	
 	sg_info.set_temperature = 20; //gctl_t.set_temperature_value ;
 	
