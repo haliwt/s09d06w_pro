@@ -205,7 +205,7 @@ void power_on_run_handler(void)
 	   g_pro.works_two_hours_interval_flag=0; //WT.EDIT 2025.05.07
 	   g_pro.fan_warning =0 ;
 	   g_pro.ptc_warning =0;
-	
+	   g_pro.gTimer_display_adc_value=0;
 
 	   gl_run.process_on_step =1;
 	 break;
@@ -213,6 +213,7 @@ void power_on_run_handler(void)
 	 case 1:
 
       if( g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+	
 		  if(g_disp.g_second_disp_flag == 1){
 	         
 		    if(g_pro.gTimer_send_dht11_disp > 2){ //3s
@@ -242,6 +243,7 @@ void power_on_run_handler(void)
 	case 2:
 
 	  if( g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+	  	
       if(g_pro.key_set_temperature_flag==1){
 
           DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
@@ -274,7 +276,8 @@ void power_on_run_handler(void)
 
       }
       else if((g_pro.g_disp_timer_or_temp_flag == timer_time_mode) && read_wifi_temperature_value()==0){
-		// 如果计时器超过阈值，切换显示模式
+             
+	    // 如果计时器超过阈值，切换显示模式
 
 		  if (g_pro.gTimer_switch_temp_hum > SWITCH_THRESHOLD) {
 			g_pro.gTimer_switch_temp_hum = 0; // 重置计时器
@@ -309,6 +312,7 @@ void power_on_run_handler(void)
 		}
 	} 
 	else {
+		
 		// 如果计时器超过阈值，切换布尔显示状态,不显示时间
        if((g_pro.g_disp_timer_or_temp_flag == normal_time_mode) && read_key_up_down_mode()!=1 && read_wifi_temperature_value()==0){ //正常模式
 
@@ -332,6 +336,7 @@ void power_on_run_handler(void)
 	 case 3: //WIFI link process
 	 
          if( g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
+		 
 		if(g_wifi.gTimer_update_dht11_data > 7 && (g_wifi.gwifi_link_net_state_flag ==1 || g_wifi.gwifi_link_net_state_flag ==1)){
 			   g_wifi.gTimer_update_dht11_data=0;
 
@@ -370,7 +375,8 @@ void power_on_run_handler(void)
 	 break;
 
 	 case 4: // wifi function
-         if(g_pro.gTimer_display_adc_value > 3){
+	    
+         if(g_pro.gTimer_display_adc_value > 4 && g_pro.works_two_hours_interval_flag==0){
 		 	g_pro.gTimer_display_adc_value=0;
 
 		    switch_adc = switch_adc ^ 0x01;

@@ -176,6 +176,7 @@ static void vTaskRunPro(void *pvParameters)
 				SendData_Set_Command(CMD_CONNECT_WIFI,0x01);
 				osDelay(5);
 			}
+			wifi_led_fast_blink(); //WT.EDIT 2025.05.20
 		}
 	}
 	else if(g_key.key_mode_flag == KEY_MODEL_ID ){ //&& MODEL_KEY_VALUE()==KEY_UP){

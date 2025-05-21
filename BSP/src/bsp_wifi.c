@@ -77,7 +77,7 @@ void link_wifi_to_tencent_handler(uint8_t data)
 static void link_wifi_net_handler(void)
 {
   
-
+    
     uint8_t  device_massage[100];
   // device_massage = (uint8_t *)malloc(128);
 
@@ -90,9 +90,10 @@ static void link_wifi_net_handler(void)
                 wifi_led_fast_blink();
         		at_send_data("AT+RST\r\n", strlen("AT+RST\r\n"));
         		//HAL_Delay(1000);
-        		wifi_led_fast_blink();
-        		osDelay(1000);
-               
+        		 wifi_led_fast_blink();
+        		 osDelay(1000);
+                 wifi_led_fast_blink();
+				  g_wifi.gTimer_link_net_timer_time = 0;
                  g_wifi.link_net_step = 1;
 
             break;
@@ -102,12 +103,18 @@ static void link_wifi_net_handler(void)
                 HAL_UART_Transmit(&huart2, "AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"), 5000);
 
                  randomName[0]=HAL_GetUIDw0();
-			     osDelay(1000);//HAL_Delay(1000);
-			     wifi_led_fast_blink();
-                 g_wifi.gTimer_link_net_timer_time = 0;
+				 wifi_led_fast_blink();
+
+				  wifi_led_fast_blink();
+        		 osDelay(1000);
+                 wifi_led_fast_blink();
+			      
+                  g_wifi.gTimer_link_net_timer_time = 0;
 				 
 
-                g_wifi.link_net_step = 2;
+                   g_wifi.link_net_step = 2;
+
+				 
 
             break;
 
@@ -115,7 +122,7 @@ static void link_wifi_net_handler(void)
                  if(g_wifi.gTimer_link_net_timer_time  > 5){
                      g_wifi.gTimer_link_net_timer_time = 0;
 
-                        // WIFI_IC_ENABLE();
+                        wifi_led_fast_blink(); // WIFI_IC_ENABLE();
             			
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
@@ -130,7 +137,7 @@ static void link_wifi_net_handler(void)
 
 
             case 3:
-                
+                 wifi_led_fast_blink();
             if(g_wifi.gTimer_link_net_timer_time  > 5){
                     g_wifi.gTimer_link_net_timer_time = 0;
                    g_wifi.link_net_step = 4;
@@ -147,6 +154,7 @@ static void link_wifi_net_handler(void)
 
 
             case 4:
+				 wifi_led_fast_blink();
                  if(g_wifi.gTimer_link_net_timer_time  > 7){
                      g_wifi.gTimer_link_net_timer_time = 0;
 
