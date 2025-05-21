@@ -179,6 +179,7 @@ void works_run_two_hours_state(void)
     if(g_pro.gTimer_two_hours_counter > 7200 ){ //two hours
 
    #endif 
+    g_pro.delay_run_adc_counter=0;
 	g_pro.gTimer_two_hours_counter= 0;
 
     g_pro.works_two_hours_interval_flag=1;
@@ -187,7 +188,7 @@ void works_run_two_hours_state(void)
 	DRY_CLOSE();
 	mouse_close();
     g_pro.gTimer_fan_run_one_minute=0;
-
+   
 
 	timer_fan_flag=1;
 
@@ -204,9 +205,9 @@ void works_run_two_hours_state(void)
 	 if(g_pro.gTimer_two_hours_counter  > 600){ //2minutes x 60s = 120s
            
          g_pro.gTimer_two_hours_counter =0;  
-		 
+		 g_pro.delay_run_adc_counter =0;
          g_pro.works_two_hours_interval_flag=0;
-    
+           
      
 
          mainboard_special_fun();
@@ -215,14 +216,12 @@ void works_run_two_hours_state(void)
      #else 
 
       if(g_pro.gTimer_two_hours_counter  > 600){ //10*60s=600s
-         g_pro.gTimer_two_hours_counter =0;  
+         g_pro.gTimer_two_hours_counter =0; 
 		 
+		 g_pro.delay_run_adc_counter=0;
          g_pro.works_two_hours_interval_flag=0;
-    
-     
-
          mainboard_special_fun();
-                
+              
       }
 
 

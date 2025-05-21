@@ -826,11 +826,10 @@ void Json_Parse_Command_Fun(void)
 		   
 			  g_wifi.app_timer_power_on_flag = 1;
               
-			   if(g_pro.DMA_txComplete ==1){
-			   	g_pro.DMA_txComplete=0;
+			  
 			   SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
-
-			   }
+               osDelay(5);
+			   
 			  
 
 		       g_pro.gpower_on = power_on; //WT.EDIT 

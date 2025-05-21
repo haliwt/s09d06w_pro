@@ -137,6 +137,7 @@ typedef struct _process{
    uint8_t  disp_timer_minutes_value;
 
    uint8_t g_copy_power_onoff_flag;
+   uint8_t delay_run_adc_counter;
 
 
    uint8_t first_connect_wifi_flag;

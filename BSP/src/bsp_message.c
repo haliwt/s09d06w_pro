@@ -62,7 +62,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
 		 
 		 
           SendWifiData_Answer_Cmd(CMD_POWER,0x01); //WT.EDIT 2025.01.07 
-           osDelay(5);
+          osDelay(5);
         }
         else{ //close 
          
@@ -113,7 +113,7 @@ void receive_data_from_displayboard(uint8_t *pdata)
           DRY_CLOSE();
 		  if(g_disp.g_second_disp_flag ==1){
 		  SendWifiData_Answer_Cmd(CMD_PTC,0x0); //WT.EDIT 2025.01.07
-		  //manual close flag :
+		   osDelay(5);
 		  }
             
          if(g_wifi.gwifi_link_net_state_flag==1){
@@ -280,21 +280,24 @@ void receive_data_from_displayboard(uint8_t *pdata)
 
 	 case 0x10: //has two display board.
 
-	   if(pdata[3] == 0x01){ 
+	   if(pdata[3] == 0x00){ //notice message.
+	   	   if(pdata[4]==0x01){
            g_disp.g_second_disp_flag = 1; 
 
-	    }
-		else{
+	       }
+		   else{
 		   g_disp.g_second_disp_flag = 0; 
-
-
-		}
+		   	}
+	   	}
+		
      break;
 
      case 0x16 : //buzzer sound command with answer .
 
       
-       if(pdata[3] == 0x01){  //buzzer sound 
+       if(pdata[3] == 0x00){  //buzzer sound 
+
+	      if(pdata[4]==0x01){
 
           if(g_pro.gpower_on == power_on){  
           SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.01.07
@@ -302,13 +305,8 @@ void receive_data_from_displayboard(uint8_t *pdata)
           buzzer_sound();
 
           }
-            
-       }
-        else if(pdata[3] == 0x0){ // don't buzzer sound .
- 
- 
- 
-        }
+	      }
+       	}
 
 
      break;

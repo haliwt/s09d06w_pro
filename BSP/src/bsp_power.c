@@ -132,7 +132,7 @@ void power_on_run_handler(void)
 {
 
    static uint8_t read_error_flag,switch_adc,switch_dht11;
-
+   static uint8_t temp_second_displboard;
 	switch(gl_run.process_on_step){
 
 
@@ -146,19 +146,17 @@ void power_on_run_handler(void)
 		   osDelay(50);//HAL_Delay(350);
 		}
         else{
-		   if(g_pro.DMA_txComplete ==1){
-		   	   g_pro.DMA_txComplete=0;
-		   	  SendData_Set_Command(CMD_POWER,open);
-		   	}
+		   
+		   	  
+		   	SendData_Set_Command(CMD_POWER,open);
+			osDelay(5);
+		   	
 		    if(g_wifi.gwifi_link_net_state_flag == wifi_link_success){ 
 		       MqttData_Publish_SetOpen(1);  
 		       osDelay(100);//HAL_Delay(200);
 		    }
         }
-		
-	     
-        
-		 Update_DHT11_ToDisplayBoard_Value();
+		Update_DHT11_ToDisplayBoard_Value();
 			 
 		   
 		   
@@ -176,9 +174,7 @@ void power_on_run_handler(void)
 		  	   Update_DHT11_ToDisplayBoard_Value();
 		   	}
 	        send_wifi_power_on_state = 1;
-		  // g_pro.gset_temperture_value = 40;
-		  // MqttData_Publish_Update_Data();
-		   //osDelay(200);//HAL_Delay(200);
+		
 	   }
 	   else{
 
@@ -206,6 +202,8 @@ void power_on_run_handler(void)
 	   g_pro.fan_warning =0 ;
 	   g_pro.ptc_warning =0;
 	   g_pro.gTimer_display_adc_value=0;
+	   g_pro.delay_run_adc_counter=0;
+	   temp_second_displboard=0;
 
 	   gl_run.process_on_step =1;
 	 break;
@@ -214,8 +212,11 @@ void power_on_run_handler(void)
 
       if( g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
 	
-		  if(g_disp.g_second_disp_flag == 1){
-	         
+		  if(g_disp.g_second_disp_flag == 1 || temp_second_displboard < 5){
+
+		     if(temp_second_displboard < 8){
+                   temp_second_displboard ++;
+			 }
 		    if(g_pro.gTimer_send_dht11_disp > 2){ //3s
 		       g_pro.gTimer_send_dht11_disp=0;
 	           Update_DHT11_ToDisplayBoard_Value();
@@ -337,7 +338,7 @@ void power_on_run_handler(void)
 	 
          if( g_pro.fan_warning ==0 && g_pro.ptc_warning ==0){
 		 
-		if(g_wifi.gTimer_update_dht11_data > 7 && (g_wifi.gwifi_link_net_state_flag ==1 || g_wifi.gwifi_link_net_state_flag ==1)){
+		if(g_wifi.gTimer_update_dht11_data > 7 && g_wifi.gwifi_link_net_state_flag ==wifi_link_success){
 			   g_wifi.gTimer_update_dht11_data=0;
 
 			   if(g_wifi.gwifi_link_net_state_flag ==1){
@@ -346,11 +347,11 @@ void power_on_run_handler(void)
 				   if(switch_dht11==1){
 		         	   Subscriber_Data_FromCloud_Handler();
 				
-	                  osDelay(30);
+	                  osDelay(50);
 				   	}
 				    else{
 					Update_Dht11_Totencent_Value()	;
-					osDelay(20);
+					osDelay(50);
 
 
 					}
@@ -376,9 +377,16 @@ void power_on_run_handler(void)
 
 	 case 4: // wifi function
 	    
-         if(g_pro.gTimer_display_adc_value > 4 && g_pro.works_two_hours_interval_flag==0){
+         if(g_pro.gTimer_display_adc_value > 5 && g_pro.works_two_hours_interval_flag==0){
 		 	g_pro.gTimer_display_adc_value=0;
 
+
+            if(g_pro.delay_run_adc_counter < 12){
+			   g_pro.delay_run_adc_counter++;
+
+
+			}
+			else{
 		    switch_adc = switch_adc ^ 0x01;
 		    if(switch_adc==1){
                Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,5);
@@ -392,6 +400,7 @@ void power_on_run_handler(void)
 		        }
 
             }
+		   }
 
          }
 	  gl_run.process_on_step =1;
@@ -422,7 +431,7 @@ void power_off_run_handler(void)
 
    case 0:
    	  gl_run.process_on_step =0;
-   	  g_disp.g_second_disp_flag=1;
+
    	  power_off_led();
       TM1639_Display_ON_OFF(0);
 	  g_key.key_long_power_flag  = 0;
@@ -433,22 +442,20 @@ void power_off_run_handler(void)
 	  fan_run_one_minute = 1;
 	  g_pro.gTimer_fan_run_one_minute =0;
 
-	  if(g_wifi.gwifi_link_net_state_flag == 1){
+	  if(g_wifi.gwifi_link_net_state_flag == wifi_link_success){
             MqttData_Publish_SetOpen(0);  
 			osDelay(50);
 	        MqttData_Publish_PowerOff_Ref() ;//
 	        osDelay(100);
            
 	  }
-	  if(g_disp.g_second_disp_flag ==1){
-
-	  
-	   	  SendData_Set_Command(CMD_POWER,close);
-          osDelay(5);
+	  if(g_pro.DMA_txComplete ==1 && g_disp.g_second_disp_flag==1){
+	  	g_pro.DMA_txComplete++;
+	  	SendData_Set_Command(CMD_POWER,close);
+	  }
+    
 	
-         
-
-       }
+        
 	   g_pro.g_fan_switch_gears_flag++;
        gl_run.process_off_step = 1;
 	   g_pro.key_set_temperature_flag=0;
@@ -488,7 +495,7 @@ void power_off_run_handler(void)
      LED_Power_Breathing();
 	 wifi_first_connect++;
 
-	 if(g_wifi.gwifi_link_net_state_flag == 1 && wifi_first_connect > 200){
+	 if(g_wifi.gwifi_link_net_state_flag == wifi_link_success && wifi_first_connect > 200){
 	 	    wifi_first_connect=0;
             MqttData_Publish_SetOpen(0);  
 			osDelay(100);
